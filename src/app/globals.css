@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: theme("colors.steel.200");
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-behavior: auto; /* Lenis handles smooth scroll */
+    @apply font-sans;
+  }
+
+  body {
+    @apply antialiased bg-canvas text-ink;
+    font-feature-settings: "ss01", "cv01", "cv11";
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: theme("colors.corporate.500");
+    color: #fff;
+  }
+
+  h1, h2, h3, h4, h5 {
+    @apply font-display font-semibold tracking-tightest text-ink;
+    text-wrap: balance;
+  }
+
+  /* Custom slim scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: theme("colors.canvas.silver");
+  }
+  ::-webkit-scrollbar-thumb {
+    background: theme("colors.steel.300");
+    border-radius: 999px;
+    border: 2px solid theme("colors.canvas.silver");
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme("colors.steel.400");
+  }
+}
+
+@layer components {
+  /* Section rhythm */
+  .section {
+    @apply relative py-20 md:py-28 lg:py-32;
+  }
+
+  /* Eyebrow / kicker label */
+  .kicker {
+    @apply inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-kicker text-corporate-600;
+  }
+  .kicker::before {
+    content: "";
+    @apply h-px w-8 bg-corporate-500/60;
+  }
+
+  /* Glassmorphism for nav / overlays */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: saturate(180%) blur(18px);
+    -webkit-backdrop-filter: saturate(180%) blur(18px);
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  }
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+  }
+
+  /* Gradient ink text */
+  .text-gradient {
+    @apply bg-gradient-to-br from-ink via-corporate-700 to-corporate-500 bg-clip-text text-transparent;
+  }
+  .text-gradient-steel {
+    background: linear-gradient(120deg, #0b1b3a 0%, #334155 55%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Industrial bordered panel */
+  .panel {
+    @apply rounded-3xl border border-steel-200 bg-white shadow-soft;
+  }
+
+  /* Hairline divider */
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-steel-300 to-transparent;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .text-pretty {
+    text-wrap: pretty;
+  }
+  .container-x {
+    @apply mx-auto w-full max-w-[1360px] px-6 lg:px-8 xl:px-10;
+  }
+
+  /* Edge mask for marquees */
+  .mask-x {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 8%,
+      #000 92%,
+      transparent
+    );
+  }
+
+  /* Subtle film grain / noise overlay */
+  .noise::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.025;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .perspective {
+    perspective: 1200px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  .anim-paused {
+    animation-play-state: paused;
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
