@@ -1,5 +1,9 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import { PageHero } from "@/components/layout/PageHero";
-import { CTASection } from "@/components/layout/CTASection";
 import { CountStat } from "@/components/ui/Stat";
 import { Button } from "@/components/ui/Button";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
@@ -26,6 +30,8 @@ export default function CaseStudiesPage() {
         kicker="Case studies"
         title="Real platforms, running real businesses at scale"
         subtitle="These aren't concept demos. They're production systems powering ₹4,185M+ in transactions — managing crores in assets, thousands of users and millions in monthly volume, every single day."
+        image="/images/about/about-4.jpg"
+        imageAlt="Production platforms engineered by Cubiccode"
         breadcrumb={[
           { label: "Home", href: "/" },
           { label: "Work" },
@@ -135,10 +141,6 @@ export default function CaseStudiesPage() {
         </div>
       </section>
 
-      <CTASection
-        title="Have a platform this ambitious in mind?"
-        subtitle="Tell us what you're building. We'll come back with architecture, a delivery plan and a proposal — typically within a day."
-      />
     </>
   );
 }

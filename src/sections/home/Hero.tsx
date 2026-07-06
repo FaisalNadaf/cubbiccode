@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import {
 	motion,
@@ -35,7 +35,13 @@ import ColorBends from "@/components/ColorBends";
  */
 export function Hero() {
 	const ref = useRef<HTMLElement>(null);
+	const videoRef = useRef<HTMLVideoElement>(null);
 	const reduce = useReducedMotion();
+
+	// Pause the background video under prefers-reduced-motion.
+	useEffect(() => {
+		if (reduce) videoRef.current?.pause();
+	}, [reduce]);
 
 	const { scrollYProgress } = useScroll({
 		target: ref,
@@ -53,31 +59,31 @@ export function Hero() {
 			<section
 				ref={ref}
 				className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-ink via-corporate-800 to-corporate-600 text-white">
-				{/* ── Animated brand-color backdrop (ColorBends shader) ───────────── */}
+				{/* ── Background video (full-bleed) ───────────────────────────────── */}
 				<div
 					className="absolute inset-0 z-0 overflow-hidden"
 					aria-hidden="true">
-					<ColorBends
-						colors={["#0B3A63", "#1B6EC2", "#3F86D0"]}
-						rotation={90}
-						speed={0.2}
-						scale={1}
-						frequency={1}
-						warpStrength={1}
-						mouseInfluence={1}
-						noise={0.08}
-						parallax={0.5}
-						iterations={1}
-						intensity={1.2}
-						bandWidth={6}
-						transparent
-						autoRotate={0}
-						paused={!!reduce}
-					/>
+					<video
+						ref={videoRef}
+						className="h-full w-full object-cover"
+						autoPlay
+						muted
+						loop
+						playsInline
+						preload="metadata"
+						poster="/images/no.png">
+						<source
+							src="/videos/demo.mp4"
+							type="video/mp4"
+						/>
+					</video>
+					{/* uniform darkening so the white copy stays legible over any frame */}
+					<div className="absolute inset-0 bg-ink/40" />
 				</div>
+
 				{/* ── Light system — soft glow + bottom melt (grid removed) ────────── */}
 				<div
-					className="pointer-events-none absolute inset-0 z-[1]"
+					className="pointer-events-none absolute inset-0 z-[2]"
 					aria-hidden="true">
 					{/* Dark legibility scrim behind the headline so the white text always
               reads over the animated colour bands. */}
@@ -89,7 +95,7 @@ export function Hero() {
 
 				{/* ── Floating technology badges (xl+, decorative) ─────────────────── */}
 				<motion.div
-					className="pointer-events-none absolute inset-0"
+					className="pointer-events-none absolute inset-0 z-[3]"
 					style={reduce ? undefined : { y: contentY, opacity: contentFade }}
 					aria-hidden="true">
 					<HeroTechIcons />
@@ -160,14 +166,10 @@ export function Hero() {
 				</motion.div>
 			</section>
 
-			{/* ══ SCREEN 2 — supporting copy, CTAs, stats & client wall ═════════════ */}
-			<section className="relative flex min-h-screen flex-col justify-center bg-canvas py-12">
-				<div className="container-x">
-					{/* ── Floating collage: header · highlights · stats · centre CTA ── */}
-					<WhyCollage />
-
-				
-				</div>
+			{/* ══ SCREEN 2 — full-screen award scroll-stack + stat reveal ═══════════ */}
+			<section className="relative bg-canvas">
+				{/* WhyCollage owns its own full-bleed layout + spacing */}
+				<WhyCollage />
 			</section>
 		</>
 	);

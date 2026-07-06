@@ -1,3 +1,8 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import {
   Users,
   CalendarDays,
@@ -7,7 +12,6 @@ import {
   MapPin,
 } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
-import { CTASection } from "@/components/layout/CTASection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
@@ -44,6 +48,8 @@ export default function GdgPage() {
         kicker="Community initiative"
         title="GDG Belgaum — a home for developers in our city"
         subtitle="Cubiccode is proud to support GDG Belgaum, a local Google Developer Group that brings the region's builders together to learn, share and grow."
+        image="/images/Moments/DSC_5539.JPG"
+        imageAlt="The GDG Belgaum developer community at DevFest"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "GDG Belgaum" }]}
       >
         <div className="flex flex-wrap items-center gap-3">
@@ -171,10 +177,6 @@ export default function GdgPage() {
         </div>
       </section>
 
-      <CTASection
-        title="Building something for the community?"
-        subtitle="Whether it's an event, a meetup or a developer initiative — tell us how we can help. We typically reply within a day."
-      />
     </>
   );
 }

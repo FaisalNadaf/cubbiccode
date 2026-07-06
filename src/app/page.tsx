@@ -1,4 +1,10 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import { Hero } from "@/sections/home/Hero";
+import { HeroSectionDemo } from "@/components/ui/hero-section-9.demo";
 import { OriginObjects } from "@/sections/home/OriginObjects";
 import { FloatingShowcase } from "@/sections/home/FloatingShowcase";
 import { WhyTrust } from "@/sections/home/WhyTrust";
@@ -10,7 +16,6 @@ import { CaseStudies } from "@/sections/home/CaseStudies";
 import { ClientWall } from "@/sections/home/ClientWall";
 import { Testimonials } from "@/sections/home/Testimonials";
 import { TechEcosystem } from "@/sections/home/TechEcosystem";
-import { CTASection } from "@/components/layout/CTASection";
 
 export default function HomePage() {
   return (
@@ -25,7 +30,6 @@ export default function HomePage() {
       <ClientWall />
       <Testimonials />
       <TechEcosystem />
-      <CTASection />
     </>
   );
 }

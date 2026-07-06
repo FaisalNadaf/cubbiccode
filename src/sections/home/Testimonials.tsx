@@ -7,6 +7,7 @@ import Autoplay from "embla-carousel-autoplay";
 import { Star, Quote, ArrowLeft, ArrowRight } from "lucide-react";
 import { testimonials } from "@/content/testimonials";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { GlowCard } from "@/components/ui/GlowCard";
 
 // Embla API type, derived without importing the core package.
 type EmblaApi = NonNullable<ReturnType<typeof useEmblaCarousel>[1]>;
@@ -146,6 +147,7 @@ export function Testimonials() {
                 className="relative min-w-0 shrink-0 grow-0 basis-[80%] px-2 sm:basis-[56%] sm:px-2.5 lg:basis-[40%]"
               >
                 <div className="tween h-full will-change-transform">
+                  <GlowCard className="h-full rounded-4xl">
                   <figure
                     data-active={selected === i}
                     className="flex h-full flex-col rounded-4xl border border-steel-200 bg-white p-7 shadow-soft transition-shadow duration-300 data-[active=true]:shadow-lift lg:p-8"
@@ -180,6 +182,7 @@ export function Testimonials() {
                       </div>
                     </figcaption>
                   </figure>
+                  </GlowCard>
                 </div>
               </div>
             ))}

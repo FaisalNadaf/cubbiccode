@@ -63,9 +63,13 @@ export function Navbar() {
   const activeIndex = nav.findIndex((g) => isActiveGroup(g, pathname));
   const target = hovered ?? (activeIndex >= 0 ? activeIndex : null);
 
-  // On the homepage the hero is dark — float transparently with white text at the
-  // very top, then solidify into the light glass bar on scroll / when a panel opens.
-  const overDarkHero = pathname === "/" && !scrolled && openIndex === null;
+  // Every interior page now opens with a dark, full-bleed cinematic hero, so the bar
+  // floats transparently with white text at the very top, then solidifies into the
+  // light glass bar on scroll / panel open. Only the handful of pages that open on a
+  // light background keep the solid bar from the start.
+  const lightHeroRoutes = ["/culture", "/clientele"];
+  const overDarkHero =
+    !lightHeroRoutes.includes(pathname) && !scrolled && openIndex === null;
 
   // Move the pill to the hovered (or active) item.
   useEffect(() => {

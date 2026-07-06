@@ -1,12 +1,17 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowUpRight, BadgeCheck, Clock, ShieldCheck, Users, Play } from "lucide-react";
+import { BadgeCheck, Clock, ShieldCheck, Users, Play } from "lucide-react";
 import { industries, industryBySlug } from "@/content/industries";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/layout/PageHero";
-import { CTASection } from "@/components/layout/CTASection";
+import { SolutionsSequence } from "@/sections/industries/SolutionsSequence";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -126,48 +131,11 @@ export default async function IndustryPage({
       </section>
 
       {/* ============ HOW WE HELP ============ */}
-      <section className="section relative bg-canvas-soft">
-        <div className="container-x">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-            <div className="lg:sticky lg:top-28 lg:self-start">
-              <SectionHeading
-                kicker="What we deliver"
-                title="How we help"
-                intro="Domain-specific platforms built on real production experience — not generic templates retrofitted to your sector."
-              />
-              <Reveal delay={0.15}>
-                <div className="mt-10 inline-flex items-center gap-4 rounded-3xl border border-steel-200 bg-white p-5 shadow-soft">
-                  <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-ink text-corporate-200 shadow-soft">
-                    <Icon name={ind.icon} className="size-7" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{ind.title}</p>
-                    <p className="mt-0.5 text-[13px] leading-snug text-steel-500">
-                      {ind.short}
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-
-            <RevealGroup className="flex flex-col gap-3">
-              {ind.solutions.map((s, i) => (
-                <RevealItem key={s}>
-                  <div className="group flex items-center gap-5 rounded-2xl border border-steel-200 bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-corporate-200 hover:shadow-lift">
-                    <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-corporate-50 font-display text-base font-bold text-corporate-600 ring-1 ring-corporate-100 transition-colors group-hover:bg-corporate-600 group-hover:text-white group-hover:ring-corporate-600">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="flex-1 text-[15px] font-medium leading-snug text-steel-700">
-                      {s}
-                    </span>
-                    <ArrowUpRight className="size-5 shrink-0 -translate-x-1 text-steel-300 opacity-0 transition-all group-hover:translate-x-0 group-hover:text-corporate-500 group-hover:opacity-100" />
-                  </div>
-                </RevealItem>
-              ))}
-            </RevealGroup>
-          </div>
-        </div>
-      </section>
+      <SolutionsSequence
+        title={ind.title}
+        icon={ind.icon}
+        solutions={ind.solutions}
+      />
 
       {/* ============ HOW WE DO IT BETTER ============ */}
       <section className="relative overflow-hidden bg-ink py-24 text-white lg:py-28">
@@ -254,84 +222,7 @@ export default async function IndustryPage({
           </div>
         </section>
       )}
-
-      {/* ============ WHY CUBICCODE FOR YOUR SECTOR ============ */}
-      <section className="section relative bg-canvas">
-        <div className="container-x">
-          <SectionHeading
-            align="center"
-            kicker="Why Cubiccode"
-            title="The right partner for your sector"
-            intro="An ISO-certified, full-stack ITES company trusted by 500+ businesses — combining enterprise discipline with the agility your industry needs."
-          />
-
-          <RevealGroup className="mt-14 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {trustPoints.map((t) => (
-              <RevealItem key={t.title}>
-                <div className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-steel-200 bg-white p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-corporate-200 hover:shadow-lift">
-                  <div className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full bg-corporate-50 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
-                  <span className="relative flex size-12 items-center justify-center rounded-2xl bg-steel-50 text-corporate-600 ring-1 ring-steel-200 transition-colors group-hover:bg-corporate-600 group-hover:text-white group-hover:ring-corporate-600">
-                    <t.icon className="size-6" />
-                  </span>
-                  <h3 className="relative mt-6 text-lg font-semibold leading-snug text-ink">
-                    {t.title}
-                  </h3>
-                  <p className="relative mt-2 flex-1 text-[13.5px] leading-relaxed text-steel-500">
-                    {t.text}
-                  </p>
-                </div>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
-      {/* ============ OTHER INDUSTRIES ============ */}
-      <section className="section relative bg-canvas-soft">
-        <div className="container-x">
-          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-            <SectionHeading
-              kicker="More sectors"
-              title="Other industries we serve"
-              intro="Domain-specific platforms across the industries that power India's economy."
-            />
-            <Link
-              href="/industries/manufacturing"
-              className="group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700"
-            >
-              View all industries
-              <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
-          </div>
-
-          <RevealGroup className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {others.map((o) => (
-              <RevealItem key={o.slug}>
-                <Link
-                  href={`/industries/${o.slug}`}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-steel-200 bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-corporate-200 hover:shadow-lift"
-                >
-                  <div className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full bg-corporate-50 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
-                  <div className="relative flex items-center justify-between">
-                    <span className="flex size-12 items-center justify-center rounded-2xl bg-steel-50 text-corporate-600 ring-1 ring-steel-200 transition-colors group-hover:bg-corporate-600 group-hover:text-white group-hover:ring-corporate-600">
-                      <Icon name={o.icon} className="size-6" />
-                    </span>
-                    <ArrowUpRight className="size-5 -translate-x-1 text-steel-300 opacity-0 transition-all group-hover:translate-x-0 group-hover:text-corporate-500 group-hover:opacity-100" />
-                  </div>
-                  <h3 className="relative mt-5 text-lg font-semibold leading-snug text-ink">
-                    {o.title}
-                  </h3>
-                  <p className="relative mt-2 flex-1 text-[13.5px] leading-relaxed text-steel-500">
-                    {o.short}
-                  </p>
-                </Link>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
-
-      <CTASection />
+      
     </>
   );
 }

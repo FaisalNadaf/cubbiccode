@@ -99,6 +99,46 @@ export const trustBadges = [
   "Silver — 16th India Digital Awards 2025",
 ];
 
+export type Award = {
+  image: string; // gold award badge — /images/awardsIcons/*.png
+  moment: string; // proof photo / certificate — /images/Moments/*
+  title: string;
+  org: string;
+  desc: string;
+};
+
+// Award / recognition cards — powers the scroll-stack showcase in "Why Cubiccode".
+export const awards: Award[] = [
+  {
+    image: "/images/awardsIcons/a.png",
+    moment: "/images/Moments/paper.jpg",
+    title: "Top 10 Web Development Start-ups in India",
+    org: "Silicon India · 2019",
+    desc: "Ranked in the Top 10 Web Development Start-ups of 2019 by Silicon India.",
+  },
+  {
+    image: "/images/awardsIcons/a.png",
+    moment: "/images/Moments/business-excellence-certificate1.jpg",
+    title: "Most Outstanding Web Development Company",
+    org: "AI Global Excellence Awards · Karnataka · 2019",
+    desc: "Awarded Most Outstanding Web Development Company 2019 (Karnataka) by AI Global Excellence Awards.",
+  },
+  {
+    image: "/images/awardsIcons/a.png",
+    moment: "/images/Moments/award-bg.jpg",
+    title: "Top 3 Web Designers in Belgaum",
+    org: "BestThreeRated",
+    desc: "Recognized as one of the Top 3 Web Designers in Belgaum by BestThreeRated.",
+  },
+  {
+    image: "/images/awardsIcons/a.png",
+    moment: "/images/Moments/india-excellence-award-certificate1.jpg",
+    title: "Silver — Web Application Development Company of the Year",
+    org: "16th India Digital Awards · 2025",
+    desc: "Won Silver in Web Application Development Company of the Year at the 16th India Digital Awards.",
+  },
+];
+
 export type NavLink = {
   label: string;
   href: string;
@@ -161,7 +201,7 @@ export const nav: NavGroup[] = [
         links: [
           { label: "Workflow Automation", href: "/capabilities/workflow-automation", desc: "Automate the repetitive, scale the rest", icon: "Workflow" },
           { label: "SEO & Domain Authority", href: "/capabilities/seo", desc: "Rank, attract & convert organic traffic", icon: "TrendingUp" },
-          { label: "Full-Stack Training", href: "/capabilities/training", desc: "AI-first, with placement support", icon: "GraduationCap" },
+     
         ],
       },
     ],

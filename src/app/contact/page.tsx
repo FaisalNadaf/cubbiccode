@@ -1,3 +1,8 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import Link from "next/link";
 import {
   Phone,
@@ -35,6 +40,8 @@ export default function ContactPage() {
         kicker="Contact us"
         title="Let's transform your business for a change that matters"
         subtitle="Would you like to discuss a project? Tell us where you are and where you'd like to go — and we'll come back with a clear plan, timeline and proposal, typically within a day."
+        image="/images/about/parallax-2.jpg"
+        imageAlt="Get in touch with the Cubiccode team"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Contact" }]}
       />
 

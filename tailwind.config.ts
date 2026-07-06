@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 const config: Config = {
   darkMode: ["class"],
@@ -105,16 +106,24 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        wiggle: {
+          "0%,100%": { transform: "rotate(0deg) scale(1)" },
+          "20%": { transform: "rotate(-10deg) scale(1.12)" },
+          "45%": { transform: "rotate(9deg) scale(1.12)" },
+          "70%": { transform: "rotate(-5deg) scale(1.06)" },
+          "85%": { transform: "rotate(3deg) scale(1.03)" },
+        },
       },
       animation: {
         marquee: "marquee var(--marquee-duration,40s) linear infinite",
         "marquee-reverse": "marquee-reverse var(--marquee-duration,40s) linear infinite",
         "spin-slow": "spin-slow 26s linear infinite",
         float: "float 6s ease-in-out infinite",
+        wiggle: "wiggle 0.7s ease-in-out",
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [tailwindcssAnimate],
 };
 
 export default config;

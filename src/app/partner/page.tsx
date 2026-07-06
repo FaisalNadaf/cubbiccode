@@ -1,3 +1,8 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import {
   Handshake,
   Search,
@@ -9,7 +14,6 @@ import {
   Layers,
 } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
-import { CTASection } from "@/components/layout/CTASection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
@@ -74,6 +78,8 @@ export default function PartnerPage() {
         kicker="Become a sales partner"
         title="Grow your income by connecting businesses with great software"
         subtitle="Have a network of businesses that need a stronger digital presence? Refer them to Cubiccode, let us handle delivery, and earn for every project that closes."
+        image="/images/Moments/devfest2022_2.jpg"
+        imageAlt="Partner with the Cubiccode team"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Sales Partner" }]}
       >
         <div className="flex flex-wrap items-center gap-4">
@@ -178,10 +184,6 @@ export default function PartnerPage() {
         </div>
       </section>
 
-      <CTASection
-        title="Let's grow — together"
-        subtitle="Become a Cubiccode sales partner and turn your network into recurring income. Tell us about yourself and we'll be in touch within a day."
-      />
     </>
   );
 }

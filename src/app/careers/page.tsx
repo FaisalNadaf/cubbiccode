@@ -1,3 +1,8 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import {
   Rocket,
   TrendingUp,
@@ -9,7 +14,6 @@ import {
   Sparkles,
 } from "lucide-react";
 import { PageHero } from "@/components/layout/PageHero";
-import { CTASection } from "@/components/layout/CTASection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { Button } from "@/components/ui/Button";
@@ -51,6 +55,8 @@ export default function CareersPage() {
         kicker="Careers · CareerJump"
         title="Build the web with people who care about the craft"
         subtitle="We're a full-stack team that designs, engineers and grows real products. If you want to do your best work alongside people who'll push you to be better — let's talk."
+        image="/images/Moments/devfest2022_2.jpg"
+        imageAlt="The Cubiccode team at a community developer event"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Careers" }]}
       >
         <div className="flex flex-wrap items-center gap-4">
@@ -162,10 +168,6 @@ export default function CareersPage() {
         </div>
       </section>
 
-      <CTASection
-        title="Ready to do your best work?"
-        subtitle="Tell us about yourself and what you'd love to build. We read every application and reply — typically within a day."
-      />
     </>
   );
 }

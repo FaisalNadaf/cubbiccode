@@ -2,124 +2,143 @@
 
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import {
 	motion,
-	useScroll,
-	useTransform,
 	useMotionValue,
 	useSpring,
+	useTransform,
 	useMotionTemplate,
 	useReducedMotion,
+	type MotionValue,
 } from "framer-motion";
-import { Users, Gauge, LifeBuoy, ShieldCheck, ArrowRight } from "lucide-react";
+import { Users, Gauge, LifeBuoy, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { CountStat } from "@/components/ui/Stat";
 import { Reveal } from "@/components/ui/Reveal";
-import { TiltCard } from "@/components/ui/TiltCard";
 import { site } from "@/content/site";
 
+/* Each ownership pillar now rides on its own floating image tile. */
 const ownership = [
 	{
 		icon: Users,
 		title: "A cross-functional team",
 		text: "Designers, full-stack developers and a dedicated project manager on every single engagement.",
+		image:
+			"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop",
 	},
 	{
 		icon: Gauge,
-		title: "Your scorecard is our scorecard",
-		text: "We treat your launch date, your traffic and your conversions as our own KPIs — not yours alone.",
+		title: "Your scorecard is ours",
+		text: "We treat your launch date, your traffic and your conversions as our own KPIs  not yours alone.",
+		image:
+			"https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1200&auto=format&fit=crop",
 	},
 	{
 		icon: LifeBuoy,
-		title: "We don't disappear at launch",
+		title: "We don't vanish at launch",
 		text: "Ongoing support and AMC mean we're with you long after the site goes live.",
+		image:
+			"https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1200&auto=format&fit=crop",
 	},
 ];
 
-/* ─────────────────────── ownership card (right column) ─────────────────────── */
+/* ─────────────────────────── floating image card ─────────────────────────── */
 
-function OwnershipCard({
+function FloatingCard({
 	item,
-	index,
+	x,
+	y,
+	depth,
+	position,
+	delay,
+	reduce,
 }: {
 	item: (typeof ownership)[number];
-	index: number;
+	x: MotionValue<number>;
+	y: MotionValue<number>;
+	depth: number;
+	position: string;
+	delay: number;
+	reduce: boolean;
 }) {
-	const Icon = item.icon;
 	return (
-		<Reveal
-			direction="left"
-			delay={0.12 + index * 0.1}>
-			<TiltCard
-				max={6}
-				className="group overflow-hidden rounded-3xl border border-white/12 bg-white/[0.06] p-5 backdrop-blur-md transition-colors duration-300 hover:border-corporate-300/40 hover:bg-white/[0.1]">
-				{/* growing accent bar */}
-				<span className="pointer-events-none absolute left-0 top-6 h-8 w-[3px] origin-top scale-y-0 rounded-full bg-corporate-400 transition-transform duration-500 ease-out group-hover:scale-y-100" />
-				{/* corner glow on hover */}
-				<span className="pointer-events-none absolute -right-10 -top-10 size-28 rounded-full bg-corporate-500/0 blur-2xl transition-colors duration-500 group-hover:bg-corporate-500/30" />
+		<motion.div
+			// Outer layer = pointer-driven depth parallax (+ real z translate).
+			style={
+				reduce ? undefined : { x, y, z: depth, transformStyle: "preserve-3d" }
+			}
+			className={`absolute ${position}`}>
+			<motion.div
+				// Inner layer = one-shot entrance so it never fights the parallax.
+				initial={reduce ? false : { opacity: 0, scale: 0.9, y: 26 }}
+				whileInView={reduce ? undefined : { opacity: 1, scale: 1, y: 0 }}
+				viewport={{ once: true, amount: 0.35 }}
+				transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
+				className="group relative h-full w-full overflow-hidden rounded-[1.6rem] border border-white/70 bg-white p-1.5 shadow-lift ring-1 ring-ink/5">
+				<div className="relative h-full w-full overflow-hidden rounded-[1.25rem]">
+					<img
+						src={item.image}
+						alt={item.title}
+						loading="lazy"
+						className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.08]"
+					/>
+					{/* legibility scrim  stronger so titles stay crisp on any image */}
+					<div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-transparent" />
+					<div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/85 to-transparent" />
 
-				<div className="relative flex items-start gap-4">
-					<span className="flex size-12 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-white/10 text-corporate-200 transition-all duration-300 group-hover:scale-105 group-hover:border-transparent group-hover:bg-corporate-600 group-hover:text-white">
-						<Icon className="size-[22px]" />
-					</span>
-					<div>
-						<p className="flex items-center gap-1.5 font-display text-[17px] font-semibold text-white">
+					{/* content  title always, text reveals on hover */}
+					<div className="absolute inset-x-5 bottom-5 text-white">
+						<span className="mb-2.5 block h-[3px] w-9 rounded-full bg-corporate-400 shadow-[0_0_12px_rgba(63,134,208,0.7)]" />
+						<p className="font-display text-lg font-bold leading-snug tracking-tight text-white sm:text-xl [text-shadow:0_2px_20px_rgba(8,20,39,0.98),0_1px_2px_rgba(8,20,39,0.9)]">
 							{item.title}
-							<ArrowRight className="size-4 -translate-x-1 text-corporate-200 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100" />
 						</p>
-						<p className="mt-1.5 text-pretty text-[14.5px] leading-relaxed text-steel-300">
+						<p className="mt-2 max-h-0 overflow-hidden text-[13.5px] font-medium leading-snug text-white/90 opacity-0 transition-all duration-500 ease-out [text-shadow:0_1px_10px_rgba(8,20,39,0.9)] group-hover:max-h-28 group-hover:opacity-100">
 							{item.text}
 						</p>
 					</div>
 				</div>
-			</TiltCard>
-		</Reveal>
+			</motion.div>
+		</motion.div>
 	);
 }
 
 /* ─────────────────────────────── section ─────────────────────────────── */
 
 export function WhyTrust() {
-	const trackRef = useRef<HTMLDivElement>(null);
-	const stageRef = useRef<HTMLDivElement>(null);
-	const videoRef = useRef<HTMLVideoElement>(null);
+	const sectionRef = useRef<HTMLDivElement>(null);
 	const reduce = useReducedMotion() ?? false;
 
-	// Scroll → expand the card from an inset rounded panel to fullscreen.
-	// Animated via clip-path (paint-only) so it stays smooth (no layout thrash).
-	const { scrollYProgress } = useScroll({
-		target: trackRef,
-		offset: ["start start", "end start"],
-	});
-	const clipY = useTransform(scrollYProgress, [0, 0.45], [6, 0]);
-	const clipX = useTransform(scrollYProgress, [0, 0.45], [4, 0]);
-	const clipR = useTransform(scrollYProgress, [0, 0.45], [44, 0]);
-	const clipPath = useMotionTemplate`inset(${clipY}vh ${clipX}vw round ${clipR}px)`;
-
-	// Pointer tracking → cursor spotlight + parallax.
+	// Pointer tracking (0..1), spring-smoothed for buttery motion.
 	const px = useMotionValue(0.5);
 	const py = useMotionValue(0.5);
-	const spx = useSpring(px, { stiffness: 120, damping: 24, mass: 0.4 });
-	const spy = useSpring(py, { stiffness: 120, damping: 24, mass: 0.4 });
+	const spx = useSpring(px, { stiffness: 110, damping: 22, mass: 0.45 });
+	const spy = useSpring(py, { stiffness: 110, damping: 22, mass: 0.45 });
 
-	const spotX = useTransform(spx, (v) => `${(v * 100).toFixed(2)}%`);
-	const spotY = useTransform(spy, (v) => `${(v * 100).toFixed(2)}%`);
-	const spotlight = useMotionTemplate`radial-gradient(640px circle at ${spotX} ${spotY}, rgba(27,110,194,0.22), transparent 62%)`;
+	// Whole cluster tilts in 3D toward the cursor.
+	const tiltY = useTransform(spx, [0, 1], [9, -9]);
+	const tiltX = useTransform(spy, [0, 1], [-9, 9]);
 
-	const leftX = useTransform(spx, [0, 1], [10, -10]);
-	const rightX = useTransform(spx, [0, 1], [-10, 10]);
-	const videoX = useTransform(spx, [0, 1], [-22, 22]);
-	const videoY = useTransform(spy, [0, 1], [-16, 16]);
+	// Per-card parallax  bigger travel = closer to the viewer.
+	const backX = useTransform(spx, [0, 1], [14, -14]);
+	const backY = useTransform(spy, [0, 1], [10, -10]);
+	const midX = useTransform(spx, [0, 1], [20, -20]);
+	const midY = useTransform(spy, [0, 1], [14, -14]);
+	const frontX = useTransform(spx, [0, 1], [30, -30]);
+	const frontY = useTransform(spy, [0, 1], [22, -22]);
 
-	// Reduced motion: pause the background video; pointer handlers stay detached.
-	useEffect(() => {
-		if (reduce) videoRef.current?.pause();
-	}, [reduce]);
+	// Left column drifts gently the opposite way for depth.
+	const leftX = useTransform(spx, [0, 1], [8, -8]);
+
+	// Soft spotlight that follows the cursor across the section.
+	const spotX = useTransform(spx, (v) => `${(v * 100).toFixed(1)}%`);
+	const spotY = useTransform(spy, (v) => `${(v * 100).toFixed(1)}%`);
+	const spotlight = useMotionTemplate`radial-gradient(600px circle at ${spotX} ${spotY}, rgba(27,110,194,0.12), transparent 60%)`;
 
 	const handleMove =
 		reduce ? undefined : (
 			(e: React.MouseEvent<HTMLElement>) => {
-				const r = stageRef.current?.getBoundingClientRect();
+				const r = sectionRef.current?.getBoundingClientRect();
 				if (!r) return;
 				px.set((e.clientX - r.left) / r.width);
 				py.set((e.clientY - r.top) / r.height);
@@ -135,180 +154,196 @@ export function WhyTrust() {
 
 	return (
 		<section
-			ref={trackRef}
+			ref={sectionRef}
+			onMouseMove={handleMove}
+			onMouseLeave={handleLeave}
 			aria-label="Why clients trust Cubiccode"
-			className={`relative bg-canvas ${reduce ? "" : "h-[185vh]"}`}>
-			{/* Sticky stage — pins while the card grows to fullscreen. */}
+			className="relative overflow-hidden bg-canvas py-20 md:py-28 lg:py-32">
+			{/* ── Ambient background ─────────────────────────────────────────── */}
 			<div
-				ref={stageRef}
-				onMouseMove={handleMove}
-				onMouseLeave={handleLeave}
-				className={`flex items-center overflow-hidden ${
-					reduce ? "relative min-h-screen" : "sticky top-0 h-screen"
-				}`}>
-				{/* ── Expanding card ───────────────────────────────────────────── */}
+				className="pointer-events-none absolute inset-0"
+				aria-hidden>
+				<div className="absolute inset-0 bg-blueprint [background-size:38px_38px] opacity-[0.04]" />
+				<div className="absolute -right-40 -top-20 size-[560px] rounded-full bg-corporate-100/50 blur-3xl" />
+				<div className="absolute -left-40 bottom-0 size-[440px] rounded-full bg-steel-100 blur-3xl" />
+			</div>
+			{!reduce && (
 				<motion.div
-					style={reduce ? undefined : { clipPath }}
-					className="absolute inset-0 isolate overflow-hidden bg-ink text-white">
-					{/* Background video (full bleed) */}
-					<div
-						className="absolute inset-0 z-0"
-						aria-hidden="true">
-						<motion.div
-							style={reduce ? undefined : { x: videoX, y: videoY }}
-							className="absolute -inset-[7%]">
-							<motion.video
-								ref={videoRef}
-								initial={reduce ? false : { scale: 1.05 }}
-								animate={reduce ? undefined : { scale: [1.05, 1.13, 1.05] }}
-								transition={{ duration: 24, repeat: Infinity, ease: "easeInOut" }}
-								className="h-full w-full object-cover"
-								autoPlay
-								muted
-								loop
-								playsInline
-								preload="metadata"
-								poster="/images/no.png">
-								<source
-									src="/videos/demo.mp4"
-									type="video/mp4"
-								/>
-							</motion.video>
-						</motion.div>
-					</div>
+					style={{ background: spotlight }}
+					className="pointer-events-none absolute inset-0 z-[1]"
+					aria-hidden
+				/>
+			)}
 
-					{/* Legibility + mood scrims */}
-					<div
-						className="pointer-events-none absolute inset-0 z-[1]"
-						aria-hidden="true">
-						<div className="absolute inset-0 bg-gradient-to-r from-ink/95 via-ink/70 to-ink/35" />
-						<div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/30 to-ink/55" />
-						<div className="absolute inset-0 bg-blueprint [background-size:34px_34px] opacity-[0.1]" />
-						<div className="absolute inset-0 [background:radial-gradient(120%_120%_at_50%_50%,transparent_55%,rgba(8,20,39,0.7))]" />
-					</div>
+			<div className="container-x relative z-10 grid items-center gap-16 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
+				{/* ── LEFT  copy + CTA + proof ──────────────────────────────── */}
+				<motion.div style={reduce ? undefined : { x: leftX }}>
+					<Reveal>
+						<span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-kicker text-corporate-600">
+							<span className="h-px w-8 bg-corporate-400/70" />
+							The reason for our success
+						</span>
+					</Reveal>
 
-					{/* Cursor spotlight (mouse interaction) */}
-					{!reduce && (
-						<motion.div
-							style={{ background: spotlight }}
-							className="pointer-events-none absolute inset-0 z-[2] mix-blend-screen"
-							aria-hidden="true"
-						/>
-					)}
+					<Reveal delay={0.08}>
+						<h2 className="mt-5 max-w-2xl text-balance font-display font-semibold leading-[1.12] tracking-tight text-ink text-[2rem] sm:text-[2.4rem] lg:text-[2.85rem]">
+							A web partner that takes{" "}
+							<span className="relative whitespace-nowrap text-corporate-600">
+								ownership
+								<span className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-gradient-to-r from-corporate-500 via-corporate-400 to-transparent" />
+							</span>{" "}
+							of your outcome  not just your project.
+						</h2>
+					</Reveal>
 
-					{/* film grain */}
-					<div
-						className="noise pointer-events-none absolute inset-0 z-[2]"
-						aria-hidden="true"
-					/>
+					<Reveal delay={0.16}>
+						<p className="mt-6 max-w-xl text-pretty text-[15px] leading-relaxed text-steel-500 sm:text-base lg:text-[17px]">
+							Most agencies hand you a website and disappear. We don&apos;t work
+							that way  every Cubiccode engagement is run by a team that treats
+							your launch date, your traffic and your conversions as their own
+							scorecard.
+						</p>
+					</Reveal>
 
-					{/* ── Content ─────────────────────────────────────────────── */}
-					<div className="absolute inset-0 z-10 flex items-center">
-						<div className="container-x grid w-full items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-20">
-							{/* LEFT — copy + CTA */}
-							<motion.div style={reduce ? undefined : { x: leftX }}>
-								<Reveal>
-									<span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-kicker text-corporate-200">
-										<span className="h-px w-8 bg-corporate-300/60" />
-										The reason for our success
-									</span>
-								</Reveal>
-
-								<Reveal delay={0.08}>
-									<h2 className="mt-5 max-w-2xl text-balance font-display font-semibold leading-[1.14] tracking-tight text-white [text-shadow:0_2px_24px_rgba(8,20,39,0.45)] text-[1.9rem] sm:text-[2.3rem] lg:text-[2.6rem] xl:text-[2.95rem]">
-										A web partner that takes ownership of your outcome — not
-										just your project.
-									</h2>
-								</Reveal>
-
-								<Reveal delay={0.16}>
-									<p className="mt-6 max-w-xl text-pretty text-[15px] leading-relaxed text-steel-200 sm:text-base lg:text-[17px]">
-										Most agencies hand you a website and disappear. We don&apos;t
-										work that way — every Cubiccode engagement is run by a team
-										that treats your launch date, your traffic and your
-										conversions as their own scorecard.
-									</p>
-								</Reveal>
-
-								<Reveal delay={0.24}>
-									<div className="mt-9 flex flex-wrap gap-3">
-										<Button
-											href={site.proposalCta}
-											external
-											variant="white"
-											arrow>
-											Get a Proposal
-										</Button>
-										<Button
-											href="/about"
-											variant="outline"
-											arrow
-											className="border-white/30 bg-white/5 text-white hover:border-white/60 hover:bg-white/10">
-											Why Cubiccode
-										</Button>
-									</div>
-								</Reveal>
-
-								<Reveal delay={0.32}>
-									<div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-steel-300">
-										<span className="inline-flex items-center gap-2">
-											<ShieldCheck className="size-4 text-corporate-300" />
-											{site.certification}
-										</span>
-										<span className="hidden h-3 w-px bg-white/20 sm:inline-block" />
-										<span>700+ projects delivered · 500+ clients</span>
-									</div>
-								</Reveal>
-							</motion.div>
-
-							{/* RIGHT — ownership map */}
-							<motion.div
-								style={reduce ? undefined : { x: rightX }}
-								className="relative">
-								{/* floating proof chip — pinned to the TOP now */}
-								<div className="mb-6 flex justify-end">
-									<motion.div
-										animate={reduce ? undefined : { y: [0, -9, 0] }}
-										transition={{
-											duration: 4.6,
-											repeat: Infinity,
-											ease: "easeInOut",
-										}}
-										className="inline-flex items-center gap-3 rounded-2xl border border-white/15 bg-white/10 px-4 py-3 shadow-lift backdrop-blur-md">
-										<span className="flex size-9 items-center justify-center rounded-xl bg-corporate-600 text-white">
-											<Users className="size-[18px]" />
-										</span>
-										<div className="leading-tight">
-											<div className="font-display text-sm font-bold text-white">
-												500+ clients
-											</div>
-											<div className="text-[11px] text-steel-300">
-												stayed &amp; referred us
-											</div>
-										</div>
-									</motion.div>
-								</div>
-
-								<Reveal direction="up">
-									<p className="mb-5 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-kicker text-corporate-200">
-										<span className="h-px w-8 bg-corporate-300/60" />
-										How we take ownership
-									</p>
-								</Reveal>
-
-								<div className="space-y-4 [perspective:1200px]">
-									{ownership.map((item, i) => (
-										<OwnershipCard
-											key={item.title}
-											item={item}
-											index={i}
-										/>
-									))}
-								</div>
-							</motion.div>
+					<Reveal delay={0.24}>
+						<div className="mt-9 flex flex-wrap gap-3">
+							<Button
+								href="/about"
+								variant="outline"
+								arrow>
+								Why Cubiccode
+							</Button>
 						</div>
-					</div>
+					</Reveal>
+
+					<Reveal delay={0.32}>
+						<div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-4">
+							<div className="flex items-center gap-5 sm:gap-7">
+								<div>
+									<div className="font-display text-2xl font-bold leading-none text-ink sm:text-[27px]">
+										<CountStat
+											value={700}
+											suffix="+"
+										/>
+									</div>
+									<div className="mt-1 text-[11px] font-medium uppercase tracking-wide text-steel-500">
+										Projects
+									</div>
+								</div>
+								<span className="h-8 w-px bg-steel-200" />
+								<div>
+									<div className="font-display text-2xl font-bold leading-none text-ink sm:text-[27px]">
+										<CountStat
+											value={500}
+											suffix="+"
+										/>
+									</div>
+									<div className="mt-1 text-[11px] font-medium uppercase tracking-wide text-steel-500">
+										Clients
+									</div>
+								</div>
+								<span className="h-8 w-px bg-steel-200" />
+								<div>
+									<div className="font-display text-2xl font-bold leading-none text-ink sm:text-[27px]">
+										<CountStat
+											value={1}
+											suffix="M+"
+										/>
+									</div>
+									<div className="mt-1 text-[11px] font-medium uppercase tracking-wide text-steel-500">
+										Daily visitors
+									</div>
+								</div>
+							</div>
+						</div>
+					</Reveal>
 				</motion.div>
+
+				{/* ── RIGHT  floating image collage ─────────────────────────── */}
+				<div className="relative [perspective:1500px]">
+					<motion.div
+						style={
+							reduce ? undefined : (
+								{
+									rotateX: tiltX,
+									rotateY: tiltY,
+									transformStyle: "preserve-3d",
+								}
+							)
+						}
+						className="relative mx-auto h-[480px] w-full max-w-[600px] sm:h-[600px] lg:h-[640px]">
+						{/* decorative floating shapes */}
+						<motion.span
+							aria-hidden
+							animate={reduce ? undefined : { y: [0, -12, 0] }}
+							transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+							className="absolute -left-5 top-8 size-16 rounded-3xl bg-corporate-200/50 blur-[1px]"
+						/>
+						<motion.span
+							aria-hidden
+							animate={reduce ? undefined : { y: [0, 10, 0] }}
+							transition={{
+								duration: 6,
+								repeat: Infinity,
+								ease: "easeInOut",
+								delay: 0.8,
+							}}
+							className="absolute -right-6 top-2 size-12 rounded-full bg-corporate-400/40"
+						/>
+
+						{/* floating proof chip */}
+						<motion.div
+							animate={reduce ? undefined : { y: [0, -9, 0] }}
+							transition={{
+								duration: 4.6,
+								repeat: Infinity,
+								ease: "easeInOut",
+							}}
+							style={reduce ? undefined : { z: 90 }}
+							className="absolute -right-5 -bottom-5 z-40 inline-flex items-center gap-3 rounded-2xl border border-steel-200 bg-white/95 px-4 py-3 shadow-lift backdrop-blur-md">
+							<span className="flex size-9 items-center justify-center rounded-xl bg-corporate-600 text-white">
+								<Users className="size-[18px]" />
+							</span>
+							<div className="leading-tight">
+								<div className="font-display text-sm font-bold text-ink">
+									500+ clients
+								</div>
+								<div className="text-[11px] text-steel-500">
+									stayed &amp; referred us
+								</div>
+							</div>
+						</motion.div>
+
+						{/* the three image tiles */}
+						<FloatingCard
+							item={ownership[1]}
+							x={frontX}
+							y={frontY}
+							depth={70}
+							delay={0.05}
+							reduce={reduce}
+							position="right-0 top-[7%] z-30 h-[56%] w-[50%]"
+						/>
+						<FloatingCard
+							item={ownership[0]}
+							x={midX}
+							y={midY}
+							depth={40}
+							delay={0.15}
+							reduce={reduce}
+							position="left-0 top-0 z-20 h-[48%] w-[53%]"
+						/>
+						<FloatingCard
+							item={ownership[2]}
+							x={backX}
+							y={backY}
+							depth={10}
+							delay={0.25}
+							reduce={reduce}
+							position="bottom-0 left-[12%] z-10 h-[48%] w-[56%]"
+						/>
+					</motion.div>
+				</div>
 			</div>
 		</section>
 	);

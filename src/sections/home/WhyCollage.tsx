@@ -2,291 +2,158 @@
 
 "use client";
 
-import Link from "next/link";
-import {
-	motion,
-	useMotionValue,
-	useSpring,
-	useTransform,
-	useReducedMotion,
-	type MotionValue,
-} from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { Magnetic } from "@/components/ui/MagneticButton";
-import { TiltCard } from "@/components/ui/TiltCard";
-import { Icon } from "@/components/ui/Icon";
+import Image from "next/image";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import ScrollStack, { ScrollStackItem } from "@/components/ScrollStack";
 import { CountStat } from "@/components/ui/Stat";
-import { Reveal } from "@/components/ui/Reveal";
-import { heroHighlights, heroStats, hero, type Stat } from "@/content/site";
-import { cn } from "@/lib/utils";
+import { awards, heroStats, type Award } from "@/content/site";
 
 /**
- * WHY CUBICCODE — a floating, scattered collage.
+ * WHY CUBICCODE — one continuous page-scroll stack: awards, then the stats.
  *
- * A wide header bar sits top-centre, the content highlights ("data") zig-zag
- * down the left as tilted cards, the headline stats stagger down the right, and
- * a circular "Explore Our Work" CTA anchors the middle. Each block drifts toward
- * the pointer (parallax), tilts in 3D on hover, and the centre CTA is magnetic.
+ * A full-bleed stage driven by the *page* scroll (ScrollStack with
+ * useWindowScroll). Each award card is a 60/40 split — a fully-visible proof
+ * photo / certificate (60%) beside its copy (40%) — pinning/stacking on the one
+ * before it. Once the awards finish, a final stats card continues the very same
+ * stack in the very same spot, its four headline numbers rising in one-by-one.
  *
- * The scattered layout is absolutely positioned on a fixed-height canvas at xl+;
- * cards are sized to their content so nothing clips. Below xl it collapses to a
- * clean stacked layout. All pointer motion respects prefers-reduced-motion.
+ * Page-scroll (not a nested scroll box) is deliberate: a fixed-height internal
+ * scroller would trap the wheel. Inner stat motion respects reduced-motion.
  */
 
-/* Left "data" cards — scattered zig-zag (top-left corner, % of the canvas). */
-const DATA_XL = [
-	{ left: "4%", top: "11%", width: "18rem", rotate: -3, depth: 26 },
-	{ left: "23%", top: "26%", width: "17rem", rotate: -7, depth: 16 },
-	{ left: "3%", top: "46%", width: "19rem", rotate: 1, depth: 30 },
-	{ left: "21%", top: "70%", width: "21rem", rotate: 5, depth: 18 },
-] as const;
+const CARD_SIZE = "w-[86vw] max-w-[1200px] h-[70vh] min-h-[520px]";
 
-/* Right "stats" cards — staggered column. */
-const STAT_XL = [
-	{ left: "79%", top: "12%", width: "12rem", rotate: 1, depth: 22 },
-	{ left: "65%", top: "31%", width: "13rem", rotate: 3, depth: 28 },
-	{ left: "79%", top: "53%", width: "12rem", rotate: -1, depth: 16 },
-	{ left: "65%", top: "74%", width: "13rem", rotate: 1, depth: 24 },
-] as const;
-
-/**
- * A single floating block — drifts toward the pointer (× depth) and reveals on
- * scroll. Pointer drift is skipped under reduced motion; only the resting
- * rotation remains.
- */
-function FloatCard({
-	mx,
-	my,
-	depth,
-	rotate = 0,
-	delay = 0,
-	enabled,
-	className,
-	children,
-}: {
-	mx: MotionValue<number>;
-	my: MotionValue<number>;
-	depth: number;
-	rotate?: number;
-	delay?: number;
-	enabled: boolean;
-	className?: string;
-	children: React.ReactNode;
-}) {
-	const x = useTransform(mx, (v) => v * depth);
-	const y = useTransform(my, (v) => v * depth);
-
+/* A 60/40 award card — full-visible proof image (60%), copy (40%). */
+function AwardCard({ a, priority }: { a: Award; priority?: boolean }) {
 	return (
-		<motion.div
-			className={cn("relative", className)}
-			style={enabled ? { x, y, rotate } : { rotate }}
-			initial={{ opacity: 0, scale: enabled ? 0.92 : 1 }}
-			whileInView={{ opacity: 1, scale: 1 }}
-			viewport={{ once: true, amount: 0.3 }}
-			transition={{ duration: 0.55, delay, ease: [0.21, 0.47, 0.32, 0.98] }}>
-			{children}
-		</motion.div>
-	);
-}
+		<ScrollStackItem
+			itemClassName={`${CARD_SIZE} border border-steel-200 bg-white`}>
+			<div className="flex h-full flex-col md:flex-row">
+				{/* Proof photo / certificate — 60%, shown whole (contain) over an
+				    ambient blurred fill of itself so the panel never looks empty. */}
+				<div className="relative h-[44%] w-full shrink-0 overflow-hidden bg-steel-100 md:h-full md:w-3/5">
+					<Image
+						src={a.moment}
+						alt=""
+						aria-hidden
+						fill
+						sizes="(min-width: 768px) 55vw, 86vw"
+						className="scale-125 object-cover blur-2xl"
+					/>
+					<div className="absolute inset-0 bg-white/60" />
+					<Image
+						src={a.moment}
+						alt=""
+						fill
+						sizes="(min-width: 768px) 55vw, 86vw"
+						className="object-contain p-4 md:p-8"
+						priority={priority}
+					/>
+				</div>
 
-/* The wide "WHY CUBICCODE" header bar. */
-function HeaderBar({ className }: { className?: string }) {
-	return (
-		<div
-			className={cn(
-				"inline-flex items-center justify-center gap-2.5 rounded-2xl border border-steel-200 bg-white px-8 py-5 shadow-soft",
-				className
-			)}>
-			<span className="size-2 rounded-full bg-corporate-500" />
-			<span className="text-sm font-semibold uppercase tracking-kicker text-corporate-600">
-				Why Cubiccode
-			</span>
-		</div>
-	);
-}
-
-/* A single content-highlight ("data") card — icon + wrapping copy. */
-function DataSurface({ h }: { h: { icon: string; text: string } }) {
-	return (
-		<TiltCard className="flex h-full w-full items-start gap-3.5 overflow-hidden rounded-2xl border border-steel-200 bg-white p-5 shadow-soft transition-shadow duration-300 hover:shadow-card">
-			<span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100">
-				<Icon name={h.icon} className="size-5" />
-			</span>
-			<p className="text-[13.5px] font-medium leading-relaxed text-steel-700">
-				{h.text}
-			</p>
-		</TiltCard>
-	);
-}
-
-/* A single stat card. */
-function StatSurface({ s }: { s: Stat }) {
-	return (
-		<TiltCard className="flex h-full w-full items-center gap-3.5 overflow-hidden rounded-2xl border border-steel-200 bg-white px-5 py-4 shadow-soft transition-shadow duration-300 hover:shadow-card">
-			<div className="shrink-0 font-display text-[1.85rem] font-bold leading-none tracking-tight text-ink">
-				<CountStat value={s.value} prefix={s.prefix} suffix={s.suffix} />
+				{/* Copy — 40% */}
+				<div className="flex flex-1 flex-col justify-center gap-4 p-7 sm:p-9 md:p-10 lg:p-12">
+					<div className="flex items-center gap-4">
+						<span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-corporate-50 ring-1 ring-corporate-100">
+							<Image
+								src={a.image}
+								alt=""
+								width={44}
+								height={44}
+								className="size-10 object-contain"
+							/>
+						</span>
+						<span className="text-[11px] font-semibold uppercase leading-snug tracking-kicker text-corporate-600">
+							{a.org}
+						</span>
+					</div>
+					<h3 className="font-display text-2xl font-bold leading-[1.15] tracking-tight text-ink lg:text-[1.75rem]">
+						{a.title}
+					</h3>
+					<p className="text-[15px] leading-relaxed text-steel-600">
+						{a.desc}
+					</p>
+				</div>
 			</div>
-			<div className="text-[12.5px] font-semibold leading-snug text-steel-500">
-				{s.label}
-			</div>
-		</TiltCard>
+		</ScrollStackItem>
 	);
 }
 
-/* The circular focal CTA — magnetic to the cursor. */
-function CenterCTA() {
+/* The final card in the stack — stat blocks rising in one-by-one. */
+function StatsCard() {
+	const reduce = useReducedMotion();
+
+	const item: Variants = reduce
+		? { hidden: { opacity: 0 }, show: { opacity: 1 } }
+		: {
+				hidden: { opacity: 0, y: 90 },
+				show: {
+					opacity: 1,
+					y: 0,
+					transition: { duration: 0.55, ease: [0.21, 0.47, 0.32, 0.98] },
+				},
+		  };
+
 	return (
-		<Magnetic strength={0.4}>
-			<Link
-				href="/portfolio"
-				className="group/cta relative flex size-44 flex-col items-center justify-center gap-1.5 rounded-full border border-steel-200 bg-white text-center shadow-card transition-shadow duration-300 hover:shadow-lift">
-				<span
-					aria-hidden
-					className="absolute inset-1.5 rounded-full border border-corporate-100"
-				/>
-				<span className="relative max-w-[6.5rem] font-display text-[15px] font-bold leading-tight tracking-tight text-ink">
-					{hero.secondaryCta}
-				</span>
-				<ArrowUpRight className="relative size-4 text-corporate-600 transition-transform duration-300 group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5" />
-			</Link>
-		</Magnetic>
+		<ScrollStackItem
+			itemClassName={`${CARD_SIZE} bg-gradient-to-br from-ink via-corporate-900 to-corporate-800 text-white`}>
+			<div className="flex h-full flex-col justify-center px-6 py-10 sm:px-10 lg:px-14">
+				<div className="text-center">
+					<span className="text-xs font-semibold uppercase tracking-kicker text-corporate-200">
+						By the numbers
+					</span>
+					<h3 className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
+						Proof, not promises
+					</h3>
+				</div>
+
+				<motion.div
+					className="mx-auto mt-12 grid w-full max-w-4xl grid-cols-2 gap-5 md:grid-cols-4"
+					initial="hidden"
+					whileInView="show"
+					viewport={{ once: true, amount: 0.35 }}
+					variants={{
+						hidden: {},
+						show: { transition: { staggerChildren: 0.18 } },
+					}}>
+					{heroStats.map((s) => (
+						<motion.div
+							key={s.label}
+							variants={item}
+							className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-8 text-center backdrop-blur-sm transition-colors duration-300 hover:bg-white/[0.1]">
+							{/* top accent */}
+							<span className="absolute inset-x-0 top-0 mx-auto block h-px w-2/3 bg-gradient-to-r from-transparent via-corporate-300/60 to-transparent" />
+							<div className="font-display text-[2.6rem] font-bold leading-none tracking-tight text-white sm:text-5xl">
+								<CountStat value={s.value} prefix={s.prefix} suffix={s.suffix} />
+							</div>
+							<div className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-corporate-100/80">
+								{s.label}
+							</div>
+						</motion.div>
+					))}
+				</motion.div>
+			</div>
+		</ScrollStackItem>
 	);
 }
 
 export function WhyCollage() {
-	const reduce = useReducedMotion();
-	const enabled = !reduce;
-
-	// Raw pointer offset (-1 → 1 from centre), smoothed by a spring.
-	const mvX = useMotionValue(0);
-	const mvY = useMotionValue(0);
-	const sx = useSpring(mvX, { stiffness: 110, damping: 18, mass: 0.5 });
-	const sy = useSpring(mvY, { stiffness: 110, damping: 18, mass: 0.5 });
-
-	const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
-		if (!enabled) return;
-		const r = e.currentTarget.getBoundingClientRect();
-		mvX.set(((e.clientX - r.left) / r.width - 0.5) * 2);
-		mvY.set(((e.clientY - r.top) / r.height - 0.5) * 2);
-	};
-	const handleLeave = () => {
-		mvX.set(0);
-		mvY.set(0);
-	};
-
 	return (
-		<div className="relative">
-			{/* ── XL+ — scattered, pointer-reactive collage ─────────────────────── */}
-			<div
-				onMouseMove={handleMove}
-				onMouseLeave={handleLeave}
-				className="relative hidden h-[660px] xl:block">
-				{/* Soft corporate halo behind the focal CTA (ties into the theme) */}
-				<div
-					aria-hidden
-					className="pointer-events-none absolute left-1/2 top-1/2 size-[440px] -translate-x-1/2 -translate-y-1/2 rounded-full"
-					style={{
-						background:
-							"radial-gradient(circle, rgba(27,110,194,0.10), transparent 70%)",
-					}}
-				/>
-
-				{/* Header bar — wide, top-centre */}
-				<div className="absolute left-1/2 top-[5%] z-20 w-[30rem] -translate-x-1/2">
-					<FloatCard mx={sx} my={sy} depth={7} enabled={enabled} className="w-full">
-						<HeaderBar className="w-full" />
-					</FloatCard>
-				</div>
-
-				{/* Left — "data" highlights */}
-				{heroHighlights.map((h, i) => {
-					const p = DATA_XL[i];
-					return (
-						<div
-							key={h.text}
-							className="absolute"
-							style={{ left: p.left, top: p.top, width: p.width }}>
-							<FloatCard
-								mx={sx}
-								my={sy}
-								depth={p.depth}
-								rotate={p.rotate}
-								delay={0.05 * i}
-								enabled={enabled}
-								className="w-full">
-								<DataSurface h={h} />
-							</FloatCard>
-						</div>
-					);
-				})}
-
-				{/* Right — stats */}
-				{heroStats.map((s, i) => {
-					const p = STAT_XL[i];
-					return (
-						<div
-							key={s.label}
-							className="absolute"
-							style={{ left: p.left, top: p.top, width: p.width }}>
-							<FloatCard
-								mx={sx}
-								my={sy}
-								depth={p.depth}
-								rotate={p.rotate}
-								delay={0.05 * i}
-								enabled={enabled}
-								className="w-full">
-								<StatSurface s={s} />
-							</FloatCard>
-						</div>
-					);
-				})}
-
-				{/* Centre — focal CTA */}
-				<div
-					className="absolute z-10"
-					style={{ left: "50%", top: "46%", width: "11rem" }}>
-					<FloatCard
-						mx={sx}
-						my={sy}
-						depth={12}
-						delay={0.15}
-						enabled={enabled}
-						className="w-full">
-						<CenterCTA />
-					</FloatCard>
-				</div>
-			</div>
-
-			{/* ── Below xl — clean stacked fallback ─────────────────────────────── */}
-			<div className="relative py-2 xl:hidden">
-				<div className="mb-9 flex justify-center">
-					<HeaderBar />
-				</div>
-
-				<div className="grid gap-5 sm:grid-cols-2">
-					{heroHighlights.map((h, i) => (
-						<Reveal key={h.text} direction="up" delay={0.06 * i}>
-							<DataSurface h={h} />
-						</Reveal>
-					))}
-				</div>
-
-				<div className="my-10 flex justify-center">
-					<Button href="/portfolio" size="lg" arrow>
-						{hero.secondaryCta}
-					</Button>
-				</div>
-
-				<div className="grid gap-5 sm:grid-cols-2">
-					{heroStats.map((s, i) => (
-						<Reveal key={s.label} direction="up" delay={0.06 * i}>
-							<StatSurface s={s} />
-						</Reveal>
-					))}
-				</div>
-			</div>
+		<div className="relative w-full overflow-x-clip bg-canvas-soft">
+			{/* One continuous stack: award cards, then the stats card */}
+			<ScrollStack
+				useWindowScroll
+				itemDistance={120}
+				itemScale={0.02}
+				itemStackDistance={26}
+				baseScale={0.92}
+				stackPosition="15%"
+				scaleEndPosition="8%">
+				{awards.map((a, i) => (
+					<AwardCard key={a.title} a={a} priority={i === 0} />
+				))}
+				<StatsCard />
+			</ScrollStack>
 		</div>
 	);
 }

@@ -1,4 +1,8 @@
-import Image from "next/image";
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Contact: faisalfnadaf@gmail.com
+ */
+
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -6,14 +10,94 @@ import { ArrowUpRight, Check, Play, Sparkles } from "lucide-react";
 import { capabilities, capabilityBySlug } from "@/content/capabilities";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/layout/PageHero";
-import { CTASection } from "@/components/layout/CTASection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
-import { Reveal, RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { CardStack } from "@/components/ui/card-stack";
+import { BuildShowcase } from "@/sections/capabilities/BuildShowcase";
+import { ProblemShowcase } from "@/sections/capabilities/ProblemShowcase";
 
 export function generateStaticParams() {
   return capabilities.map((c) => ({ slug: c.slug }));
+}
+
+// Real Cubiccode project screenshots for the "Our Work" card stack.
+// Exact matches by name; the rest cycle the available pool (swap in precise
+// shots as they're added to /public/images/portfolio).
+const WORK_IMAGE: Record<string, string> = {
+  "Harsha & Rakesh Salon": "/images/portfolio/harsha-rakesh.jpg",
+  CityIndex: "/images/portfolio/city-index.jpg",
+};
+const WORK_IMAGE_POOL = [
+  "/images/portfolio/prions-biotech.jpg",
+  "/images/portfolio/woodpecker-exotic.jpg",
+  "/images/portfolio/aishwarya-cottons.png",
+  "/images/portfolio/laxis-analytics.jpg",
+  "/images/portfolio/city-index.jpg",
+  "/images/portfolio/harsha-rakesh.jpg",
+];
+const workImage = (name: string, i: number) =>
+  WORK_IMAGE[name] ?? WORK_IMAGE_POOL[i % WORK_IMAGE_POOL.length];
+
+// Real project screenshots that back the "What We Build" CardSwap tiles.
+const FEATURE_IMAGE_POOL = [
+  "/images/portfolio/city-index.jpg",
+  "/images/portfolio/laxis-analytics.jpg",
+  "/images/portfolio/prions-biotech.jpg",
+  "/images/portfolio/woodpecker-exotic.jpg",
+  "/images/portfolio/harsha-rakesh.jpg",
+  "/images/portfolio/aishwarya-cottons.png",
+];
+const featureImage = (i: number) =>
+  FEATURE_IMAGE_POOL[i % FEATURE_IMAGE_POOL.length];
+
+// Distinct titlebar icons per card (Lucide names) — mirrors the reference's
+// per-card icon treatment. Neutral, feature-flavoured, cycled by index.
+const FEATURE_ICONS = [
+  "Code2",
+  "Layers",
+  "SlidersHorizontal",
+  "Zap",
+  "ShieldCheck",
+  "Gauge",
+  "Boxes",
+  "Sparkles",
+];
+const featureIcon = (i: number) => FEATURE_ICONS[i % FEATURE_ICONS.length];
+
+// Per-capability floating chips + badges for THE PROBLEM scene — each set is
+// written to echo that capability's specific pain (Lucide names / short tags).
+const PROBLEM_META: Record<string, { icons: string[]; badges: string[] }> = {
+  "website-development": {
+    icons: ["Gauge", "Smartphone", "TrendingDown"],
+    badges: ["Slow load", "Dated on mobile", "Ranks nowhere", "Lost leads"],
+  },
+  "web-application-development": {
+    icons: ["Table2", "Network", "Hourglass"],
+    badges: ["Manual work", "Data silos", "Won't scale", "Spreadsheet chaos"],
+  },
+  "custom-erp": {
+    icons: ["Network", "EyeOff", "Clock"],
+    badges: ["Data silos", "No visibility", "Manual entry", "Month-end guesswork"],
+  },
+  "workflow-automation": {
+    icons: ["ClipboardList", "Clock", "AlertTriangle"],
+    badges: ["Manual tasks", "Wasted hours", "Human error", "Chasing approvals"],
+  },
+  seo: {
+    icons: ["EyeOff", "Search", "TrendingDown"],
+    badges: ["Invisible", "No traffic", "Page 2+", "Losing buyers"],
+  },
+};
+
+// Features are authored as "Title — description". Split on the em-dash so the
+// card can style the lead and the detail differently; sentences without one
+// become a standalone title.
+function splitFeature(f: string): { title: string; detail: string } {
+  const idx = f.indexOf(" — ");
+  return idx === -1
+    ? { title: f, detail: "" }
+    : { title: f.slice(0, idx), detail: f.slice(idx + 3) };
 }
 
 export async function generateMetadata({
@@ -66,82 +150,32 @@ export default async function CapabilityPage({
       {/* ============ THE PROBLEM ============ */}
       <section className="section relative overflow-hidden bg-canvas">
         <div className="pointer-events-none absolute inset-0 bg-radial-fade" />
-        <div className="container-x relative grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
-          <Reveal direction="right">
-            <div>
-              <span className="kicker">The problem</span>
-              <p className="mt-6 text-pretty text-xl font-medium leading-relaxed text-steel-700 lg:text-2xl">
-                {cap.problem}
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal direction="left" delay={0.1}>
-            <div className="relative">
-              <div className="pointer-events-none absolute -bottom-6 -right-6 -z-10 size-48 rounded-3xl bg-blueprint [background-size:24px_24px] opacity-60" />
-              <div className="relative overflow-hidden rounded-4xl border border-steel-200 shadow-lift">
-                <div className="relative aspect-[4/3] w-full">
-                  <Image
-                    src="/images/no.png"
-                    alt={cap.title}
-                    fill
-                    sizes="(min-width: 1024px) 45vw, 90vw"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/5 to-transparent" />
-                </div>
-                <div className="absolute inset-x-0 bottom-0 p-7">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-ink backdrop-blur">
-                    <Icon name={cap.icon} className="size-4 text-corporate-600" />
-                    {cap.title}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Reveal>
+        <div className="container-x relative">
+          <ProblemShowcase
+            problem={cap.problem}
+            images={FEATURE_IMAGE_POOL.slice(0, 4)}
+            icons={PROBLEM_META[cap.slug]?.icons}
+            badges={PROBLEM_META[cap.slug]?.badges}
+          />
         </div>
       </section>
 
       {/* ============ WHAT WE BUILD / DO ============ */}
-      <section className="section relative bg-canvas-soft">
-        <div className="container-x">
-          <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:gap-20">
-            <div className="lg:sticky lg:top-28 lg:self-start">
-              <SectionHeading
-                kicker={cap.buildHeading}
-                title="Everything you need, engineered end-to-end."
-                intro="A complete, accountable scope — no hand-offs, no gaps. Here's exactly what this engagement delivers."
-              />
-              <Reveal delay={0.15}>
-                <div className="mt-10 inline-flex items-center gap-4 rounded-3xl border border-steel-200 bg-white p-5 shadow-soft">
-                  <span className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-ink text-corporate-200 shadow-soft">
-                    <Icon name={cap.icon} className="size-7" />
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-ink">{cap.title}</p>
-                    <p className="mt-0.5 text-[13px] leading-snug text-steel-500">
-                      {cap.short}
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
-            </div>
-
-            <RevealGroup className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {cap.features.map((f) => (
-                <RevealItem key={f}>
-                  <div className="group flex h-full items-start gap-3.5 rounded-2xl border border-steel-200 bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-corporate-200 hover:shadow-lift">
-                    <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-lg bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100 transition-colors group-hover:bg-corporate-600 group-hover:text-white group-hover:ring-corporate-600">
-                      <Check className="size-4" />
-                    </span>
-                    <span className="text-[15px] font-medium leading-snug text-steel-700">
-                      {f}
-                    </span>
-                  </div>
-                </RevealItem>
-              ))}
-            </RevealGroup>
-          </div>
+      <section className="relative flex min-h-[85vh] items-center overflow-hidden bg-canvas-soft py-16">
+        <div className="pointer-events-none absolute inset-0 bg-grid-steel [background-size:46px_46px] [mask-image:radial-gradient(60%_55%_at_50%_40%,#000,transparent)] opacity-40" />
+        <div className="container-x relative w-full">
+          <BuildShowcase
+            buildHeading={cap.buildHeading}
+            items={cap.features.map((f, i) => {
+              const { title, detail } = splitFeature(f);
+              return {
+                title,
+                detail,
+                image: featureImage(i),
+                icon: featureIcon(i),
+              };
+            })}
+          />
         </div>
       </section>
 
@@ -236,7 +270,7 @@ export default async function CapabilityPage({
 
       {/* ============ OUR WORK ============ */}
       {cap.work && cap.work.items.length > 0 && (
-        <section className="section relative bg-canvas">
+        <section className="section relative overflow-hidden bg-canvas">
           <div className="container-x">
             <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
               <SectionHeading kicker="Our work" title={cap.work.heading} />
@@ -248,105 +282,37 @@ export default async function CapabilityPage({
                 <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </Link>
             </div>
-
-            <RevealGroup className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {cap.work.items.map((w) => (
-                <RevealItem key={w.name}>
-                  <div className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-2xl border border-steel-200 bg-white p-5 shadow-soft transition-all duration-300 hover:-translate-y-0.5 hover:border-corporate-200 hover:shadow-lift">
-                    <div>
-                      <p className="font-semibold text-ink">{w.name}</p>
-                      {w.note && (
-                        <p className="mt-0.5 text-[13px] text-steel-500">{w.note}</p>
-                      )}
-                    </div>
-                    <ArrowUpRight className="size-5 shrink-0 -translate-x-1 text-steel-300 opacity-0 transition-all group-hover:translate-x-0 group-hover:text-corporate-500 group-hover:opacity-100" />
-                  </div>
-                </RevealItem>
-              ))}
-            </RevealGroup>
-
-            {cap.work.caseStudies && (
-              <div className="mt-10">
-                <Button href="/case-studies" variant="outline" arrow>
-                  View case studies
-                </Button>
-              </div>
-            )}
           </div>
-        </section>
-      )}
 
-      {/* ============ TECH STACK CHIPS ============ */}
-      {cap.tech && cap.tech.length > 0 && (
-        <section className="section relative bg-canvas-soft">
-          <div className="container-x">
-            <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-              <SectionHeading
-                kicker="Built on"
-                title="A modern, battle-tested stack"
-                intro="Proven technologies chosen for performance, security and long-term maintainability — not hype."
-              />
-              <RevealGroup className="flex flex-wrap gap-3">
-                {cap.tech.map((t) => (
-                  <RevealItem key={t}>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-steel-200 bg-white px-5 py-2.5 text-[15px] font-medium text-steel-700 shadow-soft transition-colors hover:border-corporate-200 hover:text-ink">
-                      <span className="size-1.5 rounded-full bg-corporate-500" />
-                      {t}
-                    </span>
-                  </RevealItem>
-                ))}
-              </RevealGroup>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ============ OTHER CAPABILITIES ============ */}
-      <section className="section relative bg-canvas">
-        <div className="container-x">
-          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-            <SectionHeading
-              kicker="Explore more"
-              title="Other capabilities"
-              intro="One accountable partner across the full digital lifecycle."
+          {/* Full-bleed card stack — spans the viewport so the fan isn't clipped */}
+          <div className="relative mt-12 w-full">
+            <CardStack
+              items={cap.work.items.map((w, i) => ({
+                id: w.name,
+                title: w.name,
+                description: w.note,
+                imageSrc: workImage(w.name, i),
+              }))}
+              loop
+              autoAdvance
+              intervalMs={3200}
+              pauseOnHover
+              cardWidth={440}
+              cardHeight={290}
             />
-            <Link
-              href="/capabilities/website-development"
-              className="group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700"
-            >
-              View all capabilities
-              <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
           </div>
 
-          <RevealGroup className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {others.map((c) => (
-              <RevealItem key={c.slug}>
-                <Link
-                  href={`/capabilities/${c.slug}`}
-                  className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-steel-200 bg-white p-6 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-corporate-200 hover:shadow-lift"
-                >
-                  <div className="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full bg-corporate-50 opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
-                  <div className="relative flex items-center justify-between">
-                    <span className="flex size-12 items-center justify-center rounded-2xl bg-steel-50 text-corporate-600 ring-1 ring-steel-200 transition-colors group-hover:bg-corporate-600 group-hover:text-white group-hover:ring-corporate-600">
-                      <Icon name={c.icon} className="size-6" />
-                    </span>
-                    <ArrowUpRight className="size-5 -translate-x-1 text-steel-300 opacity-0 transition-all group-hover:translate-x-0 group-hover:text-corporate-500 group-hover:opacity-100" />
-                  </div>
-                  <h3 className="relative mt-5 text-lg font-semibold leading-snug text-ink">
-                    {c.title}
-                  </h3>
-                  <p className="relative mt-2 flex-1 text-[13.5px] leading-relaxed text-steel-500">
-                    {c.short}
-                  </p>
-                </Link>
-              </RevealItem>
-            ))}
-          </RevealGroup>
-        </div>
-      </section>
+          {cap.work.caseStudies && (
+            <div className="container-x mt-12">
+              <Button href="/case-studies" variant="outline" arrow>
+                View case studies
+              </Button>
+            </div>
+          )}
+        </section>
+      )}
 
-      <CTASection />
+
     </>
   );
 }

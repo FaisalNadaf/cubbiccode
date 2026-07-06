@@ -58,17 +58,52 @@ export const awards: Award[] = [
   },
 ];
 
-export const certificateImages = [
-  { src: "/images/certificates/business-excellence-certificate.jpg", title: "Business Excellence Certificate" },
-  { src: "/images/certificates/india-excellence-award-certificate.jpg", title: "India Excellence Award" },
-  { src: "/images/certificates/brandcounselling.jpg", title: "Brand Counselling Recognition" },
-  { src: "/images/certificates/educationale.jpg", title: "Educational Excellence" },
+export type CertificateImage = {
+  src: string;
+  title: string;
+  agency: string;
+  description: string;
+};
+
+export const certificateImages: CertificateImage[] = [
+  {
+    src: "/images/certificates/ISO Certificate.jpeg",
+    title: "ISO 9001:2015 Certified",
+    agency: "Quality Management System",
+    description:
+      "An internationally recognised, formally audited quality management system — the backbone of our consistent, reliable delivery.",
+  },
+  {
+    src: "/images/certificates/cubic_code_gst_certificate_(1)_page-0001.jpg",
+    title: "GST Registration Certificate",
+    agency: "Government of India",
+    description:
+      "Registered under the Goods & Services Tax — a fully compliant, tax-registered business.",
+  },
+  {
+    src: "/images/certificates/Cubiccode_LLP_-_Certificate_of_Incorporation_(1)_page-0001.jpg",
+    title: "Certificate of Incorporation",
+    agency: "Ministry of Corporate Affairs",
+    description:
+      "Cubiccode Digital Media LLP, formally incorporated and registered under the LLP Act.",
+  },
+  {
+    src: "/images/certificates/Cubiccode_NGO_page-0001.jpg",
+    title: "NGO Registration",
+    agency: "Registered Non-Profit",
+    description:
+      "Our social initiative, formally registered to give back through education and community work.",
+  },
 ];
 
 export type Milestone = {
   year: string;
   title: string;
   text: string;
+  /** Primary photo for the journey slideshow (in /public/images/Moments). */
+  image?: string;
+  /** Optional secondary photo layered behind the primary for depth. */
+  image2?: string;
 };
 
 // Our Journey — authoritative milestones.
@@ -77,41 +112,57 @@ export const journey: Milestone[] = [
     year: "2016",
     title: "Cubiccode is founded",
     text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision — to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
+    image: "/images/Moments/2016.jpeg",
+    image2: "/images/Moments/1.jpg",
   },
   {
     year: "2017",
     title: "Bridging the skills gap",
     text: "We began training students in Belgaum after identifying a significant gap between academic learning and industry requirements. By bridging it with practical, industry-focused training, we trained over 100 students within our first year.",
+    image: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM1.jpeg",
+    image2: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM2.jpeg",
   },
   {
     year: "2018",
     title: "A teacher honoured",
     text: "We've trained numerous successful students who've gone on to build rewarding careers across industries. In recognition of his contribution to digital education, our Managing Director, Sarvesh Kakkeri, was honoured with the Best Youngest Digital Marketing Teacher in India award at the Indian Education Awards.",
+    image: "/images/Moments/award-bg.jpg",
+    image2: "/images/Moments/business-excellence-certificate1.jpg",
   },
   {
     year: "2019",
     title: "National recognition & 250+ companies",
     text: "A major milestone — recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
+    image: "/images/Moments/india-excellence-award-certificate1.jpg",
+    image2: "/images/Moments/brandcounselling1.jpg",
   },
   {
     year: "2020",
     title: "On the TEDx stage",
     text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs — further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
+    image: "/images/Moments/2020.jpg",
+    image2: "/images/Moments/DSC_5539.JPG",
   },
   {
     year: "2022",
     title: "GDG Belgaum & DevFest",
     text: "We became the organizer of the Google Developer Group Belgaum, growing it into a thriving community of 4,500+ developers. Under this leadership, DevFest 2022 became the 5th largest DevFest held in the country that year.",
+    image: "/images/Moments/devfest2022_2.jpg",
+    image2: "/images/Moments/EPCSCL06-GroupPicture.JPG",
   },
   {
     year: "2024",
     title: "1,000+ students trained",
     text: "Cubiccode's sister arm — the Belgaum Institute of Data Analytics and Digital Marketing with AI — had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
+    image: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
+    image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.16AM.jpeg",
   },
   {
     year: "2025",
     title: "Silver at the India Digital Awards",
     text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally — we won Silver in the Web Application Development Company of the Year category at the 16th India Digital Awards.",
+    image: "/images/Moments/WhatsAppImage2025-11-01at6.28.58PM.jpeg",
+    image2: "/images/Moments/WhatsAppImage2025-11-01at6.28.59PM.jpeg",
   },
 ];
 
@@ -158,9 +209,9 @@ export const founderMessage = {
   names: "Sarvesh Kakkeri & Shivani Jadhav",
   role: "Co-Founders, Cubiccode Digital Media LLP",
   paragraphs: [
-    "When we started Cubiccode in 2016, we kept meeting the same frustrated business owners. They'd paid for a website that didn't bring a single enquiry. They'd bought software that didn't fit how they actually worked. And too often, the agency they trusted had taken the money and vanished. Technology was supposed to grow their business — instead it had become one more problem to manage.",
-    "We built Cubiccode to fix exactly that. Our approach has always started with your problem, never our tech stack: we listen first, learn how your business truly runs, and then engineer the right solution — a website that converts, a web app that scales, an ERP that ends the spreadsheet chaos, automation that gives your team its hours back.",
-    "We also made a decision early on that we've never walked back: world-class work shouldn't come with a world-class invoice. Because our expertise is in-house and our teams stay lean, we deliver premium engineering at honest, value-for-money pricing — and we deliver it on the date we promised, not “soon.” That commitment is why 500+ clients have stayed with us, referred us and grown alongside us, and why we've shipped 700+ projects, trained over 1,000 students, stood on global stages, and been recognised across India for our work.",
+    "When we started Cubiccode in 2016, we kept meeting the same frustrated business owners. They'd paid for a website that didn't bring a single enquiry. They'd bought software that didn't fit how they actually worked. And too often, the agency they trusted had taken the money and vanished. Technology was supposed to grow their business, instead it had become one more problem to manage.",
+    "We built Cubiccode to fix exactly that. Our approach has always started with your problem, never our tech stack: we listen first, learn how your business truly runs, and then engineer the right solution, a website that converts, a web app that scales, an ERP Software that ends the spreadsheet chaos, automation that gives your team its hours back.",
+    "We also made a decision early on that we've never walked back: world-class work shouldn't come with a world-class invoice. Because our expertise is in-house and our teams stay lean, we deliver premium engineering at honest, value-for-money pricing and we deliver it on the date we promised, not “soon.” That commitment is why 500+ clients have stayed with us, referred us, and grown alongside us, and why we've shipped 700+ projects, trained over 1,000 students, stood on global stages, and been recognised across India for our work.",
     "Whether you're a hospital, a manufacturer, a start-up founder or a retail chain, our promise is the same: we'll take ownership of your outcome as if it were our own, and we won't consider the job done until the work moves your business forward. Your ambition is the reason we exist. Let's build something that matters.",
   ],
   signature: "— Sarvesh Kakkeri & Shivani Jadhav",
@@ -181,7 +232,7 @@ export const aboutCopy = {
   vision:
     "To become a recognized digital growth company that helps businesses build powerful web experiences, dominate search and AI platforms, and generate sustainable online growth through innovative technology, web solutions, and AI-driven visibility strategies.",
   mission:
-    "To deliver a wide range of quality services, creative solutions, exceptional after-sales support, and superfast on-time delivery — so that every client we serve grows because they worked with us.",
+    "To deliver a wide range of quality services, creative solutions, exceptional after-sales support, and superfast on-time delivery, so that every client we serve grows because they worked with us.",
   clientele:
     "We've worked with small start-ups and large corporations alike, but we love projects that excite us and people as passionate as we are. We stay lean and build agile — cross-functional teams run weekly sprints and evolve through collaboration to make sure every client gets exactly what they need.",
 };

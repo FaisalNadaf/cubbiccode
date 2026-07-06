@@ -3,6 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import { caseStudies } from "@/content/portfolio";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
+import { GlowCard } from "@/components/ui/GlowCard";
 
 export function CaseStudies() {
   return (
@@ -29,6 +30,7 @@ export function CaseStudies() {
         <RevealGroup className="mt-12 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {caseStudies.map((c) => (
             <RevealItem key={c.slug}>
+              <GlowCard className="h-full rounded-3xl">
               <article className="group flex h-full flex-col rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-sm transition-colors hover:border-corporate-400/40 hover:bg-white/[0.06]">
                 <span className="text-[11px] font-semibold uppercase tracking-kicker text-corporate-300">
                   {c.category}
@@ -46,6 +48,7 @@ export function CaseStudies() {
                   ))}
                 </ul>
               </article>
+              </GlowCard>
             </RevealItem>
           ))}
         </RevealGroup>

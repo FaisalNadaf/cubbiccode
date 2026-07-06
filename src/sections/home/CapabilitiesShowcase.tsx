@@ -196,18 +196,6 @@ export function CapabilitiesShowcase() {
                     </li>
                   ))}
                 </ul>
-                {cap.tech && (
-                  <div className="mt-5 flex flex-wrap gap-1.5">
-                    {cap.tech.slice(0, 6).map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full border border-steel-200 bg-white px-2.5 py-1 text-[11px] font-medium text-steel-600"
-                      >
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </motion.div>
             </AnimatePresence>
           </div>

@@ -17,7 +17,6 @@ export type Capability = {
   result?: string; // optional "What You Get" / outcome paragraph
   work?: { heading: string; items: WorkItem[]; caseStudies?: boolean };
   buildAfter?: { title: string; text: string }[]; // training only
-  tech?: string[];
 };
 
 // Shared "Our Work — Web Apps We've Built" list (web app dev + ERP).
@@ -38,7 +37,7 @@ export const capabilities: Capability[] = [
   {
     slug: "website-development",
     icon: "MonitorSmartphone",
-    title: "Website Design & Development",
+    title: "Website Designing & Development",
     short:
       "Conversion-first websites, e-commerce stores, booking platforms and web applications. Fast, responsive, and built to rank.",
     headline: "Websites designed to impress and engineered to convert.",
@@ -49,7 +48,7 @@ export const capabilities: Capability[] = [
       "First impressions happen in milliseconds. Most businesses are quietly losing customers to their own website — it loads slowly, looks dated on mobile, ranks nowhere on Google, and gives visitors no clear reason to act. Worse, a tired, generic, template-built site tells your best prospects you're a tired, generic business. It isn't an asset — it's a silent leak in your revenue.",
     buildHeading: "What We Build",
     features: [
-      "Custom Website Design — distinctive, design-led and unmistakably yours. No templates, ever.",
+      "Custom Website Design — distinctive, design-led, and unmistakably yours. No templates, ever.",
       "Responsive & Mobile-First Builds — pixel-perfect on every screen size.",
       "E-commerce Stores — secure, conversion-optimised storefronts with payments and inventory.",
       "Booking & Appointment Websites — for clinics, salons, services and events.",
@@ -72,7 +71,6 @@ export const capabilities: Capability[] = [
         { name: "Initium" },
       ],
     },
-    tech: ["Next.js", "React", "WordPress", "WooCommerce", "Shopify", "Tailwind"],
   },
   {
     slug: "web-application-development",
@@ -103,12 +101,11 @@ export const capabilities: Capability[] = [
       items: webApps,
       caseStudies: true,
     },
-    tech: ["React", "Next.js", "Laravel", "Node.js", "PostgreSQL", "REST/GraphQL"],
   },
   {
     slug: "custom-erp",
     icon: "Boxes",
-    title: "Custom ERP Software",
+    title: "Custom ERP Software Solutions",
     short:
       "Tailored ERP systems that replace spreadsheets and chaos with one source of truth for your operations.",
     headline: "One system to run your entire operation.",
@@ -128,11 +125,10 @@ export const capabilities: Capability[] = [
     solution:
       "We build the ERP around your workflow, not the other way around. We start by mapping how your business actually runs, then engineer a system that fits like a glove. You get one accountable team from blueprint to deployment to support, and software you fully own — no per-seat ransom, no vendor lock-in.",
     work: {
-      heading: "Our Work — Web Apps & ERP We've Built",
+      heading: "Our Work — Web Apps We've Built",
       items: webApps,
       caseStudies: true,
     },
-    tech: ["Laravel", "React", "MySQL", "PostgreSQL", "REST APIs", "Cloud Hosting"],
   },
   {
     slug: "workflow-automation",
@@ -157,12 +153,11 @@ export const capabilities: Capability[] = [
     ],
     solution:
       "We start with your bottleneck, not a tool. We audit where your team loses hours, then design automations that remove that friction — with full accountability and clear before/after metrics. You see exactly how much time you've reclaimed.",
-    tech: ["Zapier", "Make", "n8n", "Power Automate", "Webhooks", "Custom APIs"],
   },
   {
     slug: "seo",
     icon: "TrendingUp",
-    title: "SEO & Domain Authority Accelerator",
+    title: "SEO, Search Visibility & Domain Authority Accelerator",
     short:
       "Search visibility that compounds. Technical SEO, content and authority-building that puts you in front of buyers.",
     headline: "Get found by the customers already searching for you.",
@@ -184,50 +179,6 @@ export const capabilities: Capability[] = [
       "We build authority that compounds, not shortcuts that get penalised. Our SEO is engineered into the website from the architecture up — and tracked with honest reporting, so you see ranking and traffic movement, not vanity metrics.",
     result:
       "Higher rankings, more qualified organic traffic, a rising domain authority that gets harder for competitors to beat, and a clear line from search visibility to leads.",
-    tech: ["GA4", "Search Console", "SEMrush", "Ahrefs", "Moz", "Screaming Frog"],
-  },
-  {
-    slug: "training",
-    icon: "GraduationCap",
-    title: "Full-Stack Development Training",
-    short:
-      "We don't just build talent, we create it. Industry-ready full-stack programs with placement support.",
-    headline: "We don't just hire developers. We create them.",
-    subheadline:
-      "Industry-ready full-stack web development training from a company that ships real projects every day — with placement support. 1,000+ students trained and counting.",
-    cta: "Enrol Today",
-    problem:
-      "Most coding courses teach theory in a vacuum — students finish with certificates but no real-world skill, and employers can't find talent that's actually job-ready. The gap between “learned to code” and “can ship production work” is where careers stall.",
-    buildHeading: "What We Teach",
-    features: [
-      "Full-stack web development — front-end to back-end, beginner to advanced.",
-      "Real project experience — learn on the same kind of work we deliver to clients.",
-      "Modern stack — Claude Code and the tools the industry actually hires for.",
-      "For everyone — beginners, working professionals upskilling, and organisations expanding their reach.",
-      "1-on-1 Mentorship — personalised guidance sessions tailored to your learning needs.",
-      "Live Instructor-Led Sessions — online and offline classes guided by industry practitioners.",
-      "Resume & LinkedIn Optimization — stand out to recruiters with a polished professional presence.",
-      "Self-Paced Learning — access recorded content and learn at your own pace, anytime.",
-    ],
-    solution:
-      "We teach the way the industry actually builds today — AI-first. You'll learn to develop with Claude Code specifically: environment setup, writing effective prompts, and directing an AI agent to plan, build, debug and ship real features — instead of the slow, manual methods that are already being left behind. Crucially, you'll also learn to read, review, understand and own the code the AI produces, so you direct and own AI output rather than generate it blindly. That's exactly what makes our graduates hireable — and our course credible to serious students and recruiters.",
-    buildAfter: [
-      {
-        title: "Attractive Websites",
-        text: "A restaurant/café site with reservations, a personal portfolio, a salon/gym brand site, and a lead-capture landing page.",
-      },
-      {
-        title: "Dynamic Websites",
-        text: "A full e-commerce store with cart/admin, a CMS-driven blog or news site, a real estate listings site with search/filters, and an appointment-booking site.",
-      },
-      {
-        title: "Web Applications",
-        text: "An admin dashboard with charts and user roles, a CRM/task manager/inventory tracker, and a SaaS app with logins that uses tools like Claude to generate or analyse content.",
-      },
-    ],
-    result:
-      "You won't just understand code — you'll have shipped real, portfolio-ready projects.",
-    tech: ["HTML/CSS/JS", "React", "Next.js", "Node.js", "Claude Code", "Git & GitHub"],
   },
 ];
 
