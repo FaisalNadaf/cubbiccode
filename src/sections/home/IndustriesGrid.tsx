@@ -7,7 +7,7 @@ import { industryImage } from "@/content/serviceImages";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 /**
- * INDUSTRIES — industrial blueprint mosaic (light theme).
+ * INDUSTRIES  industrial blueprint mosaic (light theme).
  *
  * Manually composed (NOT a single auto-grid): Row 1 = wide heading block + one
  * large industry card; Row 2 = four cards; Row 3 = four cards. Rows are aligned
@@ -29,19 +29,19 @@ import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
  * grid; the parallelogram geometry is preserved at every breakpoint.
  */
 
-// One global slant — a FIXED length, so every tile shares one edge angle.
+// One global slant  a FIXED length, so every tile shares one edge angle.
 const SLANT_VARS = "[--slant:0.9rem] sm:[--slant:1.4rem] lg:[--slant:2.5rem]";
 
-// Full parallelogram (both side edges slanted) — interior industry cards.
+// Full parallelogram (both side edges slanted)  interior industry cards.
 const CARD_CLIP =
 	"polygon(var(--slant) 0%, 100% 0%, calc(100% - var(--slant)) 100%, 0% 100%)";
-// Flush-left block (vertical left edge, slanted right) — heading panel.
+// Flush-left block (vertical left edge, slanted right)  heading panel.
 const HEAD_CLIP =
 	"polygon(0% 0%, 100% 0%, calc(100% - var(--slant)) 100%, 0% 100%)";
 
-// Vertical LEFT edge, slanted right — leftmost card in a row (flush outer left).
+// Vertical LEFT edge, slanted right  leftmost card in a row (flush outer left).
 const CARD_CLIP_LEFT_STRAIGHT = HEAD_CLIP;
-// Slanted left edge, vertical RIGHT edge — rightmost card in a row (flush outer right).
+// Slanted left edge, vertical RIGHT edge  rightmost card in a row (flush outer right).
 const CARD_CLIP_RIGHT_STRAIGHT =
 	"polygon(var(--slant) 0%, 100% 0%, 100% 100%, 0% 100%)";
 
@@ -50,7 +50,7 @@ const CARD_CLIP_RIGHT_STRAIGHT =
 // tiles is `margin + slant`; set margin = 16px − slant to land a ~16px gap.
 const ROW_GAP_X = "[&>*+*]:ml-[calc(16px_-_var(--slant))]";
 
-// Very subtle engineering grid — dark hairlines on the light canvas.
+// Very subtle engineering grid  dark hairlines on the light canvas.
 const GRID = {
 	backgroundImage:
 		"linear-gradient(rgba(15,23,42,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.05) 1px, transparent 1px)",
@@ -78,13 +78,13 @@ export function IndustriesGrid() {
 				<RevealGroup
 					stagger={0.05}
 					className="hidden h-full flex-1 flex-col gap-[14px] lg:flex">
-					{/* Row 1 — heading + one large card */}
+					{/* Row 1  heading + one large card */}
 					<div className={`flex flex-1 lg:min-h-0 ${ROW_GAP_X}`}>
 						<RevealItem className="h-full w-[67%] min-w-0">
 							<HeadingPanel />
 						</RevealItem>
 						<RevealItem className="h-full flex-1 min-w-0">
-							{/* Block 1 — rightmost: straight right edge */}
+							{/* Block 1  rightmost: straight right edge */}
 							<IndustryCard
 								ind={industries[0]}
 								priority
@@ -93,36 +93,38 @@ export function IndustriesGrid() {
 						</RevealItem>
 					</div>
 
-					{/* Row 2 — four cards (block 2 leftmost-straight, block 5 rightmost-straight) */}
+					{/* Row 2  four cards (block 2 leftmost-straight, block 5 rightmost-straight) */}
 					<div className={`flex flex-1 lg:min-h-0 ${ROW_GAP_X}`}>
 						{industries.slice(1, 5).map((ind, i) => (
-							<RevealItem key={ind.slug} className="h-full flex-1 min-w-0">
+							<RevealItem
+								key={ind.slug}
+								className="h-full flex-1 min-w-0">
 								<IndustryCard
 									ind={ind}
 									clip={
-										i === 0
-											? CARD_CLIP_LEFT_STRAIGHT
-											: i === 3
-											? CARD_CLIP_RIGHT_STRAIGHT
-											: CARD_CLIP
+										i === 0 ? CARD_CLIP_LEFT_STRAIGHT
+										: i === 3 ?
+											CARD_CLIP_RIGHT_STRAIGHT
+										:	CARD_CLIP
 									}
 								/>
 							</RevealItem>
 						))}
 					</div>
 
-					{/* Row 3 — four cards (block 6 leftmost-straight, block 9 rightmost-straight) */}
+					{/* Row 3  four cards (block 6 leftmost-straight, block 9 rightmost-straight) */}
 					<div className={`flex flex-1 lg:min-h-0 ${ROW_GAP_X}`}>
 						{industries.slice(5, 9).map((ind, i) => (
-							<RevealItem key={ind.slug} className="h-full flex-1 min-w-0">
+							<RevealItem
+								key={ind.slug}
+								className="h-full flex-1 min-w-0">
 								<IndustryCard
 									ind={ind}
 									clip={
-										i === 0
-											? CARD_CLIP_LEFT_STRAIGHT
-											: i === 3
-											? CARD_CLIP_RIGHT_STRAIGHT
-											: CARD_CLIP
+										i === 0 ? CARD_CLIP_LEFT_STRAIGHT
+										: i === 3 ?
+											CARD_CLIP_RIGHT_STRAIGHT
+										:	CARD_CLIP
 									}
 								/>
 							</RevealItem>
@@ -172,9 +174,7 @@ function HeadingPanel() {
 						Industries we serve
 					</span>
 					<h2 className="font-display text-3xl font-bold uppercase leading-[0.95] tracking-tight text-ink sm:text-4xl lg:text-[2.9rem]">
-						Built for
-						
-						your industry
+						Built for your industry
 					</h2>
 					<p className="max-w-2xl text-xl leading-relaxed text-steel-600">
 						We understand your industry&apos;s needs and speak your
@@ -202,7 +202,7 @@ function IndustryCard({
 		<Link
 			href={`/industries/${ind.slug}`}
 			className="group relative block h-full min-h-[132px] w-full transition-transform duration-300 ease-out hover:z-20 hover:-translate-y-1 focus-visible:z-20 focus-visible:outline-none lg:min-h-0">
-			{/* Thin border — accents on hover */}
+			{/* Thin border  accents on hover */}
 			<div
 				className="absolute inset-0 bg-steel-300 transition-colors duration-300 group-hover:bg-corporate-400 group-focus-visible:bg-corporate-400"
 				style={{ clipPath: clip }}

@@ -19,21 +19,27 @@ export default function PortfolioPage() {
 			<PageHero
 				kicker="Website portfolio"
 				title="Crafted with love. Built with passion."
-				subtitle="A living showcase of 42+ live websites we've designed, engineered and shipped — for manufacturers, hospitals, schools, retailers and startups across India and beyond. Every one is in production. Visit them yourself."
+				subtitle="A living showcase of 42+ live websites we've designed, engineered and shipped  for manufacturers, hospitals, schools, retailers and startups across India and beyond. Every one is in production. Visit them yourself."
 				image="/images/about/parallax-2.jpg"
 				imageAlt="A showcase of websites Cubiccode has designed and shipped"
 				breadcrumb={[{ label: "Home", href: "/" }, { label: "Portfolio" }]}>
 				<div className="flex flex-wrap items-center gap-3">
-					<Button href={site.proposalCta} external variant="accent" arrow>
+					<Button
+						href={site.proposalCta}
+						external
+						variant="accent"
+						arrow>
 						Get a Proposal
 					</Button>
-					<Button href="/case-studies" variant="outline">
+					<Button
+						href="/case-studies"
+						variant="outline">
 						View case studies
 					</Button>
 				</div>
 			</PageHero>
 
-			{/* Featured — immersive scroll-driven zoom parallax */}
+			{/* Featured  immersive scroll-driven zoom parallax */}
 			<section className="relative bg-ink text-white">
 				<div className="container-x relative z-10 pt-20 lg:pt-28">
 					<div className="max-w-2xl">
@@ -44,7 +50,7 @@ export default function PortfolioPage() {
 							Flagship websites, captured live
 						</h2>
 						<p className="mt-5 text-base leading-relaxed text-steel-300 sm:text-lg">
-							A handful of our favourite builds — scroll to zoom in.
+							A handful of our favourite builds scroll to zoom in.
 						</p>
 					</div>
 				</div>
@@ -52,13 +58,12 @@ export default function PortfolioPage() {
 				<ZoomParallax
 					images={featuredProjects.map((p) => ({
 						src: p.image,
-						alt: `${p.name} — built by Cubiccode`,
+						alt: `${p.name}  built by Cubiccode`,
 						name: p.name,
 						href: `https://${p.url}`,
 					}))}
 				/>
 			</section>
-
 		</>
 	);
 }

@@ -18,7 +18,7 @@ import {
 } from "./motion";
 
 /**
- * CarouselViewport — renders exactly one slide (the wrapped `index`) inside an
+ * CarouselViewport  renders exactly one slide (the wrapped `index`) inside an
  * AnimatePresence so the outgoing/incoming slides cross-animate. The slide is
  * drag-enabled: a small drag rubber-bands back to centre, a fast/long flick
  * paginates. `render` receives the current index so the parent owns the content.
@@ -44,7 +44,9 @@ export function CarouselViewport({
 
 	return (
 		<div className={cn("relative h-full w-full overflow-hidden", className)}>
-			<AnimatePresence initial={false} custom={direction}>
+			<AnimatePresence
+				initial={false}
+				custom={direction}>
 				<motion.div
 					key={page}
 					custom={direction}
@@ -57,8 +59,7 @@ export function CarouselViewport({
 					dragElastic={0.6}
 					onDragStart={() => setDragging(true)}
 					onDragEnd={handleDragEnd}
-					className="absolute inset-0 cursor-grab touch-pan-y will-change-transform active:cursor-grabbing"
-				>
+					className="absolute inset-0 cursor-grab touch-pan-y will-change-transform active:cursor-grabbing">
 					{render(index)}
 				</motion.div>
 			</AnimatePresence>

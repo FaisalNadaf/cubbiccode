@@ -4,7 +4,7 @@ import { Carousel } from "@/components/ui/carousel";
 import { showcaseSlides } from "@/content/showcase";
 
 /**
- * Dark, minimal stage for the premium showcase carousel — the white outlines
+ * Dark, minimal stage for the premium showcase carousel  the white outlines
  * and glassy card read best against a near-black canvas with a soft top glow.
  */
 export function ShowcaseCarousel() {

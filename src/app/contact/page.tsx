@@ -22,7 +22,7 @@ import { EnquiryForm } from "@/components/contact/EnquiryForm";
 import { site } from "@/content/site";
 
 export const metadata = {
-  title: "Contact Cubiccode — Let's Build Something That Matters",
+  title: "Contact Cubiccode  Let's Build Something That Matters",
   description:
     "Talk to Cubiccode Digital Media LLP about your website, web app, ERP or growth project. Reach us by phone, email or WhatsApp, or visit our Belagavi & Bengaluru offices. We reply within a day.",
 };
@@ -39,23 +39,23 @@ export default function ContactPage() {
       <PageHero
         kicker="Contact us"
         title="Let's transform your business for a change that matters"
-        subtitle="Would you like to discuss a project? Tell us where you are and where you'd like to go — and we'll come back with a clear plan, timeline and proposal, typically within a day."
+        subtitle="Would you like to discuss a project? Tell us where you are and where you'd like to go  and we'll come back with a clear plan, timeline and proposal, typically within a day."
         image="/images/about/parallax-2.jpg"
         imageAlt="Get in touch with the Cubiccode team"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Contact" }]}
       />
 
-      {/* Main conversion block — form + contact rail */}
+      {/* Main conversion block  form + contact rail */}
       <section className="relative overflow-hidden bg-canvas-soft py-20 lg:py-28">
         <div className="pointer-events-none absolute inset-0 bg-radial-fade" />
         <div className="container-x relative">
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
-            {/* LEFT — enquiry form */}
+            {/* LEFT  enquiry form */}
             <Reveal direction="up" amount={0.15}>
               <EnquiryForm />
             </Reveal>
 
-            {/* RIGHT — contact rail */}
+            {/* RIGHT  contact rail */}
             <RevealGroup stagger={0.09} className="flex flex-col gap-5">
               {/* Phone card */}
               <RevealItem>
@@ -107,7 +107,7 @@ export default function ContactPage() {
                 </a>
               </RevealItem>
 
-              {/* WhatsApp CTA — accent band */}
+              {/* WhatsApp CTA  accent band */}
               <RevealItem>
                 <a
                   href={site.whatsapp}
@@ -126,7 +126,7 @@ export default function ContactPage() {
                         Chat on WhatsApp
                       </p>
                       <p className="mt-0.5 text-sm text-steel-300">
-                        The fastest way to reach us — usually replies in hours.
+                        The fastest way to reach us  usually replies in hours.
                       </p>
                     </div>
                     <ArrowUpRight className="ml-auto size-5 shrink-0 text-white/60 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-white" />
@@ -210,7 +210,7 @@ export default function ContactPage() {
             <Reveal delay={0.2}>
               <p className="mt-5 text-lg leading-relaxed text-steel-600">
                 Drop by our registered office in Belagavi or our Bengaluru workspace
-                — or simply send your enquiry and we&apos;ll bring the meeting to you.
+                 or simply send your enquiry and we&apos;ll bring the meeting to you.
               </p>
             </Reveal>
           </div>

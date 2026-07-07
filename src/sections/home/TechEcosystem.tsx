@@ -19,7 +19,7 @@ import { getTechIcon, getTechIconColor } from "@/content/techIcons";
 import { cn } from "@/lib/utils";
 
 /**
- * TECH ECOSYSTEM — an interactive radial hub on a light canvas.
+ * TECH ECOSYSTEM  an interactive radial hub on a light canvas.
  *
  * The Cubiccode logo sits at the centre; every capability orbits it and is wired
  * back with a corporate-blue pulse flowing along the connector ("blood flow").
@@ -56,7 +56,7 @@ export function TechEcosystem() {
 					align="center"
 					kicker="Technologies we work with"
 					title="One stack, wired end to end."
-					intro="Frontend to backend, cloud to AI, automation to analytics — hover any layer to see the exact tools we build with."
+					intro="Frontend to backend, cloud to AI, automation to analytics  hover any layer to see the exact tools we build with."
 				/>
 
 				{/* Desktop: interactive radial hub */}
@@ -280,7 +280,7 @@ function RadialHub() {
 								{active &&
 									n.cat.items.map((it, k) => {
 										const total = n.cat.items.length;
-										// Spread the technologies evenly on *every* side — a full
+										// Spread the technologies evenly on *every* side  a full
 										// ring around the node.
 										const a = -Math.PI / 2 + (k / total) * Math.PI * 2;
 										// Push icons clear of the node card, a touch farther the more
@@ -350,7 +350,7 @@ function RadialHub() {
 					);
 				})}
 
-				{/* Centre hub — Cubiccode logo */}
+				{/* Centre hub  Cubiccode logo */}
 				<div
 					className="absolute left-1/2 top-1/2 z-20"
 					style={{ transform: "translate(-50%, -50%) translateZ(50px)" }}>

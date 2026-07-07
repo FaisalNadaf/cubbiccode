@@ -13,7 +13,7 @@ import {
 } from "framer-motion";
 
 /**
- * Preloader — branded first-load splash for Cubiccode.
+ * Preloader  branded first-load splash for Cubiccode.
  *
  * Sequence: the brand cube draws + assembles face-by-face, the wordmark
  * rises in with a letter stagger, and a hairline progress bar tracks the
@@ -24,7 +24,7 @@ import {
  *
  * Robustness:
  *  • Server-rendered, so the overlay covers the very first paint.
- *  • Plays once per browser session — a pre-paint <head> script in
+ *  • Plays once per browser session  a pre-paint <head> script in
  *    app/layout.tsx sets html[data-preloader-seen] from sessionStorage and
  *    globals.css hides the overlay before hydration (no flash on repeats).
  *  • <noscript> hides it for no-JS users/crawlers, and a pure-CSS failsafe
@@ -44,7 +44,7 @@ const RISE_EASE = [0.22, 1, 0.36, 1] as const;
 const LETTERS = ["C", "u", "b", "i", "c", "c", "o", "d", "e"];
 const ACCENT_FROM = 5; // "code" tail rendered in corporate blue
 
-// Isometric cube faces (120×120 viewBox), each with its assembly offset —
+// Isometric cube faces (120×120 viewBox), each with its assembly offset
 // faces fly in from outside toward the closed cube.
 const FACES = [
 	{
@@ -86,7 +86,7 @@ export function Preloader() {
 				return;
 			}
 		} catch {
-			/* storage unavailable — still play the loader */
+			/* storage unavailable  still play the loader */
 		}
 
 		let cancelled = false;
@@ -108,7 +108,7 @@ export function Preloader() {
 			});
 		};
 
-		// Exit once the page has actually loaded — never before MIN, never after MAX.
+		// Exit once the page has actually loaded  never before MIN, never after MAX.
 		let minTimer: number | undefined;
 		const onReady = () => {
 			const elapsed = performance.now() - startedAt;
@@ -171,7 +171,7 @@ export function Preloader() {
 					className="fixed inset-0 z-[200] overflow-hidden">
 					<span className="sr-only">Cubiccode is loading</span>
 
-					{/* Accent under-curtain — revealed for a beat as the navy panel lifts. */}
+					{/* Accent under-curtain  revealed for a beat as the navy panel lifts. */}
 					<motion.div
 						aria-hidden
 						className="absolute inset-0 bg-gradient-to-b from-corporate-700 via-corporate-500 to-corporate-400"
@@ -224,7 +224,7 @@ export function Preloader() {
 							className="absolute inset-0 [background:radial-gradient(120%_90%_at_50%_42%,transparent_0%,rgba(5,11,23,0.55)_100%)]"
 						/>
 
-						{/* Center lockup — fades out first during the exit. */}
+						{/* Center lockup  fades out first during the exit. */}
 						<motion.div
 							className="relative flex flex-col items-center px-6"
 							exit={{
@@ -390,7 +390,7 @@ export function Preloader() {
 								</motion.div>
 							</div>
 
-							{/* Wordmark — per-letter rise behind an overflow mask + glint sweep. */}
+							{/* Wordmark  per-letter rise behind an overflow mask + glint sweep. */}
 							<div className="relative mt-7 overflow-hidden px-2 pb-1 md:mt-8">
 								<div
 									aria-hidden
@@ -455,7 +455,7 @@ export function Preloader() {
 							</motion.div>
 						</motion.div>
 
-						{/* Bottom rail — ISO note, live percentage, hairline progress. */}
+						{/* Bottom rail  ISO note, live percentage, hairline progress. */}
 						<motion.div
 							aria-hidden
 							className="absolute inset-x-0 bottom-0"

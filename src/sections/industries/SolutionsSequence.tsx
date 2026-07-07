@@ -18,7 +18,7 @@ import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/utils";
 
 /**
- * SOLUTIONS SEQUENCE — a cinematic, scroll-driven carousel for "How we help".
+ * SOLUTIONS SEQUENCE  a cinematic, scroll-driven carousel for "How we help".
  *
  * One tall wrapper with a `sticky` viewport inside. Scrolling maps `scrollYProgress`
  * to a discrete active step; each step cross-dissolves a central arch-framed image,
@@ -43,7 +43,7 @@ type Item = { text: string; label: string; image: string };
 /** Derive a short, curved-title label from a full solution sentence. */
 function shortLabel(s: string): string {
 	const lead = s
-		.split(/\s+(?:—|–|that|so|for|with|to|connecting)\s+|[,—–:(]/i)[0]
+		.split(/\s+(?:|–|that|so|for|with|to|connecting)\s+|[,–:(]/i)[0]
 		.trim();
 	const base = lead.length > 1 ? lead : s;
 	const words = base.split(/\s+/);

@@ -11,7 +11,7 @@ import { caseStudies } from "@/content/portfolio";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-  title: "Case Studies — Real Platforms at Scale | Cubiccode",
+  title: "Case Studies  Real Platforms at Scale | Cubiccode",
   description:
     "Our web apps and custom ERPs power ₹4,185M+ in transactions, manage ₹250 Cr+ in assets and run real businesses at 99.99% uptime. Explore Cubiccode's production case studies.",
 };
@@ -29,7 +29,7 @@ export default function CaseStudiesPage() {
       <PageHero
         kicker="Case studies"
         title="Real platforms, running real businesses at scale"
-        subtitle="These aren't concept demos. They're production systems powering ₹4,185M+ in transactions — managing crores in assets, thousands of users and millions in monthly volume, every single day."
+        subtitle="These aren't concept demos. They're production systems powering ₹4,185M+ in transactions  managing crores in assets, thousands of users and millions in monthly volume, every single day."
         image="/images/about/about-4.jpg"
         imageAlt="Production platforms engineered by Cubiccode"
         breadcrumb={[
@@ -48,7 +48,7 @@ export default function CaseStudiesPage() {
         </div>
       </PageHero>
 
-      {/* Feature blocks — zig-zag */}
+      {/* Feature blocks  zig-zag */}
       <section className="relative overflow-hidden bg-canvas">
         <div className="pointer-events-none absolute inset-0 bg-radial-fade" />
         <div className="container-x relative space-y-20 py-20 lg:space-y-28 lg:py-28">
@@ -93,7 +93,7 @@ export default function CaseStudiesPage() {
         </div>
       </section>
 
-      {/* Combined impact band — ink/navy */}
+      {/* Combined impact band  ink/navy */}
       <section className="relative overflow-hidden bg-ink py-24 text-white lg:py-28">
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute inset-0 bg-blueprint [background-size:42px_42px] opacity-[0.12]" />

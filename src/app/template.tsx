@@ -6,10 +6,10 @@ import { motion, useReducedMotion } from "framer-motion";
 /**
  * Route transition (App Router `template.tsx` re-mounts on every navigation).
  *
- *  • Content does an OPACITY-ONLY crossfade — no transform/filter, so sticky &
+ *  • Content does an OPACITY-ONLY crossfade  no transform/filter, so sticky &
  *    fixed descendants (e.g. the Capabilities sticky panel, the navbar) are not
  *    broken by a transformed ancestor.
- *  • A branded "curtain" wipes up to reveal the new route — but ONLY on client
+ *  • A branded "curtain" wipes up to reveal the new route  but ONLY on client
  *    navigations, never on the first hard load (module flag below), so the very
  *    first paint is instant and there is no reverse-flash of content.
  *  • Fully disabled under prefers-reduced-motion.

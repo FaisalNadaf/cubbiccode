@@ -20,9 +20,9 @@ import { Button } from "@/components/ui/Button";
 import { site } from "@/content/site";
 
 export const metadata = {
-  title: "Careers at Cubiccode — Join the Team & CareerJump",
+  title: "Careers at Cubiccode  Join the Team & CareerJump",
   description:
-    "Build real products used by 500+ clients. Join Cubiccode Digital Media LLP — an ISO 9001:2015 certified company offering genuine growth, mentorship and training. Apply now.",
+    "Build real products used by 500+ clients. Join Cubiccode Digital Media LLP  an ISO 9001:2015 certified company offering genuine growth, mentorship and training. Apply now.",
 };
 
 const values = [
@@ -44,7 +44,7 @@ const values = [
   {
     icon: BadgeCheck,
     title: "An ISO-certified home",
-    text: "An ISO 9001:2015 certified company with nearly a decade of stability — process, quality and a team that has your back.",
+    text: "An ISO 9001:2015 certified company with nearly a decade of stability  process, quality and a team that has your back.",
   },
 ];
 
@@ -54,7 +54,7 @@ export default function CareersPage() {
       <PageHero
         kicker="Careers · CareerJump"
         title="Build the web with people who care about the craft"
-        subtitle="We're a full-stack team that designs, engineers and grows real products. If you want to do your best work alongside people who'll push you to be better — let's talk."
+        subtitle="We're a full-stack team that designs, engineers and grows real products. If you want to do your best work alongside people who'll push you to be better  let's talk."
         image="/images/Moments/devfest2022_2.jpg"
         imageAlt="The Cubiccode team at a community developer event"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Careers" }]}
@@ -119,7 +119,7 @@ export default function CareersPage() {
                   Don&apos;t see your exact role? Reach out anyway.
                 </h2>
                 <p className="mt-5 leading-relaxed text-steel-600">
-                  We hire across engineering, design, SEO, content and operations —
+                  We hire across engineering, design, SEO, content and operations 
                   and we&apos;re always glad to meet sharp, curious people. Send your
                   CV and a line about what you&apos;d love to build, and we&apos;ll
                   take it from there.

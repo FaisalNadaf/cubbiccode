@@ -1,7 +1,7 @@
 /** @format */
 
 /**
- * CarouselMotion — shared springs, easings and variants for the carousel.
+ * CarouselMotion  shared springs, easings and variants for the carousel.
  *
  * Everything animates with `transform`/`opacity`/`filter` only (GPU-friendly).
  * Slides use a physical spring; opacity + blur ride a premium ease so they
@@ -28,7 +28,7 @@ export const UI_SPRING: Transition = {
 	damping: 24,
 };
 
-// Tween for opacity/blur — slightly faster than the spring.
+// Tween for opacity/blur  slightly faster than the spring.
 export const FADE_TWEEN: Transition = {
 	duration: 0.5,
 	ease: PREMIUM_EASE,

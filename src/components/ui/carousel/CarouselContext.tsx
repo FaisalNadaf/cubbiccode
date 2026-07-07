@@ -13,7 +13,7 @@ import {
 import { wrap, useReducedMotion } from "framer-motion";
 
 /**
- * CarouselContext — single source of truth for the carousel.
+ * CarouselContext  single source of truth for the carousel.
  *
  * Paging uses an unbounded `page` counter; the visible `index` is `page` wrapped
  * into [0, count). This gives a seamless infinite loop (10 → 1, 1 → 10) with no
@@ -80,7 +80,7 @@ export function CarouselProvider({
 				return [p + delta, Math.sign(delta)];
 			});
 		},
-		[count]
+		[count],
 	);
 
 	// ── Autoplay pause signals (all idempotent) ──────────────────────────
@@ -96,8 +96,7 @@ export function CarouselProvider({
 	}, []);
 
 	const enabled = autoPlay && !reduce && count > 1;
-	const isAutoPlaying =
-		enabled && !hovered && !focused && !dragging && !hidden;
+	const isAutoPlaying = enabled && !hovered && !focused && !dragging && !hidden;
 
 	useEffect(() => {
 		if (!isAutoPlaying) return;
@@ -120,7 +119,7 @@ export function CarouselProvider({
 			setFocused,
 			setDragging,
 		}),
-		[count, index, page, direction, next, prev, goTo, isAutoPlaying]
+		[count, index, page, direction, next, prev, goTo, isAutoPlaying],
 	);
 
 	return (

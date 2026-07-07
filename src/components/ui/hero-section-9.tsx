@@ -34,7 +34,7 @@ interface HeroSectionProps {
 	subtitle: string;
 	actions: ActionProps[];
 	stats: StatProps[];
-	/** Exactly three image URLs — one per collage tile. */
+	/** Exactly three image URLs  one per collage tile. */
 	images: string[];
 	className?: string;
 }
@@ -51,12 +51,20 @@ const containerVariants: Variants = {
 
 const itemVariants: Variants = {
 	hidden: { opacity: 0, y: 22 },
-	visible: { opacity: 1, y: 0, transition: { duration: 0.55, ease: "easeOut" } },
+	visible: {
+		opacity: 1,
+		y: 0,
+		transition: { duration: 0.55, ease: "easeOut" },
+	},
 };
 
 const imageVariants: Variants = {
 	hidden: { opacity: 0, scale: 0.85 },
-	visible: { opacity: 1, scale: 1, transition: { duration: 0.55, ease: "easeOut" } },
+	visible: {
+		opacity: 1,
+		scale: 1,
+		transition: { duration: 0.55, ease: "easeOut" },
+	},
 };
 
 /* ─────────────────────────────── section ───────────────────────────── */
@@ -73,23 +81,23 @@ export function HeroSection({
 
 	// A tiny helper so every floating shape shares one loop with its own phase.
 	const float = (delay: number) =>
-		reduce
-			? undefined
-			: {
-					animate: { y: [0, -8, 0] },
-					transition: {
-						duration: 3,
-						repeat: Infinity,
-						ease: "easeInOut" as const,
-						delay,
-					},
-			  };
+		reduce ? undefined : (
+			{
+				animate: { y: [0, -8, 0] },
+				transition: {
+					duration: 3,
+					repeat: Infinity,
+					ease: "easeInOut" as const,
+					delay,
+				},
+			}
+		);
 
 	return (
 		<section
 			className={cn(
 				"relative w-full overflow-hidden bg-canvas py-16 sm:py-24",
-				className
+				className,
 			)}>
 			<div className="container-x grid grid-cols-1 items-center gap-14 lg:grid-cols-2 lg:gap-10">
 				{/* ── Left column: copy ─────────────────────────────────────── */}
@@ -122,7 +130,9 @@ export function HeroSection({
 								onClick={action.onClick}
 								variant={action.variant}
 								size="lg"
-								arrow={action.variant === "accent" || action.variant === "primary"}
+								arrow={
+									action.variant === "accent" || action.variant === "primary"
+								}
 								className={action.className}>
 								{action.text}
 							</Button>
@@ -133,7 +143,9 @@ export function HeroSection({
 						variants={itemVariants}
 						className="mt-12 flex flex-wrap justify-center gap-x-10 gap-y-6 lg:justify-start">
 						{stats.map((stat, i) => (
-							<div key={i} className="flex items-center gap-3">
+							<div
+								key={i}
+								className="flex items-center gap-3">
 								<span className="flex size-11 items-center justify-center rounded-full border border-steel-200 bg-steel-100 text-corporate-600">
 									{stat.icon}
 								</span>
@@ -141,9 +153,9 @@ export function HeroSection({
 									<p className="font-display text-xl font-bold leading-none text-ink">
 										{stat.value}
 									</p>
-									{stat.label ? (
+									{stat.label ?
 										<p className="mt-1 text-sm text-steel-500">{stat.label}</p>
-									) : null}
+									:	null}
 								</div>
 							</div>
 						))}

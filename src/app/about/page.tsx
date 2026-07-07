@@ -16,7 +16,7 @@ import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
-	title: "About Us — Transforming Businesses Since 2016 | Cubiccode",
+	title: "About Us  Transforming Businesses Since 2016 | Cubiccode",
 	description:
 		"Cubiccode Digital Media LLP is a full-stack ITES company born in Belagavi, now serving 500+ clients nationwide from offices in Belagavi and Bengaluru.",
 };
@@ -98,7 +98,7 @@ export default function AboutPage() {
 						</Reveal>
 					</div>
 
-					{/* Alternating story chapters — content ⇄ image */}
+					{/* Alternating story chapters  content ⇄ image */}
 					<div className="mt-14 space-y-8 lg:mt-16 lg:space-y-0">
 						{aboutCopy.story.map((p, i) => {
 							const imageLeft = i % 2 === 1;

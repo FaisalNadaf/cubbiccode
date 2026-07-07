@@ -203,7 +203,20 @@ export default function ColorBends({
       alpha: true
     });
     rendererRef.current = renderer;
-    (renderer as any).outputColorSpace = (THREE as any).SRGBColorSpace;
+
+    type RendererWithOutputColorSpace = THREE.WebGLRenderer & {
+      outputColorSpace?: unknown;
+    };
+    type ThreeWithColorSpace = typeof THREE & {
+      SRGBColorSpace?: unknown;
+    };
+
+    const rendererWithOutputColorSpace = renderer as RendererWithOutputColorSpace;
+    const threeWithColorSpace = THREE as ThreeWithColorSpace;
+    if (rendererWithOutputColorSpace && threeWithColorSpace.SRGBColorSpace !== undefined) {
+      rendererWithOutputColorSpace.outputColorSpace = threeWithColorSpace.SRGBColorSpace;
+    }
+
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setClearColor(0x000000, transparent ? 0 : 1);
     renderer.domElement.style.width = '100%';

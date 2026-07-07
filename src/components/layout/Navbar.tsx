@@ -1,16 +1,18 @@
+/** @format */
+
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useMotionValueEvent,
-  useMotionValue,
-  useSpring,
-  type Variants,
+	motion,
+	AnimatePresence,
+	useScroll,
+	useMotionValueEvent,
+	useMotionValue,
+	useSpring,
+	type Variants,
 } from "framer-motion";
 import { ChevronDown, ArrowUpRight, ArrowRight } from "lucide-react";
 import { nav, site, type NavGroup, type NavLink } from "@/content/site";
@@ -20,285 +22,287 @@ import { Magnetic } from "@/components/ui/MagneticButton";
 import { cn } from "@/lib/utils";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
-const SPRING = { type: "spring", stiffness: 380, damping: 32, mass: 0.8 } as const;
+const SPRING = {
+	type: "spring",
+	stiffness: 380,
+	damping: 32,
+	mass: 0.8,
+} as const;
 
 const hasPanel = (g: NavGroup) => !!(g.columns || g.links);
 
 function groupHrefs(g: NavGroup): string[] {
-  if (g.href) return [g.href];
-  const cols = g.columns ?? (g.links ? [{ heading: g.label, links: g.links }] : []);
-  return cols.flatMap((c) => c.links.map((l) => l.href));
+	if (g.href) return [g.href];
+	const cols =
+		g.columns ?? (g.links ? [{ heading: g.label, links: g.links }] : []);
+	return cols.flatMap((c) => c.links.map((l) => l.href));
 }
 
 function isActiveGroup(g: NavGroup, path: string): boolean {
-  if (g.href) return path === g.href;
-  return groupHrefs(g).some(
-    (h) => path === h || (h !== "/" && path.startsWith(h + "/"))
-  );
+	if (g.href) return path === g.href;
+	return groupHrefs(g).some(
+		(h) => path === h || (h !== "/" && path.startsWith(h + "/")),
+	);
 }
 
 export function Navbar() {
-  const pathname = usePathname();
-  const { scrollY } = useScroll();
-  const [scrolled, setScrolled] = useState(false);
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [hovered, setHovered] = useState<number | null>(null);
-  const [mobileOpen, setMobileOpen] = useState(false);
+	const pathname = usePathname();
+	const { scrollY } = useScroll();
+	const [scrolled, setScrolled] = useState(false);
+	const [openIndex, setOpenIndex] = useState<number | null>(null);
+	const [hovered, setHovered] = useState<number | null>(null);
+	const [mobileOpen, setMobileOpen] = useState(false);
 
-  // top-level item refs for the sliding pill
-  const navRef = useRef<HTMLElement>(null);
-  const itemRefs = useRef<(HTMLElement | null)[]>([]);
-  const [pill, setPill] = useState({ left: 0, width: 0, opacity: 0 });
+	// top-level item refs for the sliding pill
+	const navRef = useRef<HTMLElement>(null);
+	const itemRefs = useRef<(HTMLElement | null)[]>([]);
+	const [pill, setPill] = useState({ left: 0, width: 0, opacity: 0 });
 
-  // outer wrapper + the x-anchor used to center the mega panel under its trigger
-  const barWrapRef = useRef<HTMLDivElement>(null);
-  const [panelAnchor, setPanelAnchor] = useState(0);
+	// outer wrapper + the x-anchor used to center the mega panel under its trigger
+	const barWrapRef = useRef<HTMLDivElement>(null);
+	const [panelAnchor, setPanelAnchor] = useState(0);
 
-  // Delayed close so moving the cursor from a trigger into the panel never
-  // snaps the dropdown shut mid-traverse.
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+	// Delayed close so moving the cursor from a trigger into the panel never
+	// snaps the dropdown shut mid-traverse.
+	const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 12));
+	useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 12));
 
-  const activeIndex = nav.findIndex((g) => isActiveGroup(g, pathname));
-  const target = hovered ?? (activeIndex >= 0 ? activeIndex : null);
+	const activeIndex = nav.findIndex((g) => isActiveGroup(g, pathname));
+	const target = hovered ?? (activeIndex >= 0 ? activeIndex : null);
 
-  // Every interior page now opens with a dark, full-bleed cinematic hero, so the bar
-  // floats transparently with white text at the very top, then solidifies into the
-  // light glass bar on scroll / panel open. Only the handful of pages that open on a
-  // light background keep the solid bar from the start.
-  const lightHeroRoutes = ["/culture", "/clientele"];
-  const overDarkHero =
-    !lightHeroRoutes.includes(pathname) && !scrolled && openIndex === null;
+	// Every interior page now opens with a dark, full-bleed cinematic hero, so the bar
+	// floats transparently with white text at the very top, then solidifies into the
+	// light glass bar on scroll / panel open. Only the handful of pages that open on a
+	// light background keep the solid bar from the start.
+	const lightHeroRoutes = ["/culture", "/clientele"];
+	const overDarkHero =
+		!lightHeroRoutes.includes(pathname) && !scrolled && openIndex === null;
 
-  // Move the pill to the hovered (or active) item.
-  useEffect(() => {
-    if (target == null) {
-      setPill((p) => ({ ...p, opacity: 0 }));
-      return;
-    }
-    const el = itemRefs.current[target];
-    if (el) {
-      setPill({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
-    }
-  }, [target, scrolled]);
+	// Move the pill to the hovered (or active) item.
+	useEffect(() => {
+		if (target == null) {
+			setPill((p) => ({ ...p, opacity: 0 }));
+			return;
+		}
+		const el = itemRefs.current[target];
+		if (el) {
+			setPill({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
+		}
+	}, [target, scrolled]);
 
-  // Anchor the mega panel to the center of its trigger item (relative to the bar).
-  function measureAnchor(index: number | null) {
-    if (index == null) return;
-    const trigger = itemRefs.current[index];
-    const wrap = barWrapRef.current;
-    if (trigger && wrap) {
-      const t = trigger.getBoundingClientRect();
-      const w = wrap.getBoundingClientRect();
-      setPanelAnchor(t.left - w.left + t.width / 2);
-    }
-  }
+	// Anchor the mega panel to the center of its trigger item (relative to the bar).
+	function measureAnchor(index: number | null) {
+		if (index == null) return;
+		const trigger = itemRefs.current[index];
+		const wrap = barWrapRef.current;
+		if (trigger && wrap) {
+			const t = trigger.getBoundingClientRect();
+			const w = wrap.getBoundingClientRect();
+			setPanelAnchor(t.left - w.left + t.width / 2);
+		}
+	}
 
-  useEffect(() => {
-    measureAnchor(openIndex);
-  }, [openIndex, scrolled]);
+	useEffect(() => {
+		measureAnchor(openIndex);
+	}, [openIndex, scrolled]);
 
-  useEffect(() => {
-    function onResize() {
-      const el = target != null ? itemRefs.current[target] : null;
-      if (el) setPill({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
-      measureAnchor(openIndex);
-    }
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
-  }, [target, openIndex]);
+	useEffect(() => {
+		function onResize() {
+			const el = target != null ? itemRefs.current[target] : null;
+			if (el)
+				setPill({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
+			measureAnchor(openIndex);
+		}
+		window.addEventListener("resize", onResize);
+		return () => window.removeEventListener("resize", onResize);
+	}, [target, openIndex]);
 
-  // Close everything on route change.
-  useEffect(() => {
-    setOpenIndex(null);
-    setHovered(null);
-    setMobileOpen(false);
-  }, [pathname]);
+	// Close everything on route change.
+	useEffect(() => {
+		setOpenIndex(null);
+		setHovered(null);
+		setMobileOpen(false);
+	}, [pathname]);
 
-  function cancelClose() {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
-  }
+	function cancelClose() {
+		if (closeTimer.current) {
+			clearTimeout(closeTimer.current);
+			closeTimer.current = null;
+		}
+	}
 
-  function closeAll() {
-    cancelClose();
-    setHovered(null);
-    setOpenIndex(null);
-  }
+	function closeAll() {
+		cancelClose();
+		setHovered(null);
+		setOpenIndex(null);
+	}
 
-  // Arm a short timer instead of closing instantly — entering the panel (which
-  // re-enters the bar wrapper) cancels it, so the hover gap no longer kills it.
-  function scheduleClose() {
-    cancelClose();
-    closeTimer.current = setTimeout(() => {
-      setHovered(null);
-      setOpenIndex(null);
-    }, 140);
-  }
+	// Arm a short timer instead of closing instantly  entering the panel (which
+	// re-enters the bar wrapper) cancels it, so the hover gap no longer kills it.
+	function scheduleClose() {
+		cancelClose();
+		closeTimer.current = setTimeout(() => {
+			setHovered(null);
+			setOpenIndex(null);
+		}, 140);
+	}
 
-  // Clear any pending timer on unmount.
-  useEffect(() => () => cancelClose(), []);
+	// Clear any pending timer on unmount.
+	useEffect(() => () => cancelClose(), []);
 
-  return (
-    <motion.header
-      initial={{ y: -90, opacity: 0, scale: 0.97 }}
-      animate={{ y: 0, opacity: 1, scale: 1 }}
-      transition={{ duration: 0.9, ease: EASE, delay: 0.05 }}
-      className="fixed inset-x-0 top-0 z-[70]"
-    >
-      {/* ===== Full-width bar, flush to the top edge ===== */}
-      <div
-        className={cn(
-          "relative border-b transition-all duration-500",
-          scrolled || openIndex !== null
-            ? "border-steel-200/70 bg-white/85 shadow-soft backdrop-blur-xl backdrop-saturate-150"
-            : overDarkHero
-              ? "border-transparent bg-gradient-to-b from-ink/65 via-ink/35 to-transparent"
-              : "border-transparent bg-white/75 backdrop-blur-md"
-        )}
-      >
-        {/* animated sheen on scroll */}
-        <div
-          className={cn(
-            "pointer-events-none absolute inset-0 bg-gradient-to-r from-corporate-500/0 via-corporate-400/10 to-corporate-500/0 transition-opacity duration-500",
-            scrolled ? "opacity-100" : "opacity-0"
-          )}
-        />
+	return (
+		<motion.header
+			initial={{ y: -90, opacity: 0, scale: 0.97 }}
+			animate={{ y: 0, opacity: 1, scale: 1 }}
+			transition={{ duration: 0.9, ease: EASE, delay: 0.05 }}
+			className="fixed inset-x-0 top-0 z-[70]">
+			{/* ===== Full-width bar, flush to the top edge ===== */}
+			<div
+				className={cn(
+					"relative border-b transition-all duration-500",
+					scrolled || openIndex !== null ?
+						"border-steel-200/70 bg-white/85 shadow-soft backdrop-blur-xl backdrop-saturate-150"
+					: overDarkHero ?
+						"border-transparent bg-gradient-to-b from-ink/65 via-ink/35 to-transparent"
+					:	"border-transparent bg-white/75 backdrop-blur-md",
+				)}>
+				{/* animated sheen on scroll */}
+				<div
+					className={cn(
+						"pointer-events-none absolute inset-0 bg-gradient-to-r from-corporate-500/0 via-corporate-400/10 to-corporate-500/0 transition-opacity duration-500",
+						scrolled ? "opacity-100" : "opacity-0",
+					)}
+				/>
 
-        <div
-          ref={barWrapRef}
-          className="container-x relative"
-          onMouseLeave={scheduleClose}
-          onMouseEnter={cancelClose}
-        >
-          <div
-            className={cn(
-              "relative flex items-center justify-between gap-4 transition-all duration-500",
-              scrolled ? "h-[66px]" : "h-[82px]"
-            )}
-          >
-            <Logo
-              priority
-              className={cn(
-                "relative z-10 shrink-0 transition-[filter] duration-500 [&_img]:h-12",
-                overDarkHero && "[&_img]:brightness-0 [&_img]:invert"
-              )}
-            />
+				<div
+					ref={barWrapRef}
+					className="container-x relative"
+					onMouseLeave={scheduleClose}
+					onMouseEnter={cancelClose}>
+					<div
+						className={cn(
+							"relative flex items-center justify-between gap-4 transition-all duration-500",
+							scrolled ? "h-[66px]" : "h-[82px]",
+						)}>
+						<Logo
+							priority
+							className={cn(
+								"relative z-10 shrink-0 transition-[filter] duration-500 [&_img]:h-12",
+								overDarkHero && "[&_img]:brightness-0 [&_img]:invert",
+							)}
+						/>
 
-            {/* ===== Desktop nav (centered) ===== */}
-            <nav
-              ref={navRef}
-              className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-4 lg:flex"
-            >
-              {/* sliding pill */}
-              <motion.span
-                aria-hidden
-                className={cn(
-                  "absolute top-1/2 z-0 h-9 rounded-full ring-1",
-                  overDarkHero
-                    ? "bg-white/10 ring-white/15"
-                    : "bg-ink/[0.06] ring-ink/[0.04]"
-                )}
-                animate={{
-                  x: pill.left,
-                  width: pill.width,
-                  opacity: pill.opacity,
-                  y: "-50%",
-                }}
-                transition={SPRING}
-                style={{ left: 0 }}
-              />
+						{/* ===== Desktop nav (centered) ===== */}
+						<nav
+							ref={navRef}
+							className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-4 lg:flex">
+							{/* sliding pill */}
+							<motion.span
+								aria-hidden
+								className={cn(
+									"absolute top-1/2 z-0 h-9 rounded-full ring-1",
+									overDarkHero ?
+										"bg-white/10 ring-white/15"
+									:	"bg-ink/[0.06] ring-ink/[0.04]",
+								)}
+								animate={{
+									x: pill.left,
+									width: pill.width,
+									opacity: pill.opacity,
+									y: "-50%",
+								}}
+								transition={SPRING}
+								style={{ left: 0 }}
+							/>
 
-              {nav.map((group, i) => {
-                const active = isActiveGroup(group, pathname);
-                const panel = hasPanel(group);
-                const common =
-                  "relative z-10 inline-flex h-9 items-center gap-1 whitespace-nowrap rounded-full px-5 text-[15px] font-medium transition-colors duration-200";
-                const tone = overDarkHero
-                  ? active || hovered === i
-                    ? "text-white [text-shadow:0_1px_3px_rgba(8,20,39,0.55)]"
-                    : "text-white/90 [text-shadow:0_1px_3px_rgba(8,20,39,0.55)]"
-                  : active || hovered === i
-                    ? "text-ink"
-                    : "text-steel-700";
+							{nav.map((group, i) => {
+								const active = isActiveGroup(group, pathname);
+								const panel = hasPanel(group);
+								const common =
+									"relative z-10 inline-flex h-9 items-center gap-1 whitespace-nowrap rounded-full px-5 text-[15px] font-medium transition-colors duration-200";
+								const tone =
+									overDarkHero ?
+										active || hovered === i ?
+											"text-white [text-shadow:0_1px_3px_rgba(8,20,39,0.55)]"
+										:	"text-white/90 [text-shadow:0_1px_3px_rgba(8,20,39,0.55)]"
+									: active || hovered === i ? "text-ink"
+									: "text-steel-700";
 
-                return panel ? (
-                  <button
-                    key={group.label}
-                    ref={(el) => {
-                      itemRefs.current[i] = el;
-                    }}
-                    onMouseEnter={() => {
-                      setHovered(i);
-                      setOpenIndex(i);
-                    }}
-                    onFocus={() => {
-                      setHovered(i);
-                      setOpenIndex(i);
-                    }}
-                    className={cn(common, tone)}
-                    aria-expanded={openIndex === i}
-                  >
-                    {group.label}
-                    <ChevronDown
-                      className={cn(
-                        "size-3.5 transition-transform duration-300",
-                        overDarkHero ? "text-white/60" : "text-steel-400",
-                        openIndex === i && "rotate-180 text-corporate-500"
-                      )}
-                    />
-                  </button>
-                ) : (
-                  <Link
-                    key={group.label}
-                    href={group.href!}
-                    ref={(el) => {
-                      itemRefs.current[i] = el;
-                    }}
-                    onMouseEnter={() => {
-                      setHovered(i);
-                      setOpenIndex(null);
-                    }}
-                    className={cn(common, tone)}
-                  >
-                    {group.label}
-                  </Link>
-                );
-              })}
-            </nav>
+								return panel ?
+										<button
+											key={group.label}
+											ref={(el) => {
+												itemRefs.current[i] = el;
+											}}
+											onMouseEnter={() => {
+												setHovered(i);
+												setOpenIndex(i);
+											}}
+											onFocus={() => {
+												setHovered(i);
+												setOpenIndex(i);
+											}}
+											className={cn(common, tone)}
+											aria-expanded={openIndex === i}>
+											{group.label}
+											<ChevronDown
+												className={cn(
+													"size-3.5 transition-transform duration-300",
+													overDarkHero ? "text-white/60" : "text-steel-400",
+													openIndex === i && "rotate-180 text-corporate-500",
+												)}
+											/>
+										</button>
+									:	<Link
+											key={group.label}
+											href={group.href!}
+											ref={(el) => {
+												itemRefs.current[i] = el;
+											}}
+											onMouseEnter={() => {
+												setHovered(i);
+												setOpenIndex(null);
+											}}
+											className={cn(common, tone)}>
+											{group.label}
+										</Link>;
+							})}
+						</nav>
 
-            {/* ===== Right: CTA + mobile toggle ===== */}
-            <div className="relative z-10 flex items-center gap-2">
-              <ProposalCta className="hidden sm:inline-flex" />
-              <MobileToggle
-                open={mobileOpen}
-                onClick={() => setMobileOpen((v) => !v)}
-                dark={overDarkHero}
-              />
-            </div>
-          </div>
+						{/* ===== Right: CTA + mobile toggle ===== */}
+						<div className="relative z-10 flex items-center gap-2">
+							<ProposalCta className="hidden sm:inline-flex" />
+							<MobileToggle
+								open={mobileOpen}
+								onClick={() => setMobileOpen((v) => !v)}
+								dark={overDarkHero}
+							/>
+						</div>
+					</div>
 
-          {/* ===== Mega panel ===== */}
-          <AnimatePresence>
-            {openIndex !== null && hasPanel(nav[openIndex]) && (
-              <MegaPanel
-                key={openIndex}
-                group={nav[openIndex]}
-                onNavigate={closeAll}
-                centerX={panelAnchor}
-              />
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
+					{/* ===== Mega panel ===== */}
+					<AnimatePresence>
+						{openIndex !== null && hasPanel(nav[openIndex]) && (
+							<MegaPanel
+								key={openIndex}
+								group={nav[openIndex]}
+								onNavigate={closeAll}
+								centerX={panelAnchor}
+							/>
+						)}
+					</AnimatePresence>
+				</div>
+			</div>
 
-      {/* ===== Mobile menu ===== */}
-      <MobileMenu open={mobileOpen} onClose={() => setMobileOpen(false)} pathname={pathname} />
-    </motion.header>
-  );
+			{/* ===== Mobile menu ===== */}
+			<MobileMenu
+				open={mobileOpen}
+				onClose={() => setMobileOpen(false)}
+				pathname={pathname}
+			/>
+		</motion.header>
+	);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -306,52 +310,53 @@ export function Navbar() {
 /* ----------------------------------------------------------------------- */
 
 function ProposalCta({
-  className,
-  full = false,
+	className,
+	full = false,
 }: {
-  className?: string;
-  full?: boolean;
+	className?: string;
+	full?: boolean;
 }) {
-  return (
-    <Magnetic strength={0.3} className={full ? "w-full" : undefined}>
-      <Link
-        href={site.proposalCta}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(
-          "group relative inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5",
-          full && "w-full py-3.5 text-base",
-          className
-        )}
-      >
-        {/* pulsing glow */}
-        <motion.span
-          aria-hidden
-          className="pointer-events-none absolute -inset-0.5 -z-20 rounded-full bg-corporate-500/45 blur-md"
-          animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.97, 1.04, 0.97] }}
-          transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        {/* animated gradient fill */}
-        <motion.span
-          aria-hidden
-          className="absolute inset-0 -z-10 rounded-full"
-          style={{
-            backgroundImage:
-              "linear-gradient(110deg,#0F4C81,#1B6EC2,#3F86D0,#1B6EC2,#0F4C81)",
-            backgroundSize: "200% 100%",
-          }}
-          animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
-          transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
-        />
-        {/* sheen sweep on hover */}
-        <span className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full">
-          <span className="absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-sm transition-transform duration-700 ease-out group-hover:translate-x-[420%]" />
-        </span>
-        Get a Proposal
-        <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-      </Link>
-    </Magnetic>
-  );
+	return (
+		<Magnetic
+			strength={0.3}
+			className={full ? "w-full" : undefined}>
+			<Link
+				href={site.proposalCta}
+				target="_blank"
+				rel="noopener noreferrer"
+				className={cn(
+					"group relative inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5",
+					full && "w-full py-3.5 text-base",
+					className,
+				)}>
+				{/* pulsing glow */}
+				<motion.span
+					aria-hidden
+					className="pointer-events-none absolute -inset-0.5 -z-20 rounded-full bg-corporate-500/45 blur-md"
+					animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.97, 1.04, 0.97] }}
+					transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+				/>
+				{/* animated gradient fill */}
+				<motion.span
+					aria-hidden
+					className="absolute inset-0 -z-10 rounded-full"
+					style={{
+						backgroundImage:
+							"linear-gradient(110deg,#0F4C81,#1B6EC2,#3F86D0,#1B6EC2,#0F4C81)",
+						backgroundSize: "200% 100%",
+					}}
+					animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
+					transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+				/>
+				{/* sheen sweep on hover */}
+				<span className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full">
+					<span className="absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-sm transition-transform duration-700 ease-out group-hover:translate-x-[420%]" />
+				</span>
+				Get a Proposal
+				<ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+			</Link>
+		</Magnetic>
+	);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -359,189 +364,195 @@ function ProposalCta({
 /* ----------------------------------------------------------------------- */
 
 const panelVariants: Variants = {
-  hidden: { opacity: 0, y: 10, scale: 0.98, filter: "blur(8px)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    filter: "blur(0px)",
-    transition: { duration: 0.42, ease: EASE },
-  },
-  exit: {
-    opacity: 0,
-    y: 8,
-    scale: 0.985,
-    filter: "blur(6px)",
-    transition: { duration: 0.22, ease: "easeIn" },
-  },
+	hidden: { opacity: 0, y: 10, scale: 0.98, filter: "blur(8px)" },
+	show: {
+		opacity: 1,
+		y: 0,
+		scale: 1,
+		filter: "blur(0px)",
+		transition: { duration: 0.42, ease: EASE },
+	},
+	exit: {
+		opacity: 0,
+		y: 8,
+		scale: 0.985,
+		filter: "blur(6px)",
+		transition: { duration: 0.22, ease: "easeIn" },
+	},
 };
 
 const listVariants: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
+	hidden: {},
+	show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
 };
 
 const cardVariants: Variants = {
-  hidden: { opacity: 0, y: 14 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } },
+	hidden: { opacity: 0, y: 14 },
+	show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: EASE } },
 };
 
 function MegaPanel({
-  group,
-  onNavigate,
-  centerX,
+	group,
+	onNavigate,
+	centerX,
 }: {
-  group: NavGroup;
-  onNavigate: () => void;
-  centerX: number;
+	group: NavGroup;
+	onNavigate: () => void;
+	centerX: number;
 }) {
-  const columns =
-    group.columns ??
-    (group.links ? [{ heading: group.label, links: group.links }] : []);
-  const multi = columns.length > 1;
+	const columns =
+		group.columns ??
+		(group.links ? [{ heading: group.label, links: group.links }] : []);
+	const multi = columns.length > 1;
 
-  // Position the panel's left edge so it is centered under its trigger,
-  // clamped to stay within the bar so it never overflows the viewport.
-  const panelRef = useRef<HTMLDivElement>(null);
-  const [left, setLeft] = useState(() => centerX);
+	// Position the panel's left edge so it is centered under its trigger,
+	// clamped to stay within the bar so it never overflows the viewport.
+	const panelRef = useRef<HTMLDivElement>(null);
+	const [left, setLeft] = useState(() => centerX);
 
-  useLayoutEffect(() => {
-    const el = panelRef.current;
-    if (!el) return;
-    const parent = el.offsetParent;
-    const parentW =
-      parent instanceof HTMLElement ? parent.clientWidth : window.innerWidth;
-    const margin = 8;
-    const next = Math.max(
-      margin,
-      Math.min(centerX - el.offsetWidth / 2, parentW - el.offsetWidth - margin)
-    );
-    setLeft(next);
-  }, [centerX, group]);
+	useLayoutEffect(() => {
+		const el = panelRef.current;
+		if (!el) return;
+		const parent = el.offsetParent;
+		const parentW =
+			parent instanceof HTMLElement ? parent.clientWidth : window.innerWidth;
+		const margin = 8;
+		const next = Math.max(
+			margin,
+			Math.min(centerX - el.offsetWidth / 2, parentW - el.offsetWidth - margin),
+		);
+		setLeft(next);
+	}, [centerX, group]);
 
-  // mouse-follow highlight
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const hx = useSpring(mx, { stiffness: 150, damping: 20 });
-  const hy = useSpring(my, { stiffness: 150, damping: 20 });
+	// mouse-follow highlight
+	const mx = useMotionValue(0);
+	const my = useMotionValue(0);
+	const hx = useSpring(mx, { stiffness: 150, damping: 20 });
+	const hy = useSpring(my, { stiffness: 150, damping: 20 });
 
-  return (
-    <motion.div
-      ref={panelRef}
-      variants={panelVariants}
-      initial="hidden"
-      animate="show"
-      exit="exit"
-      onMouseMove={(e) => {
-        const r = e.currentTarget.getBoundingClientRect();
-        mx.set(e.clientX - r.left);
-        my.set(e.clientY - r.top);
-      }}
-      className="absolute top-full z-[65] hidden pt-2.5 lg:block"
-      style={{ left }}
-    >
-      <div className="relative overflow-hidden rounded-3xl border border-steel-200 bg-white/95 p-2.5 shadow-lift ring-1 ring-black/5 backdrop-blur-xl">
-        {/* mouse-follow glow */}
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute size-[240px] rounded-full bg-corporate-400/10 blur-3xl"
-          style={{ left: hx, top: hy, x: "-50%", y: "-50%" }}
-        />
-        {/* top accent line */}
-        <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-corporate-400/60 to-transparent" />
+	return (
+		<motion.div
+			ref={panelRef}
+			variants={panelVariants}
+			initial="hidden"
+			animate="show"
+			exit="exit"
+			onMouseMove={(e) => {
+				const r = e.currentTarget.getBoundingClientRect();
+				mx.set(e.clientX - r.left);
+				my.set(e.clientY - r.top);
+			}}
+			className="absolute top-full z-[65] hidden pt-2.5 lg:block"
+			style={{ left }}>
+			<div className="relative overflow-hidden rounded-3xl border border-steel-200 bg-white/95 p-2.5 shadow-lift ring-1 ring-black/5 backdrop-blur-xl">
+				{/* mouse-follow glow */}
+				<motion.div
+					aria-hidden
+					className="pointer-events-none absolute size-[240px] rounded-full bg-corporate-400/10 blur-3xl"
+					style={{ left: hx, top: hy, x: "-50%", y: "-50%" }}
+				/>
+				{/* top accent line */}
+				<div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-corporate-400/60 to-transparent" />
 
-        {multi ? (
-          <div className="relative flex gap-1">
-            {columns.map((col, ci) => (
-              <div
-                key={col.heading}
-                className={cn(
-                  "w-[268px] p-1.5",
-                  ci > 0 && "border-l border-steel-100"
-                )}
-              >
-                <ColHeading>{col.heading}</ColHeading>
-                <motion.div
-                  variants={listVariants}
-                  initial="hidden"
-                  animate="show"
-                  className="mt-1 space-y-0.5"
-                >
-                  {col.links.map((link) => (
-                    <LinkRow key={link.label} link={link} onNavigate={onNavigate} />
-                  ))}
-                </motion.div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="relative w-[560px] p-1.5">
-            <ColHeading>{columns[0]?.heading}</ColHeading>
-            <motion.div
-              variants={listVariants}
-              initial="hidden"
-              animate="show"
-              className="mt-1 grid grid-cols-2 gap-0.5"
-            >
-              {columns[0]?.links.map((link) => (
-                <LinkRow key={link.label} link={link} onNavigate={onNavigate} />
-              ))}
-            </motion.div>
-          </div>
-        )}
-      </div>
-    </motion.div>
-  );
+				{multi ?
+					<div className="relative flex gap-1">
+						{columns.map((col, ci) => (
+							<div
+								key={col.heading}
+								className={cn(
+									"w-[268px] p-1.5",
+									ci > 0 && "border-l border-steel-100",
+								)}>
+								<ColHeading>{col.heading}</ColHeading>
+								<motion.div
+									variants={listVariants}
+									initial="hidden"
+									animate="show"
+									className="mt-1 space-y-0.5">
+									{col.links.map((link) => (
+										<LinkRow
+											key={link.label}
+											link={link}
+											onNavigate={onNavigate}
+										/>
+									))}
+								</motion.div>
+							</div>
+						))}
+					</div>
+				:	<div className="relative w-[560px] p-1.5">
+						<ColHeading>{columns[0]?.heading}</ColHeading>
+						<motion.div
+							variants={listVariants}
+							initial="hidden"
+							animate="show"
+							className="mt-1 grid grid-cols-2 gap-0.5">
+							{columns[0]?.links.map((link) => (
+								<LinkRow
+									key={link.label}
+									link={link}
+									onNavigate={onNavigate}
+								/>
+							))}
+						</motion.div>
+					</div>
+				}
+			</div>
+		</motion.div>
+	);
 }
 
 function ColHeading({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-kicker text-steel-400">
-      {children}
-    </p>
-  );
+	return (
+		<p className="px-3 pt-2 text-[11px] font-semibold uppercase tracking-kicker text-steel-400">
+			{children}
+		</p>
+	);
 }
 
 function LinkRow({
-  link,
-  onNavigate,
+	link,
+	onNavigate,
 }: {
-  link: NavLink;
-  onNavigate: () => void;
+	link: NavLink;
+	onNavigate: () => void;
 }) {
-  return (
-    <motion.div variants={cardVariants} whileHover="hover">
-      <Link
-        href={link.href}
-        onClick={onNavigate}
-        className="group/link relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors duration-300 hover:bg-corporate-50/70"
-      >
-        {/* animated border */}
-        <span className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent transition-colors duration-300 group-hover/link:ring-corporate-200" />
+	return (
+		<motion.div
+			variants={cardVariants}
+			whileHover="hover">
+			<Link
+				href={link.href}
+				onClick={onNavigate}
+				className="group/link relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors duration-300 hover:bg-corporate-50/70">
+				{/* animated border */}
+				<span className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent transition-colors duration-300 group-hover/link:ring-corporate-200" />
 
-        {link.icon && (
-          <motion.span
-            variants={{ hover: { scale: 1.18, y: -3, rotate: -4 } }}
-            transition={{ type: "spring", stiffness: 420, damping: 13 }}
-            className="relative flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-corporate-600 shadow-soft ring-1 ring-steel-200 transition-colors duration-300 group-hover/link:bg-corporate-600 group-hover/link:text-white group-hover/link:ring-corporate-600"
-          >
-            <Icon name={link.icon} className="size-[19px]" />
-          </motion.span>
-        )}
-        <span className="min-w-0 flex-1">
-          <span className="block text-[14.5px] font-semibold text-ink">
-            {link.label}
-          </span>
-          {link.desc && (
-            <span className="mt-0.5 block truncate text-[12.5px] text-steel-500">
-              {link.desc}
-            </span>
-          )}
-        </span>
-        <ArrowUpRight className="size-4 shrink-0 -translate-x-1 text-steel-300 opacity-0 transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:text-corporate-600 group-hover/link:opacity-100" />
-      </Link>
-    </motion.div>
-  );
+				{link.icon && (
+					<motion.span
+						variants={{ hover: { scale: 1.18, y: -3, rotate: -4 } }}
+						transition={{ type: "spring", stiffness: 420, damping: 13 }}
+						className="relative flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-corporate-600 shadow-soft ring-1 ring-steel-200 transition-colors duration-300 group-hover/link:bg-corporate-600 group-hover/link:text-white group-hover/link:ring-corporate-600">
+						<Icon
+							name={link.icon}
+							className="size-[19px]"
+						/>
+					</motion.span>
+				)}
+				<span className="min-w-0 flex-1">
+					<span className="block text-[14.5px] font-semibold text-ink">
+						{link.label}
+					</span>
+					{link.desc && (
+						<span className="mt-0.5 block truncate text-[12.5px] text-steel-500">
+							{link.desc}
+						</span>
+					)}
+				</span>
+				<ArrowUpRight className="size-4 shrink-0 -translate-x-1 text-steel-300 opacity-0 transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:text-corporate-600 group-hover/link:opacity-100" />
+			</Link>
+		</motion.div>
+	);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -549,58 +560,57 @@ function LinkRow({
 /* ----------------------------------------------------------------------- */
 
 function MobileToggle({
-  open,
-  onClick,
-  dark = false,
+	open,
+	onClick,
+	dark = false,
 }: {
-  open: boolean;
-  onClick: () => void;
-  dark?: boolean;
+	open: boolean;
+	onClick: () => void;
+	dark?: boolean;
 }) {
-  // While the full-screen (dark) menu is open, always use the light-on-dark bars.
-  const onDark = dark || open;
-  return (
-    <button
-      onClick={onClick}
-      aria-label={open ? "Close menu" : "Open menu"}
-      aria-expanded={open}
-      className={cn(
-        "relative z-[90] inline-flex size-11 items-center justify-center rounded-full border shadow-soft backdrop-blur transition-colors lg:hidden",
-        onDark
-          ? "border-white/25 bg-white/10 text-white hover:border-white/50"
-          : "border-steel-200 bg-white/80 text-ink hover:border-corporate-300"
-      )}
-    >
-      <span className="relative block h-4 w-5">
-        <motion.span
-          className={cn(
-            "absolute left-0 block h-[2px] w-5 rounded-full",
-            onDark ? "bg-white" : "bg-ink"
-          )}
-          animate={open ? { top: 7, rotate: 45 } : { top: 2, rotate: 0 }}
-          transition={{ duration: 0.3, ease: EASE }}
-          style={{ top: 2 }}
-        />
-        <motion.span
-          className={cn(
-            "absolute left-0 top-[7px] block h-[2px] w-5 rounded-full",
-            onDark ? "bg-white" : "bg-ink"
-          )}
-          animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
-          transition={{ duration: 0.2 }}
-        />
-        <motion.span
-          className={cn(
-            "absolute left-0 block h-[2px] w-5 rounded-full",
-            onDark ? "bg-white" : "bg-ink"
-          )}
-          animate={open ? { top: 7, rotate: -45 } : { top: 12, rotate: 0 }}
-          transition={{ duration: 0.3, ease: EASE }}
-          style={{ top: 12 }}
-        />
-      </span>
-    </button>
-  );
+	// While the full-screen (dark) menu is open, always use the light-on-dark bars.
+	const onDark = dark || open;
+	return (
+		<button
+			onClick={onClick}
+			aria-label={open ? "Close menu" : "Open menu"}
+			aria-expanded={open}
+			className={cn(
+				"relative z-[90] inline-flex size-11 items-center justify-center rounded-full border shadow-soft backdrop-blur transition-colors lg:hidden",
+				onDark ?
+					"border-white/25 bg-white/10 text-white hover:border-white/50"
+				:	"border-steel-200 bg-white/80 text-ink hover:border-corporate-300",
+			)}>
+			<span className="relative block h-4 w-5">
+				<motion.span
+					className={cn(
+						"absolute left-0 block h-[2px] w-5 rounded-full",
+						onDark ? "bg-white" : "bg-ink",
+					)}
+					animate={open ? { top: 7, rotate: 45 } : { top: 2, rotate: 0 }}
+					transition={{ duration: 0.3, ease: EASE }}
+					style={{ top: 2 }}
+				/>
+				<motion.span
+					className={cn(
+						"absolute left-0 top-[7px] block h-[2px] w-5 rounded-full",
+						onDark ? "bg-white" : "bg-ink",
+					)}
+					animate={open ? { opacity: 0, scaleX: 0 } : { opacity: 1, scaleX: 1 }}
+					transition={{ duration: 0.2 }}
+				/>
+				<motion.span
+					className={cn(
+						"absolute left-0 block h-[2px] w-5 rounded-full",
+						onDark ? "bg-white" : "bg-ink",
+					)}
+					animate={open ? { top: 7, rotate: -45 } : { top: 12, rotate: 0 }}
+					transition={{ duration: 0.3, ease: EASE }}
+					style={{ top: 12 }}
+				/>
+			</span>
+		</button>
+	);
 }
 
 /* ----------------------------------------------------------------------- */
@@ -608,166 +618,168 @@ function MobileToggle({
 /* ----------------------------------------------------------------------- */
 
 const mobileContainer: Variants = {
-  hidden: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
-  show: { transition: { staggerChildren: 0.06, delayChildren: 0.2 } },
+	hidden: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
+	show: { transition: { staggerChildren: 0.06, delayChildren: 0.2 } },
 };
 
 const mobileItem: Variants = {
-  hidden: { opacity: 0, y: 24 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+	hidden: { opacity: 0, y: 24 },
+	show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
 };
 
 function MobileMenu({
-  open,
-  onClose,
-  pathname,
+	open,
+	onClose,
+	pathname,
 }: {
-  open: boolean;
-  onClose: () => void;
-  pathname: string;
+	open: boolean;
+	onClose: () => void;
+	pathname: string;
 }) {
-  const [expanded, setExpanded] = useState<string | null>(null);
+	const [expanded, setExpanded] = useState<string | null>(null);
 
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ clipPath: "circle(0% at calc(100% - 36px) 36px)" }}
-          animate={{ clipPath: "circle(145% at calc(100% - 36px) 36px)" }}
-          exit={{ clipPath: "circle(0% at calc(100% - 36px) 36px)" }}
-          transition={{ duration: 0.6, ease: EASE }}
-          className="fixed inset-0 z-[85] overflow-y-auto bg-ink lg:hidden"
-        >
-          {/* animated background */}
-          <div className="pointer-events-none absolute inset-0 bg-blueprint [background-size:40px_40px] opacity-[0.14]" />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute -right-24 top-0 size-[460px] rounded-full bg-corporate-600/25 blur-3xl"
-            animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            aria-hidden
-            className="pointer-events-none absolute -left-20 bottom-10 size-[380px] rounded-full bg-corporate-500/15 blur-3xl"
-            animate={{ scale: [1, 1.2, 1] }}
-            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-          />
+	return (
+		<AnimatePresence>
+			{open && (
+				<motion.div
+					initial={{ clipPath: "circle(0% at calc(100% - 36px) 36px)" }}
+					animate={{ clipPath: "circle(145% at calc(100% - 36px) 36px)" }}
+					exit={{ clipPath: "circle(0% at calc(100% - 36px) 36px)" }}
+					transition={{ duration: 0.6, ease: EASE }}
+					className="fixed inset-0 z-[85] overflow-y-auto bg-ink lg:hidden">
+					{/* animated background */}
+					<div className="pointer-events-none absolute inset-0 bg-blueprint [background-size:40px_40px] opacity-[0.14]" />
+					<motion.div
+						aria-hidden
+						className="pointer-events-none absolute -right-24 top-0 size-[460px] rounded-full bg-corporate-600/25 blur-3xl"
+						animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
+						transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+					/>
+					<motion.div
+						aria-hidden
+						className="pointer-events-none absolute -left-20 bottom-10 size-[380px] rounded-full bg-corporate-500/15 blur-3xl"
+						animate={{ scale: [1, 1.2, 1] }}
+						transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+					/>
 
-          <div className="container-x relative flex min-h-full flex-col pb-10 pt-6">
-            <div className="flex items-center justify-between">
-              <Logo className="[&_img]:brightness-0 [&_img]:invert" />
-              <button
-                onClick={onClose}
-                aria-label="Close menu"
-                className="inline-flex size-11 items-center justify-center rounded-full border border-white/20 text-white"
-              >
-                <span className="relative block size-5">
-                  <span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 rotate-45 rounded-full bg-white" />
-                  <span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -rotate-45 rounded-full bg-white" />
-                </span>
-              </button>
-            </div>
+					<div className="container-x relative flex min-h-full flex-col pb-10 pt-6">
+						<div className="flex items-center justify-between">
+							<Logo className="[&_img]:brightness-0 [&_img]:invert" />
+							<button
+								onClick={onClose}
+								aria-label="Close menu"
+								className="inline-flex size-11 items-center justify-center rounded-full border border-white/20 text-white">
+								<span className="relative block size-5">
+									<span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 rotate-45 rounded-full bg-white" />
+									<span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -rotate-45 rounded-full bg-white" />
+								</span>
+							</button>
+						</div>
 
-            <motion.nav
-              variants={mobileContainer}
-              initial="hidden"
-              animate="show"
-              exit="hidden"
-              className="mt-8 flex-1"
-            >
-              {nav.map((group) => {
-                const cols =
-                  group.columns ??
-                  (group.links
-                    ? [{ heading: group.label, links: group.links }]
-                    : []);
-                const active = isActiveGroup(group, pathname);
+						<motion.nav
+							variants={mobileContainer}
+							initial="hidden"
+							animate="show"
+							exit="hidden"
+							className="mt-8 flex-1">
+							{nav.map((group) => {
+								const cols =
+									group.columns ??
+									(group.links ?
+										[{ heading: group.label, links: group.links }]
+									:	[]);
+								const active = isActiveGroup(group, pathname);
 
-                if (cols.length === 0) {
-                  return (
-                    <motion.div key={group.label} variants={mobileItem}>
-                      <Link
-                        href={group.href!}
-                        onClick={onClose}
-                        className={cn(
-                          "block border-b border-white/10 py-4 font-display text-2xl font-semibold transition-colors",
-                          active ? "text-corporate-300" : "text-white"
-                        )}
-                      >
-                        {group.label}
-                      </Link>
-                    </motion.div>
-                  );
-                }
+								if (cols.length === 0) {
+									return (
+										<motion.div
+											key={group.label}
+											variants={mobileItem}>
+											<Link
+												href={group.href!}
+												onClick={onClose}
+												className={cn(
+													"block border-b border-white/10 py-4 font-display text-2xl font-semibold transition-colors",
+													active ? "text-corporate-300" : "text-white",
+												)}>
+												{group.label}
+											</Link>
+										</motion.div>
+									);
+								}
 
-                const isOpen = expanded === group.label;
-                return (
-                  <motion.div
-                    key={group.label}
-                    variants={mobileItem}
-                    className="border-b border-white/10"
-                  >
-                    <button
-                      onClick={() => setExpanded(isOpen ? null : group.label)}
-                      className="flex w-full items-center justify-between py-4 text-left font-display text-2xl font-semibold text-white"
-                    >
-                      {group.label}
-                      <ChevronDown
-                        className={cn(
-                          "size-5 text-corporate-300 transition-transform duration-300",
-                          isOpen && "rotate-180"
-                        )}
-                      />
-                    </button>
-                    <AnimatePresence initial={false}>
-                      {isOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.35, ease: EASE }}
-                          className="overflow-hidden"
-                        >
-                          <div className="grid grid-cols-1 gap-1 pb-4 sm:grid-cols-2">
-                            {cols.flatMap((c) => c.links).map((link) => (
-                              <Link
-                                key={link.label}
-                                href={link.href}
-                                onClick={onClose}
-                                className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-steel-300 transition-colors hover:bg-white/5 hover:text-white"
-                              >
-                                {link.icon && (
-                                  <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-corporate-200 ring-1 ring-white/10">
-                                    <Icon name={link.icon} className="size-[18px]" />
-                                  </span>
-                                )}
-                                <span className="text-[15px] font-medium">
-                                  {link.label}
-                                </span>
-                              </Link>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
-                );
-              })}
-            </motion.nav>
+								const isOpen = expanded === group.label;
+								return (
+									<motion.div
+										key={group.label}
+										variants={mobileItem}
+										className="border-b border-white/10">
+										<button
+											onClick={() => setExpanded(isOpen ? null : group.label)}
+											className="flex w-full items-center justify-between py-4 text-left font-display text-2xl font-semibold text-white">
+											{group.label}
+											<ChevronDown
+												className={cn(
+													"size-5 text-corporate-300 transition-transform duration-300",
+													isOpen && "rotate-180",
+												)}
+											/>
+										</button>
+										<AnimatePresence initial={false}>
+											{isOpen && (
+												<motion.div
+													initial={{ height: 0, opacity: 0 }}
+													animate={{ height: "auto", opacity: 1 }}
+													exit={{ height: 0, opacity: 0 }}
+													transition={{ duration: 0.35, ease: EASE }}
+													className="overflow-hidden">
+													<div className="grid grid-cols-1 gap-1 pb-4 sm:grid-cols-2">
+														{cols
+															.flatMap((c) => c.links)
+															.map((link) => (
+																<Link
+																	key={link.label}
+																	href={link.href}
+																	onClick={onClose}
+																	className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-steel-300 transition-colors hover:bg-white/5 hover:text-white">
+																	{link.icon && (
+																		<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-corporate-200 ring-1 ring-white/10">
+																			<Icon
+																				name={link.icon}
+																				className="size-[18px]"
+																			/>
+																		</span>
+																	)}
+																	<span className="text-[15px] font-medium">
+																		{link.label}
+																	</span>
+																</Link>
+															))}
+													</div>
+												</motion.div>
+											)}
+										</AnimatePresence>
+									</motion.div>
+								);
+							})}
+						</motion.nav>
 
-            {/* floating CTA */}
-            <motion.div variants={mobileItem} initial="hidden" animate="show" className="mt-8">
-              <ProposalCta full />
-              <a
-                href={`tel:${site.primaryPhoneRaw}`}
-                className="mt-3 flex items-center justify-center gap-2 rounded-full border border-white/20 py-3.5 text-sm font-medium text-white"
-              >
-                Call {site.phones[0]}
-              </a>
-            </motion.div>
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+						{/* floating CTA */}
+						<motion.div
+							variants={mobileItem}
+							initial="hidden"
+							animate="show"
+							className="mt-8">
+							<ProposalCta full />
+							<a
+								href={`tel:${site.primaryPhoneRaw}`}
+								className="mt-3 flex items-center justify-center gap-2 rounded-full border border-white/20 py-3.5 text-sm font-medium text-white">
+								Call {site.phones[0]}
+							</a>
+						</motion.div>
+					</div>
+				</motion.div>
+			)}
+		</AnimatePresence>
+	);
 }

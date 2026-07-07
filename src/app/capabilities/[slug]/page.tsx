@@ -43,7 +43,7 @@ const WORK_IMAGE_POOL = [
 const workImage = (name: string, i: number) =>
   WORK_IMAGE[name] ?? WORK_IMAGE_POOL[i % WORK_IMAGE_POOL.length];
 
-// Distinct titlebar icons per card (Lucide names) — mirrors the reference's
+// Distinct titlebar icons per card (Lucide names)  mirrors the reference's
 // per-card icon treatment. Neutral, feature-flavoured, cycled by index.
 const FEATURE_ICONS = [
   "Code2",
@@ -57,7 +57,7 @@ const FEATURE_ICONS = [
 ];
 const featureIcon = (i: number) => FEATURE_ICONS[i % FEATURE_ICONS.length];
 
-// Per-capability floating chips + badges for THE PROBLEM scene — each set is
+// Per-capability floating chips + badges for THE PROBLEM scene  each set is
 // written to echo that capability's specific pain (Lucide names / short tags).
 const PROBLEM_META: Record<string, { icons: string[]; badges: string[] }> = {
   "website-development": {
@@ -82,11 +82,11 @@ const PROBLEM_META: Record<string, { icons: string[]; badges: string[] }> = {
   },
 };
 
-// Features are authored as "Title — description". Split on the em-dash so the
+// Features are authored as "Title  description". Split on the em-dash so the
 // card can style the lead and the detail differently; sentences without one
 // become a standalone title.
 function splitFeature(f: string): { title: string; detail: string } {
-  const idx = f.indexOf(" — ");
+  const idx = f.indexOf("  ");
   return idx === -1
     ? { title: f, detail: "" }
     : { title: f.slice(0, idx), detail: f.slice(idx + 3) };
@@ -101,7 +101,7 @@ export async function generateMetadata({
   const cap = capabilityBySlug(slug);
   if (!cap) return { title: "Capability not found" };
   return {
-    title: `${cap.title} — ${site.name}`,
+    title: `${cap.title}  ${site.name}`,
     description: cap.subheadline,
   };
 }
@@ -225,7 +225,7 @@ export default async function CapabilityPage({
               align="center"
               kicker="Portfolio-ready outcomes"
               title="What you'll be able to build after this course"
-              intro="You won't just understand code — you'll have shipped real, portfolio-ready projects."
+              intro="You won't just understand code  you'll have shipped real, portfolio-ready projects."
             />
             <RevealGroup className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
               {cap.buildAfter.map((b, i) => (
@@ -277,7 +277,7 @@ export default async function CapabilityPage({
             </div>
           </div>
 
-          {/* Full-bleed card stack — spans the viewport so the fan isn't clipped */}
+          {/* Full-bleed card stack  spans the viewport so the fan isn't clipped */}
           <div className="relative mt-12 w-full">
             <CardStack
               items={cap.work.items.map((w, i) => ({

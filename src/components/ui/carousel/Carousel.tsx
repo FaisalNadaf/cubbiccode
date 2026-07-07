@@ -14,7 +14,7 @@ import { CarouselIndicators } from "./CarouselIndicators";
 import { CarouselCard } from "./CarouselCard";
 
 /**
- * Carousel — premium, custom-built, infinitely looping slider.
+ * Carousel  premium, custom-built, infinitely looping slider.
  *
  * Layout (matches the reference): thumbnail indicators on top, then a large
  * centred card flanked by circular prev/next arrows that sit outside the card.
@@ -25,7 +25,7 @@ import { CarouselCard } from "./CarouselCard";
  *
  * `theme` switches the whole surface between dark (default) and light.
  * `fill` makes the carousel stretch to its parent's height (the card area
- * flex-grows) instead of using a fixed height — use inside an h-screen flex
+ * flex-grows) instead of using a fixed height  use inside an h-screen flex
  * column. The parent must give it a height (e.g. flex-1 min-h-0).
  */
 export function Carousel({
@@ -45,7 +45,10 @@ export function Carousel({
 }) {
 	if (!slides.length) return null;
 	return (
-		<CarouselProvider count={slides.length} autoPlay={autoPlay} interval={interval}>
+		<CarouselProvider
+			count={slides.length}
+			autoPlay={autoPlay}
+			interval={interval}>
 			<CarouselInner
 				slides={slides}
 				theme={theme}
@@ -100,7 +103,11 @@ function CarouselInner({
 				role="region"
 				aria-roledescription="carousel"
 				aria-label="Featured work showcase"
-				className={cn("relative w-full", fill && "flex h-full flex-col", className)}
+				className={cn(
+					"relative w-full",
+					fill && "flex h-full flex-col",
+					className,
+				)}
 				onMouseEnter={() => setHovered(true)}
 				onMouseLeave={() => setHovered(false)}
 				onFocus={() => setFocused(true)}
@@ -112,9 +119,7 @@ function CarouselInner({
 				{/* Top: thumbnail indicators */}
 				<CarouselIndicators
 					className={
-						fill
-							? "mb-5 shrink-0 sm:mb-7 lg:mb-8"
-							: "mb-8 sm:mb-10 lg:mb-12"
+						fill ? "mb-5 shrink-0 sm:mb-7 lg:mb-8" : "mb-8 sm:mb-10 lg:mb-12"
 					}
 					theme={theme}
 					thumbnails={slides.map((s) => ({ src: s.image, alt: s.title }))}
@@ -124,7 +129,7 @@ function CarouselInner({
 				<div
 					className={cn(
 						"flex items-center gap-2.5 sm:gap-5 lg:gap-8",
-						fill && "min-h-0 flex-1 items-stretch"
+						fill && "min-h-0 flex-1 items-stretch",
 					)}>
 					<CarouselArrow
 						dir="prev"
@@ -135,11 +140,15 @@ function CarouselInner({
 					<div
 						className={cn(
 							"relative flex-1",
-							fill ? "h-full min-h-0" : "h-[540px] sm:h-[420px] lg:h-[440px]"
+							fill ? "h-full min-h-0" : "h-[540px] sm:h-[420px] lg:h-[440px]",
 						)}>
 						<CarouselViewport
 							render={(i) => (
-								<CarouselCard slide={slides[i]} index={i} theme={theme} />
+								<CarouselCard
+									slide={slides[i]}
+									index={i}
+									theme={theme}
+								/>
 							)}
 						/>
 					</div>
@@ -152,7 +161,10 @@ function CarouselInner({
 				</div>
 
 				{/* Screen-reader announcement */}
-				<p aria-live="polite" aria-atomic="true" className="sr-only">
+				<p
+					aria-live="polite"
+					aria-atomic="true"
+					className="sr-only">
 					{`Slide ${index + 1} of ${count}: ${slides[index]?.title ?? ""}`}
 				</p>
 			</div>

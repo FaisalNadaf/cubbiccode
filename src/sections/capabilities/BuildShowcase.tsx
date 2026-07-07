@@ -29,13 +29,13 @@ export function BuildShowcase({
 
 	return (
 		<div className="grid grid-cols-1 items-center gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
-			{/* Left — heading + live panel reflecting the front card */}
+			{/* Left  heading + live panel reflecting the front card */}
 			<div>
 				<SectionHeading
-        className="mb-10"
+					className="mb-10"
 					kicker={buildHeading}
 					title="Everything you need, engineered end-to-end."
-					intro="A complete, accountable scope — no hand-offs, no gaps. Here's exactly what this engagement delivers."
+					intro="A complete, accountable scope  no hand-offs, no gaps. Here's exactly what this engagement delivers."
 				/>
 
 				{/* progress track */}
@@ -81,7 +81,7 @@ export function BuildShowcase({
 				</div>
 			</div>
 
-			{/* Right — animated CardSwap showcase (real project imagery) */}
+			{/* Right  animated CardSwap showcase (real project imagery) */}
 			<div className="relative h-[640px] w-full sm:h-[760px] lg:h-[860px]">
 				<CardSwap
 					width={600}
@@ -97,7 +97,7 @@ export function BuildShowcase({
 							key={it.title}
 							className="cursor-pointer border border-steel-200 bg-white shadow-2xl ring-1 ring-black/5 transition-shadow hover:shadow-[0_28px_70px_-20px_rgba(11,27,58,0.45)]">
 							<div className="flex h-full w-full flex-col">
-								{/* titlebar — icon + label, like the reference */}
+								{/* titlebar  icon + label, like the reference */}
 								<div className="flex items-center gap-2.5 border-b border-steel-200 bg-white px-5 py-3">
 									<span className="flex size-7 shrink-0 items-center justify-center rounded-lg bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100">
 										<Icon
@@ -112,7 +112,7 @@ export function BuildShowcase({
 										{String(i + 1).padStart(2, "0")}
 									</span>
 								</div>
-								{/* body — real project screenshot fills the card */}
+								{/* body  real project screenshot fills the card */}
 								<div className="relative flex-1">
 									<Image
 										src={it.image}

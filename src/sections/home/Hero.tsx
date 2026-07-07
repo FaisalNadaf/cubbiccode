@@ -22,13 +22,13 @@ import { featuredClients } from "@/content/clients";
 import ColorBends from "@/components/ColorBends";
 
 /**
- * HERO — split into two full-width screens.
+ * HERO  split into two full-width screens.
  *
- *  1. LANDING  — a full-viewport (min-h 100svh) panel on the brand blue, with the
+ *  1. LANDING   a full-viewport (min-h 100svh) panel on the brand blue, with the
  *     badge, bold headline and a single primary CTA stacked + centered. An animated
  *     brand-blue ColorBends shader + radial glow give it depth; the bottom edge
  *     melts to white so it flows into the section below. Content lifts/fades on scroll.
- *  2. CONTENT  — a light section carrying the supporting copy, both CTAs, the
+ *  2. CONTENT   a light section carrying the supporting copy, both CTAs, the
  *     four headline stats and the trusted-by client ticker.
  *
  * All scroll/entrance motion is disabled under prefers-reduced-motion.
@@ -55,7 +55,7 @@ export function Hero() {
 
 	return (
 		<>
-			{/* ══ SCREEN 1 — full-screen centered landing on brand blue ══════════ */}
+			{/* ══ SCREEN 1  full-screen centered landing on brand blue ══════════ */}
 			<section
 				ref={ref}
 				className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-ink via-corporate-800 to-corporate-600 text-white">
@@ -81,14 +81,14 @@ export function Hero() {
 					<div className="absolute inset-0 bg-ink/40" />
 				</div>
 
-				{/* ── Light system — soft glow + bottom melt (grid removed) ────────── */}
+				{/* ── Light system  soft glow + bottom melt (grid removed) ────────── */}
 				<div
 					className="pointer-events-none absolute inset-0 z-[2]"
 					aria-hidden="true">
 					{/* Dark legibility scrim behind the headline so the white text always
               reads over the animated colour bands. */}
 					<div className="absolute inset-0 [background:radial-gradient(80%_55%_at_50%_42%,rgba(8,20,39,0.6),transparent_80%)]" />
-					{/* Refined bottom melt — stays dark longer, then eases into the white
+					{/* Refined bottom melt  stays dark longer, then eases into the white
               section below over the final stretch (no heavy white wash). */}
 					<div className="absolute inset-x-0 bottom-0 h-36 [background:linear-gradient(to_bottom,transparent_0%,transparent_52%,rgba(255,255,255,0.55)_84%,#fff_100%)]" />
 				</div>
@@ -166,7 +166,7 @@ export function Hero() {
 				</motion.div>
 			</section>
 
-			{/* ══ SCREEN 2 — full-screen award scroll-stack + stat reveal ═══════════ */}
+			{/* ══ SCREEN 2  full-screen award scroll-stack + stat reveal ═══════════ */}
 			<section className="relative bg-canvas">
 				{/* WhyCollage owns its own full-bleed layout + spacing */}
 				<WhyCollage />

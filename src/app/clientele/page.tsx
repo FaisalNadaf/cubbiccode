@@ -14,15 +14,15 @@ import {
 import { featuredClients } from "@/content/clients";
 
 export const metadata = {
-  title: "Our Clientele — 500+ Brands Trust Cubiccode",
+  title: "Our Clientele  500+ Brands Trust Cubiccode",
   description:
-    "From Tata Sky, Reliance and Cognizant to fast-growing startups — Cubiccode serves 500+ businesses across India. A look at a few of the brands we've loved working with.",
+    "From Tata Sky, Reliance and Cognizant to fast-growing startups  Cubiccode serves 500+ businesses across India. A look at a few of the brands we've loved working with.",
 };
 
 /**
  * Read every client logo straight from /public at build time. Drop files into
  * public/images/clientsLogo (or remove them) and they appear/disappear on the
- * page automatically — nothing hardcoded.
+ * page automatically  nothing hardcoded.
  */
 function getClientLogos(): Logo[] {
   const dir = path.join(process.cwd(), "public", "images", "clientsLogo");
@@ -56,7 +56,7 @@ export default function ClientelePage() {
       {/* <PageHero
         kicker="Our clientele"
         title="Few of the top companies we've loved working with"
-        subtitle="For nearly a decade we've partnered with over 500+ businesses across India — from household names like Tata Sky, Reliance and Cognizant to ambitious startups building their first product. Here's a glimpse of the companies that trust us."
+        subtitle="For nearly a decade we've partnered with over 500+ businesses across India  from household names like Tata Sky, Reliance and Cognizant to ambitious startups building their first product. Here's a glimpse of the companies that trust us."
         image="/images/Moments/EPCSCL06-GroupPicture.JPG"
         imageAlt="The Cubiccode team with clients and partners"
         breadcrumb={[{ label: "Home", href: "/" }, { label: "Clientele" }]}

@@ -153,7 +153,7 @@
 }
 
 /* First-load preloader guards (see components/ui/Preloader.tsx) */
-/* Session gate — set pre-paint by the inline <head> script in app/layout.tsx. */
+/* Session gate  set pre-paint by the inline <head> script in app/layout.tsx. */
 html[data-preloader-seen] [data-preloader] {
   display: none !important;
 }

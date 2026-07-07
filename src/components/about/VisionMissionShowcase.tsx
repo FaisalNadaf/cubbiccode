@@ -79,7 +79,7 @@ export function VisionMissionShowcase() {
 					<motion.p
 						className="mt-5 text-lg leading-relaxed text-steel-300"
 						variants={fadeUp(20, 0.7)}>
-						The horizon we&apos;re building toward — and the promise we keep on
+						The horizon we&apos;re building toward and the promise we keep on
 						the way there.
 					</motion.p>
 				</motion.div>
@@ -216,7 +216,7 @@ function DiagonalPanels() {
 					style={{ background: `${ACCENT}33` }}
 				/>
 
-				{/* Target icon — top-right */}
+				{/* Target icon  top-right */}
 				<motion.span
 					initial={{ scale: 0.5, opacity: 0, rotate: -20 }}
 					whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
@@ -318,7 +318,7 @@ function DiagonalPanels() {
 					</p>
 				</motion.div>
 
-				{/* Compass icon — bottom-left */}
+				{/* Compass icon  bottom-left */}
 				<motion.span
 					initial={{ scale: 0.5, opacity: 0, rotate: 20 }}
 					whileInView={{ scale: 1, opacity: 1, rotate: 0 }}

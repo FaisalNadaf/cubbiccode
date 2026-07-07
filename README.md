@@ -1,8 +1,8 @@
-# Cubiccode — Industrial Corporate Website
+# Cubiccode  Industrial Corporate Website
 
 A premium, industrial-corporate website for **Cubiccode Digital Media LLP**, built with Next.js 15.
 Strict **light theme** (steel / corporate-blue / deep-navy accents), visual-first, and animation-rich
-— engineered to communicate trust, authority and scale.
+ engineered to communicate trust, authority and scale.
 
 All copy, statistics, client names, testimonials, awards and case studies are the **real Cubiccode
 content** extracted from the existing cubiccode.in site.
@@ -11,13 +11,13 @@ content** extracted from the existing cubiccode.in site.
 
 - **Next.js 15** (App Router, Server Components, SSG) + **TypeScript**
 - **Tailwind CSS** (custom industrial design system)
-- **Framer Motion** — reveals, mega-menu, carousels, 3D-tilt
-- **GSAP + ScrollTrigger** — pinned horizontal scroll, split-text reveals
-- **Lenis** — smooth scroll (wired into the GSAP ticker)
-- **SplitType** — line-clipped heading reveals
-- **react-countup** — animated metrics
-- **Embla Carousel** — testimonials
-- **lucide-react** — icons
+- **Framer Motion**  reveals, mega-menu, carousels, 3D-tilt
+- **GSAP + ScrollTrigger**  pinned horizontal scroll, split-text reveals
+- **Lenis**  smooth scroll (wired into the GSAP ticker)
+- **SplitType**  line-clipped heading reveals
+- **react-countup**  animated metrics
+- **Embla Carousel**  testimonials
+- **lucide-react**  icons
 
 ## Run
 
@@ -53,7 +53,7 @@ public/
   images/                  # clients, certificates, portfolio, testimonials, about, press
 ```
 
-To change any copy, stat, client, award or case study, edit the files in **`src/content/`** —
+To change any copy, stat, client, award or case study, edit the files in **`src/content/`** 
 the whole site reads from there.
 
 ## Adding real media later (drop-in points)

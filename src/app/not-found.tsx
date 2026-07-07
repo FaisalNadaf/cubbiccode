@@ -13,7 +13,7 @@ export default function NotFound() {
           Page not found
         </h1>
         <p className="mx-auto mt-5 max-w-md text-lg text-steel-600">
-          The page you're looking for has moved or no longer exists. Let's get you
+          The page you&apos;re looking for has moved or no longer exists. Let&apos;s get you
           back to building something great.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

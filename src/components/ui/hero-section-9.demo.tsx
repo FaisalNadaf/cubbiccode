@@ -17,7 +17,7 @@ export function HeroSectionDemo() {
 					Websites that take <br /> ownership of your outcome
 				</>
 			}
-			subtitle="Cubiccode designs, builds and maintains high-performing websites for 500+ brands — a cross-functional team on every engagement, long after launch."
+			subtitle="Cubiccode designs, builds and maintains high-performing websites for 500+ brands  a cross-functional team on every engagement, long after launch."
 			actions={[
 				{
 					text: "Get a Proposal",

@@ -8,7 +8,7 @@
  * On load: a big cobe globe fades/zooms in and rotates, with client logos
  * pinned to its surface (they hide around the back like real pins). On scroll
  * the globe spins; near the end the pinned logos stream off the globe and,
- * right below, the full MagicBento grid (every logo) assembles into place —
+ * right below, the full MagicBento grid (every logo) assembles into place
  * reading as "the logos leave the globe and form the grid". Row 5 of the grid
  * is a band of big, full-colour highlight logos.
  *
@@ -30,11 +30,11 @@ import { featuredClients } from "@/content/clients";
 
 export type Logo = { src: string; alt: string };
 
-const FLYER = 64; // px — a pinned logo chip
-const GLOBE_SPEED = 0.0045; // globe auto-spin per frame — shared with the pinned logos
-const AUTO_DIR = -1; // sign of the pins' auto-spin — flip to +1 if they rotate against the globe
+const FLYER = 64; // px  a pinned logo chip
+const GLOBE_SPEED = 0.0045; // globe auto-spin per frame  shared with the pinned logos
+const AUTO_DIR = -1; // sign of the pins' auto-spin  flip to +1 if they rotate against the globe
 
-/** Fixed set of logos pinned to the globe — the featured brands from clients.ts. */
+/** Fixed set of logos pinned to the globe  the featured brands from clients.ts. */
 const FEATURED_LOGOS: Logo[] = featuredClients.map((c) => ({
 	src: c.logo,
 	alt: c.name,
@@ -218,7 +218,7 @@ function GlobeScene({ logos }: { logos: Logo[] }) {
 		};
 	}, []);
 
-	// Stay visible right through the pin — the sticky globe then scrolls up
+	// Stay visible right through the pin  the sticky globe then scrolls up
 	// into the grid (no faded-out empty div = no blank screen on the way out).
 	const globeOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [1, 1, 0.85]);
 	const globeScale = useTransform(scrollYProgress, [0, 0.92], [1, 1.14]);

@@ -44,7 +44,7 @@ export const metadata: Metadata = {
 	metadataBase: new URL(site.url),
 	title: {
 		default:
-			"Cubiccode — Top-Rated Website, Web App & ERP Development Company in India",
+			"Cubiccode  Top-Rated Website, Web App & ERP Development Company in India",
 		template: "%s · Cubiccode",
 	},
 	description: site.metaDescription,
@@ -64,12 +64,12 @@ export const metadata: Metadata = {
 		locale: "en_IN",
 		url: site.url,
 		siteName: site.legalName,
-		title: "Cubiccode — We Build Top-Rated Websites & Web Apps",
+		title: "Cubiccode  We Build Top-Rated Websites & Web Apps",
 		description: site.metaDescription,
 	},
 	twitter: {
 		card: "summary_large_image",
-		title: "Cubiccode — We Build Top-Rated Websites & Web Apps",
+		title: "Cubiccode  We Build Top-Rated Websites & Web Apps",
 		description: site.metaDescription,
 	},
 	robots: { index: true, follow: true },
@@ -93,7 +93,7 @@ export default function RootLayout({
 			<head>
 				{/* Pre-paint gate for the first-load preloader: if this session has
             already seen it, flag <html> so globals.css hides the overlay
-            before hydration — no flash on reloads / subsequent pages. */}
+            before hydration  no flash on reloads / subsequent pages. */}
 				<script
 					dangerouslySetInnerHTML={{
 						__html: `try{if(sessionStorage.getItem("cc-preloader-seen")==="1")document.documentElement.setAttribute("data-preloader-seen","")}catch(e){}`,

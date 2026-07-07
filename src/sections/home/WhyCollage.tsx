@@ -9,11 +9,11 @@ import { CountStat } from "@/components/ui/Stat";
 import { awards, heroStats, type Award } from "@/content/site";
 
 /**
- * WHY CUBICCODE — one continuous page-scroll stack: awards, then the stats.
+ * WHY CUBICCODE  one continuous page-scroll stack: awards, then the stats.
  *
  * A full-bleed stage driven by the *page* scroll (ScrollStack with
- * useWindowScroll). Each award card is a 60/40 split — a fully-visible proof
- * photo / certificate (60%) beside its copy (40%) — pinning/stacking on the one
+ * useWindowScroll). Each award card is a 60/40 split  a fully-visible proof
+ * photo / certificate (60%) beside its copy (40%)  pinning/stacking on the one
  * before it. Once the awards finish, a final stats card continues the very same
  * stack in the very same spot, its four headline numbers rising in one-by-one.
  *
@@ -23,13 +23,13 @@ import { awards, heroStats, type Award } from "@/content/site";
 
 const CARD_SIZE = "w-[86vw] max-w-[1200px] h-[70vh] min-h-[520px]";
 
-/* A 60/40 award card — full-visible proof image (60%), copy (40%). */
+/* A 60/40 award card  full-visible proof image (60%), copy (40%). */
 function AwardCard({ a, priority }: { a: Award; priority?: boolean }) {
 	return (
 		<ScrollStackItem
 			itemClassName={`${CARD_SIZE} border border-steel-200 bg-white`}>
 			<div className="flex h-full flex-col md:flex-row">
-				{/* Proof photo / certificate — 60%, shown whole (contain) over an
+				{/* Proof photo / certificate  60%, shown whole (contain) over an
 				    ambient blurred fill of itself so the panel never looks empty. */}
 				<div className="relative h-[44%] w-full shrink-0 overflow-hidden bg-steel-100 md:h-full md:w-3/5">
 					<Image
@@ -51,7 +51,7 @@ function AwardCard({ a, priority }: { a: Award; priority?: boolean }) {
 					/>
 				</div>
 
-				{/* Copy — 40% */}
+				{/* Copy  40% */}
 				<div className="flex flex-1 flex-col justify-center gap-4 p-7 sm:p-9 md:p-10 lg:p-12">
 					<div className="flex items-center gap-4">
 						<span className="grid size-14 shrink-0 place-items-center rounded-2xl bg-corporate-50 ring-1 ring-corporate-100">
@@ -70,29 +70,28 @@ function AwardCard({ a, priority }: { a: Award; priority?: boolean }) {
 					<h3 className="font-display text-2xl font-bold leading-[1.15] tracking-tight text-ink lg:text-[1.75rem]">
 						{a.title}
 					</h3>
-					<p className="text-[15px] leading-relaxed text-steel-600">
-						{a.desc}
-					</p>
+					<p className="text-[15px] leading-relaxed text-steel-600">{a.desc}</p>
 				</div>
 			</div>
 		</ScrollStackItem>
 	);
 }
 
-/* The final card in the stack — stat blocks rising in one-by-one. */
+/* The final card in the stack  stat blocks rising in one-by-one. */
 function StatsCard() {
 	const reduce = useReducedMotion();
 
-	const item: Variants = reduce
-		? { hidden: { opacity: 0 }, show: { opacity: 1 } }
-		: {
+	const item: Variants =
+		reduce ?
+			{ hidden: { opacity: 0 }, show: { opacity: 1 } }
+		:	{
 				hidden: { opacity: 0, y: 90 },
 				show: {
 					opacity: 1,
 					y: 0,
 					transition: { duration: 0.55, ease: [0.21, 0.47, 0.32, 0.98] },
 				},
-		  };
+			};
 
 	return (
 		<ScrollStackItem
@@ -124,7 +123,11 @@ function StatsCard() {
 							{/* top accent */}
 							<span className="absolute inset-x-0 top-0 mx-auto block h-px w-2/3 bg-gradient-to-r from-transparent via-corporate-300/60 to-transparent" />
 							<div className="font-display text-[2.6rem] font-bold leading-none tracking-tight text-white sm:text-5xl">
-								<CountStat value={s.value} prefix={s.prefix} suffix={s.suffix} />
+								<CountStat
+									value={s.value}
+									prefix={s.prefix}
+									suffix={s.suffix}
+								/>
 							</div>
 							<div className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-corporate-100/80">
 								{s.label}
@@ -150,7 +153,11 @@ export function WhyCollage() {
 				stackPosition="15%"
 				scaleEndPosition="8%">
 				{awards.map((a, i) => (
-					<AwardCard key={a.title} a={a} priority={i === 0} />
+					<AwardCard
+						key={a.title}
+						a={a}
+						priority={i === 0}
+					/>
 				))}
 				<StatsCard />
 			</ScrollStack>

@@ -18,7 +18,7 @@ const config: Config = {
       colors: {
         // Industrial light-theme system
         ink: {
-          DEFAULT: "#0B1B3A", // deep navy — primary text / brand
+          DEFAULT: "#0B1B3A", // deep navy  primary text / brand
           900: "#081427",
           800: "#0B1B3A",
           700: "#13284f",
