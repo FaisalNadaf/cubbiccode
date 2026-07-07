@@ -4,10 +4,10 @@ import type { Metadata } from "next";
 import { Inter, Sora, Geist, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
+import { SiteChrome } from "@/components/layout/SiteChrome";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { Cursor } from "@/components/ui/Cursor";
+import { Preloader } from "@/components/ui/Preloader";
 import { site } from "@/content/site";
 import { cn } from "@/lib/utils";
 
@@ -91,10 +91,18 @@ export default function RootLayout({
 				geist.variable,
 			)}>
 			<head>
-				{/* Route-transition fade must never hide content when JS is unavailable
-            (no-JS users + non-JS crawlers) — force it fully visible. */}
+				{/* Pre-paint gate for the first-load preloader: if this session has
+            already seen it, flag <html> so globals.css hides the overlay
+            before hydration — no flash on reloads / subsequent pages. */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `try{if(sessionStorage.getItem("cc-preloader-seen")==="1")document.documentElement.setAttribute("data-preloader-seen","")}catch(e){}`,
+					}}
+				/>
+				{/* Route-transition fade + preloader must never hide content when JS
+            is unavailable (no-JS users + non-JS crawlers). */}
 				<noscript>
-					<style>{`[data-route-fade]{opacity:1 !important}`}</style>
+					<style>{`[data-route-fade]{opacity:1 !important}[data-preloader]{display:none !important}`}</style>
 				</noscript>
 			</head>
 			<body className="min-h-screen bg-canvas font-sans text-ink">
@@ -103,12 +111,11 @@ export default function RootLayout({
 					hidden
 					dangerouslySetInnerHTML={{ __html: CREDIT_COMMENT }}
 				/>
+				<Preloader />
 				<SmoothScroll>
 					<ScrollProgress />
 					<Cursor />
-					<Navbar />
-					<main className="relative">{children}</main>
-					<Footer />
+					<SiteChrome>{children}</SiteChrome>
 				</SmoothScroll>
 			</body>
 		</html>

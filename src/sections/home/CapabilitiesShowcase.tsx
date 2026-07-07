@@ -13,6 +13,7 @@ import {
 } from "framer-motion";
 import { ArrowUpRight, Check } from "lucide-react";
 import { capabilities, type Capability } from "@/content/capabilities";
+import { capabilityImage } from "@/content/serviceImages";
 
 /**
  * CAPABILITIES — scroll-pinned showcase (shares the Origin·Objects motion
@@ -30,11 +31,8 @@ import { capabilities, type Capability } from "@/content/capabilities";
  * Below 640px or under prefers-reduced-motion the pin is dropped for a stacked,
  * fully-revealed layout.
  *
- * Card centre image is `/images/no.png` for every capability for now — swap per
- * card later by giving each Capability an image field.
+ * Each card shows its capability's own artwork (see `capabilityImage`).
  */
-
-const NO_IMAGE = "/images/no.png";
 
 // Showcase column geometry, in viewport-height units. Cards are near-full-height
 // so the active one fills the stage while its neighbours just peek (sliding stack).
@@ -264,14 +262,13 @@ function CapabilityCard({
   className?: string;
   priority?: boolean;
 }) {
-  // Full-bleed image card — the artwork fills the whole frame (no chrome). Swap
-  // NO_IMAGE for a real per-capability image when artwork lands.
+  // Full-bleed image card — the capability's own artwork fills the whole frame.
   return (
     <div
       className={`relative shrink-0 overflow-hidden rounded-3xl bg-steel-100 ring-1 ring-steel-200/80 shadow-lift ${className}`}
     >
       <Image
-        src={NO_IMAGE}
+        src={capabilityImage(cap.slug)}
         alt={cap.title}
         fill
         priority={priority}

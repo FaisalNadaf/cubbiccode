@@ -189,13 +189,13 @@ export function ZoomParallax({
             {current?.name}
           </span>
 
-          {/* Visit website — bottom left */}
+          {/* Visit website — bottom centre */}
           {current?.href ? (
             <a
               href={current.href}
               target="_blank"
               rel="noopener noreferrer"
-              className="pointer-events-auto group absolute bottom-9 left-6 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink shadow-lift transition-transform hover:-translate-y-0.5 sm:left-10 lg:left-14"
+              className="pointer-events-auto group absolute bottom-9 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink shadow-lift transition-transform hover:-translate-y-0.5"
             >
               Visit website
               <ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -250,22 +250,45 @@ function CarouselSlide({
 }) {
   const { input, output, seg, c } = opacityStops(i, total);
   const opacity = useTransform(cp, input, output);
-  const scale = useTransform(cp, [c - seg, c, c + seg], [1.14, 1, 1.05]);
+  // Blurred backdrop zooms (Ken-Burns); the sharp shot stays ≤ 1 so it's never cropped.
+  const bgScale = useTransform(cp, [c - seg, c, c + seg], [1.14, 1, 1.05]);
+  const shotScale = useTransform(cp, [c - seg, c, c + seg], [0.94, 1, 0.97]);
 
   return (
     <motion.div
       style={{ opacity }}
       className="pointer-events-none absolute inset-0 [will-change:opacity]"
     >
-      <motion.div style={{ scale }} className="absolute inset-0 [will-change:transform]">
+      {/* Blurred cover fill — keeps the frame immersive behind the full shot */}
+      <motion.div
+        style={{ scale: bgScale }}
+        className="absolute inset-0 [will-change:transform]"
+      >
         <Image
           src={img.src}
-          alt={img.alt}
+          alt=""
+          aria-hidden
           fill
           sizes="100vw"
-          className="object-cover"
+          className="scale-110 object-cover blur-2xl"
         />
-        <div className="absolute inset-0 bg-ink/25" />
+        <div className="absolute inset-0 bg-ink/60" />
+      </motion.div>
+
+      {/* The full website screenshot — always shown in its entirety, never cropped */}
+      <motion.div
+        style={{ scale: shotScale }}
+        className="absolute inset-0 flex items-center justify-center p-4 [will-change:transform] sm:p-8 lg:p-12"
+      >
+        <div className="relative h-full w-full">
+          <Image
+            src={img.src}
+            alt={img.alt}
+            fill
+            sizes="100vw"
+            className="object-contain"
+          />
+        </div>
       </motion.div>
     </motion.div>
   );

@@ -9,6 +9,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { BadgeCheck, Clock, ShieldCheck, Users, Play } from "lucide-react";
 import { industries, industryBySlug } from "@/content/industries";
+import { industryImage, industrySolutionImages } from "@/content/serviceImages";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/layout/PageHero";
 import { SolutionsSequence } from "@/sections/industries/SolutionsSequence";
@@ -110,7 +111,7 @@ export default async function IndustryPage({
               <div className="relative overflow-hidden rounded-4xl border border-steel-200 shadow-lift">
                 <div className="relative aspect-[4/3] w-full">
                   <Image
-                    src="/images/no.png"
+                    src={industryImage(ind.slug)}
                     alt={ind.title}
                     fill
                     sizes="(min-width: 1024px) 45vw, 90vw"
@@ -135,6 +136,7 @@ export default async function IndustryPage({
         title={ind.title}
         icon={ind.icon}
         solutions={ind.solutions}
+        images={industrySolutionImages(ind.slug, ind.solutions.length)}
       />
 
       {/* ============ HOW WE DO IT BETTER ============ */}

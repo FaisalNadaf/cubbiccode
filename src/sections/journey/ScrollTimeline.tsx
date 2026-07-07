@@ -315,18 +315,28 @@ function Slide({
               <motion.div
                 style={{ y: img2Y }}
                 className={cn(
-                  "absolute -bottom-12 z-30 w-[50%] overflow-hidden rounded-xl ring-1 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] [will-change:transform]",
+                  "absolute -bottom-12 z-30 overflow-hidden rounded-xl ring-1 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.55)] [will-change:transform]",
                   t.ring,
+                  // certificates get a slimmer, portrait card so the whole document shows
+                  m.image2Certificate ? "w-[40%]" : "w-[50%]",
                   left ? "-right-10" : "-left-10"
                 )}
               >
-                <div className="relative aspect-[4/3] w-full">
+                <div
+                  className={cn(
+                    "relative w-full",
+                    m.image2Certificate ? "aspect-[3/4] bg-white" : "aspect-[4/3]"
+                  )}
+                >
                   <Image
                     src={m.image2}
                     alt=""
                     fill
                     sizes="25vw"
-                    className="object-cover"
+                    // certificate: show it whole (contain); photo: fill the frame (cover)
+                    className={cn(
+                      m.image2Certificate ? "object-contain p-1.5" : "object-cover"
+                    )}
                   />
                 </div>
               </motion.div>

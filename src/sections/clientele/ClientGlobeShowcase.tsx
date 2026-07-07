@@ -20,16 +20,25 @@ import {
 	motion,
 	useScroll,
 	useTransform,
+	useMotionValue,
 	useReducedMotion,
 	type MotionValue,
 } from "framer-motion";
 import { GlobeWeather } from "@/components/ui/cobe-globe-weather";
 import MagicBento from "@/components/customComponent/MagicBento";
+import { featuredClients } from "@/content/clients";
 
 export type Logo = { src: string; alt: string };
 
-const SPIN_COUNT = 24; // logos pinned to the globe
 const FLYER = 64; // px — a pinned logo chip
+const GLOBE_SPEED = 0.0045; // globe auto-spin per frame — shared with the pinned logos
+const AUTO_DIR = -1; // sign of the pins' auto-spin — flip to +1 if they rotate against the globe
+
+/** Fixed set of logos pinned to the globe — the featured brands from clients.ts. */
+const FEATURED_LOGOS: Logo[] = featuredClients.map((c) => ({
+	src: c.logo,
+	alt: c.name,
+}));
 
 /* ── math ─────────────────────────────────────────────────────────────── */
 const clamp = (v: number, a: number, b: number) => Math.max(a, Math.min(b, v));
@@ -37,17 +46,6 @@ const smoothstep = (e0: number, e1: number, x: number) => {
 	const t = clamp((x - e0) / (e1 - e0), 0, 1);
 	return t * t * (3 - 2 * t);
 };
-
-/** Pick `n` random items (client-only). */
-function sampleRandom<T>(arr: T[], n: number): T[] {
-	if (arr.length <= n) return arr;
-	const copy = arr.slice();
-	for (let i = copy.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[copy[i], copy[j]] = [copy[j], copy[i]];
-	}
-	return copy.slice(0, n);
-}
 
 /** Even scatter of unit vectors on a sphere (Fibonacci). */
 function fibonacciSphere(n: number): [number, number, number][] {
@@ -158,15 +156,31 @@ function GridSection({
 /* ── desktop: pinned rotating globe with pinned logos ─────────────────── */
 
 function GlobeScene({ logos }: { logos: Logo[] }) {
+	void logos; // grid uses the full list; the globe pins the fixed featured set
 	const wrapRef = useRef<HTMLDivElement>(null);
 	const globeRef = useRef<HTMLDivElement>(null);
 	const dimsRef = useRef({ r: 260, vh: 800 });
 
-	const spinLogos = useMemo(() => sampleRandom(logos, SPIN_COUNT), [logos]);
+	// Fixed pinned logos (featured brands), not a random sample.
+	const spinLogos = FEATURED_LOGOS;
 	const spheres = useMemo(
 		() => fibonacciSphere(spinLogos.length),
 		[spinLogos.length],
 	);
+
+	// Continuous rotation that matches the globe's auto-spin, so pinned logos
+	// keep revolving with the globe even when the page isn't being scrolled.
+	const autoRot = useMotionValue(0);
+	useEffect(() => {
+		let raf = 0;
+		const loop = () => {
+			// advance once per frame by the same amount cobe adds to its phi
+			autoRot.set(autoRot.get() + GLOBE_SPEED);
+			raf = requestAnimationFrame(loop);
+		};
+		raf = requestAnimationFrame(loop);
+		return () => cancelAnimationFrame(raf);
+	}, [autoRot]);
 
 	const markers = useMemo(
 		() =>
@@ -240,7 +254,7 @@ function GlobeScene({ logos }: { logos: Logo[] }) {
 						className="w-[min(92vw,620px)]">
 						<GlobeWeather
 							markers={markers}
-							speed={0.0045}
+							speed={GLOBE_SPEED}
 							baseColor={[0.85, 0.89, 0.96]}
 							markerColor={[0.106, 0.435, 0.761]}
 							glowColor={[0.92, 0.95, 1]}
@@ -257,6 +271,7 @@ function GlobeScene({ logos }: { logos: Logo[] }) {
 							i={i}
 							logo={logo}
 							progress={scrollYProgress}
+							autoRot={autoRot}
 							spheres={spheres}
 							dimsRef={dimsRef}
 						/>
@@ -273,20 +288,22 @@ function PinnedLogo({
 	i,
 	logo,
 	progress,
+	autoRot,
 	spheres,
 	dimsRef,
 }: {
 	i: number;
 	logo: Logo;
 	progress: MotionValue<number>;
+	autoRot: MotionValue<number>;
 	spheres: [number, number, number][];
 	dimsRef: React.MutableRefObject<{ r: number; vh: number }>;
 }) {
-	const state = useTransform(progress, (p) => {
+	const state = useTransform([progress, autoRot], ([p, a]: number[]) => {
 		const v = spheres[i] ?? [0, 0, 0];
 
-		// spin with the globe as you scroll
-		const spin = p * Math.PI * 2 * 1.5;
+		// scroll adds spin; `a` is the globe's continuous auto-rotation
+		const spin = p * Math.PI * 2 * 1.5 + AUTO_DIR * a;
 		const cS = Math.cos(spin);
 		const sS = Math.sin(spin);
 		const X = v[0] * cS + v[2] * sS;

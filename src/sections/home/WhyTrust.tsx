@@ -24,22 +24,19 @@ const ownership = [
 		icon: Users,
 		title: "A cross-functional team",
 		text: "Designers, full-stack developers and a dedicated project manager on every single engagement.",
-		image:
-			"https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop",
+		image: "/images/downloads/A cross-functional team.webp",
 	},
 	{
 		icon: Gauge,
 		title: "Your scorecard is ours",
 		text: "We treat your launch date, your traffic and your conversions as our own KPIs  not yours alone.",
-		image:
-			"https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1200&auto=format&fit=crop",
+		image: "/images/downloads/Your scorecard is ours.webp",
 	},
 	{
 		icon: LifeBuoy,
 		title: "We don't vanish at launch",
 		text: "Ongoing support and AMC mean we're with you long after the site goes live.",
-		image:
-			"https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=1200&auto=format&fit=crop",
+		image: "/images/downloads/we dont vansih on launch.webp",
 	},
 ];
 

@@ -152,6 +152,24 @@
   }
 }
 
+/* First-load preloader guards (see components/ui/Preloader.tsx) */
+/* Session gate — set pre-paint by the inline <head> script in app/layout.tsx. */
+html[data-preloader-seen] [data-preloader] {
+  display: none !important;
+}
+/* Pure-CSS failsafe: if hydration never runs (JS error, blocked bundle),
+   the overlay hides itself after 9s so it can never brick the page.
+   Normal operation unmounts it long before this fires. */
+@keyframes preloader-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+[data-preloader] {
+  animation: preloader-failsafe 0.5s ease 9s forwards;
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,

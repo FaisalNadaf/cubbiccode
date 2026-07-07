@@ -34,6 +34,11 @@ export function ClientWall() {
   const rowA = namedClients.slice(0, half);
   const rowB = namedClients.slice(half);
 
+  // split featured logos so each marquee row shows a distinct set
+  const logoHalf = Math.ceil(featuredClients.length / 2);
+  const logosA = featuredClients.slice(0, logoHalf);
+  const logosB = featuredClients.slice(logoHalf);
+
   return (
     <section className="section relative overflow-hidden bg-canvas">
       <div className="container-x">
@@ -47,12 +52,12 @@ export function ClientWall() {
 
       <div className="mt-14 space-y-4">
         <Marquee speed={44}>
-          {featuredClients.map((c) => (
+          {logosA.map((c) => (
             <LogoCell key={c.name} {...c} />
           ))}
         </Marquee>
         <Marquee speed={50} reverse>
-          {[...featuredClients].reverse().map((c) => (
+          {logosB.map((c) => (
             <LogoCell key={c.name} name={c.name} logo={c.logo} />
           ))}
         </Marquee>

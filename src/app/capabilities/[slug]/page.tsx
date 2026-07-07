@@ -8,6 +8,10 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ArrowUpRight, Check, Play, Sparkles } from "lucide-react";
 import { capabilities, capabilityBySlug } from "@/content/capabilities";
+import {
+  capabilityFeatureImages,
+  capabilityProblemImages,
+} from "@/content/serviceImages";
 import { site } from "@/content/site";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -38,18 +42,6 @@ const WORK_IMAGE_POOL = [
 ];
 const workImage = (name: string, i: number) =>
   WORK_IMAGE[name] ?? WORK_IMAGE_POOL[i % WORK_IMAGE_POOL.length];
-
-// Real project screenshots that back the "What We Build" CardSwap tiles.
-const FEATURE_IMAGE_POOL = [
-  "/images/portfolio/city-index.jpg",
-  "/images/portfolio/laxis-analytics.jpg",
-  "/images/portfolio/prions-biotech.jpg",
-  "/images/portfolio/woodpecker-exotic.jpg",
-  "/images/portfolio/harsha-rakesh.jpg",
-  "/images/portfolio/aishwarya-cottons.png",
-];
-const featureImage = (i: number) =>
-  FEATURE_IMAGE_POOL[i % FEATURE_IMAGE_POOL.length];
 
 // Distinct titlebar icons per card (Lucide names) — mirrors the reference's
 // per-card icon treatment. Neutral, feature-flavoured, cycled by index.
@@ -124,6 +116,7 @@ export default async function CapabilityPage({
   if (!cap) notFound();
 
   const others = capabilities.filter((c) => c.slug !== cap.slug);
+  const featImages = capabilityFeatureImages(cap.slug, cap.features.length);
 
   return (
     <>
@@ -153,7 +146,7 @@ export default async function CapabilityPage({
         <div className="container-x relative">
           <ProblemShowcase
             problem={cap.problem}
-            images={FEATURE_IMAGE_POOL.slice(0, 4)}
+            images={capabilityProblemImages(cap.slug)}
             icons={PROBLEM_META[cap.slug]?.icons}
             badges={PROBLEM_META[cap.slug]?.badges}
           />
@@ -171,7 +164,7 @@ export default async function CapabilityPage({
               return {
                 title,
                 detail,
-                image: featureImage(i),
+                image: featImages[i],
                 icon: featureIcon(i),
               };
             })}

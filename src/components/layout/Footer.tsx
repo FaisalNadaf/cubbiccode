@@ -17,7 +17,6 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { site, nav } from "@/content/site";
-import { Wordmark } from "@/components/ui/Logo";
 import { cn } from "@/lib/utils";
 
 const EASE = [0.21, 0.47, 0.32, 0.98] as const;
@@ -169,17 +168,15 @@ export function Footer() {
         >
           {/* Brand */}
           <motion.div variants={fadeUp} className="lg:col-span-4">
-            <div className="flex items-center gap-2.5">
+            <Link href="/" aria-label={`${site.name} — home`} className="inline-flex">
               <Image
-                src="/brand/blue-star.png"
-                alt=""
-                aria-hidden
-                width={24}
-                height={24}
-                className="size-5 animate-spin-slow opacity-90"
+                src="/brand/cubiccode logo light.png"
+                alt={site.legalName}
+                width={758}
+                height={329}
+                className="h-24 w-auto object-contain lg:h-28"
               />
-              <Wordmark className="text-white" />
-            </div>
+            </Link>
             <p className="mt-5 max-w-sm text-sm leading-relaxed text-steel-400">
               {site.legalName} — an {site.certification.toLowerCase()} company.
               Our mission is to provide quality services, creative solutions and

@@ -4,15 +4,30 @@ import { Button } from "@/components/ui/Button";
 import { Carousel } from "@/components/ui/carousel";
 import type { ShowcaseSlide } from "@/content/showcase";
 
-// Featured projects mapped into the shared carousel's slide shape.
-const slides: ShowcaseSlide[] = featuredProjects.map((p) => ({
-  id: p.url,
-  eyebrow: p.category,
-  title: p.name,
-  description: p.blurb,
-  cta: { label: "Visit site", href: `https://${p.url}` },
-  image: p.image,
-}));
+// The seven sites featured on the home page, shown in this order.
+const HOME_SHOWCASE_URLS = [
+  "harsharakesh.com",
+  "madhtara.com",
+  "foraam.com",
+  "mabdaglobal.com/en",
+  "kajalagrawal.com",
+  "woodpeckerexotica.com",
+  "rareu.in",
+];
+
+// Curated featured projects mapped into the shared carousel's slide shape.
+const slides: ShowcaseSlide[] = HOME_SHOWCASE_URLS.map((url) =>
+  featuredProjects.find((p) => p.url === url),
+)
+  .filter((p): p is (typeof featuredProjects)[number] => Boolean(p))
+  .map((p) => ({
+    id: p.url,
+    eyebrow: p.category,
+    title: p.name,
+    description: p.blurb,
+    cta: { label: "Visit site", href: `https://${p.url}` },
+    image: p.image,
+  }));
 
 export function PortfolioShowcase() {
   return (

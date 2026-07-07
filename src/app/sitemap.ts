@@ -20,6 +20,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/careers",
     "/partner",
     "/gdg",
+    "/careerjump",
+    "/data-analytics",
+    "/digital-marketing",
     "/terms",
     "/privacy",
   ];

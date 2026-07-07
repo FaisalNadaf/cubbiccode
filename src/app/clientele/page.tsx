@@ -11,6 +11,7 @@ import {
   ClientGlobeShowcase,
   type Logo,
 } from "@/sections/clientele/ClientGlobeShowcase";
+import { featuredClients } from "@/content/clients";
 
 export const metadata = {
   title: "Our Clientele — 500+ Brands Trust Cubiccode",
@@ -41,7 +42,14 @@ function getClientLogos(): Logo[] {
 }
 
 export default function ClientelePage() {
-  const logos = getClientLogos();
+  // Featured brands lead the grid's starting rows; the rest of the folder logos follow.
+  const featured: Logo[] = featuredClients.map((c) => ({
+    src: c.logo,
+    alt: c.name,
+  }));
+  const featuredSrcs = new Set(featured.map((l) => l.src));
+  const rest = getClientLogos().filter((l) => !featuredSrcs.has(l.src));
+  const logos = [...featured, ...rest];
 
   return (
     <>

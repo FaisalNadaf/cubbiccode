@@ -1,4 +1,4 @@
-// Authentic Cubiccode company data — extracted from the existing cubiccode.in site.
+// Authentic Cubiccode company data  extracted from the existing cubiccode.in site.
 
 export const site = {
   name: "Cubiccode",
@@ -6,11 +6,11 @@ export const site = {
   certification: "ISO 9001:2015 Certified",
   founded: 2016,
   tagline:
-    "We build websites and web apps that don't just look good — they drive traffic and sales.",
+    "We build websites and web apps that don't just look good  they drive traffic and sales.",
   description:
-    "Cubiccode Digital Media LLP is a full-stack ITES company with nearly a decade of expertise — building websites, web applications, custom ERP, SEO and workflow automation for 500+ clients across India. Engineered in India, delivered on time.",
+    "Cubiccode Digital Media LLP is a full-stack ITES company with nearly a decade of expertise  building websites, web applications, custom ERP, SEO and workflow automation for 500+ clients across India. Engineered in India, delivered on time.",
   metaDescription:
-    "Cubiccode is a 5x-awarded, ISO 9001:2015 certified web development company with 700+ projects and 500+ clients. Websites, web apps, custom ERP, automation & SEO — engineered in India, delivered on time.",
+    "Cubiccode is a 5x-awarded, ISO 9001:2015 certified web development company with 700+ projects and 500+ clients. Websites, web apps, custom ERP, automation & SEO  engineered in India, delivered on time.",
   url: "https://cubiccode.in",
   educationUrl: "https://cubiccode.org",
   email: "biz@cubiccode.in",
@@ -27,12 +27,12 @@ export const site = {
   },
   offices: [
     {
-      label: "Registered Office — Belagavi",
+      label: "Registered Office  Belagavi",
       lines: [
         "Plot No. 60, Saraf Colony,",
         "Opp. Saraf Residency, Near Dominos Pizza,",
         "RPD Cross, Khanapur Road, Tilakwadi,",
-        "Belagavi, Karnataka, India — 590006",
+        "Belagavi, Karnataka, India  590006",
       ],
       map: "https://maps.app.goo.gl/7xSdkUUG6Ubc3VPU7",
       coords: { lat: 15.835088, lng: 74.506782 },
@@ -42,7 +42,7 @@ export const site = {
       lines: [
         "Novel Office, MG Road,",
         "Opposite 1MG Mall,",
-        "Bengaluru, Karnataka — 560042",
+        "Bengaluru, Karnataka  560042",
       ],
       map: "https://maps.app.goo.gl/LmYJarmyrMm8cwTy9",
       coords: { lat: 12.9756, lng: 77.6068 },
@@ -52,7 +52,7 @@ export const site = {
 
 export type Stat = { value: number; suffix: string; prefix?: string; label: string };
 
-// Trust Bar — authoritative stat counters.
+// Trust Bar  authoritative stat counters.
 export const heroStats: Stat[] = [
   { value: 700, suffix: "+", label: "Projects Delivered" },
   { value: 500, suffix: "+", label: "Clients Served" },
@@ -64,14 +64,14 @@ export const heroStats: Stat[] = [
 export const hero = {
   eyebrow: "ISO 9001:2015 Certified · 5x Awarded · Since 2016",
   headline:
-    "We build websites and web apps that don't just look good — they drive traffic and sales.",
+    "We build websites and web apps that don't just look good  they drive traffic and sales.",
   subheadline:
-    "With 500+ clients and nearly a decade building websites and web apps, Cubiccode is recognised among the 10 Best Web Development Start-ups in India (Silicon India, 2019), named Most Outstanding Web Development Company in Karnataka (AI Global Excellence Awards, 2019), and a Silver winner for Web Application Development Company of the Year at the 16th India Digital Awards 2025. Websites, web apps, customised ERP, SEO and workflow automation — engineered in India, delivered on time.",
+    "With 500+ clients and nearly a decade building websites and web apps, Cubiccode is recognised among the 10 Best Web Development Start-ups in India (Silicon India, 2019), named Most Outstanding Web Development Company in Karnataka (AI Global Excellence Awards, 2019), and a Silver winner for Web Application Development Company of the Year at the 16th India Digital Awards 2025. Websites, web apps, customised ERP, SEO and workflow automation  engineered in India, delivered on time.",
   primaryCta: "Get a Proposal",
   secondaryCta: "Explore Our Work",
 };
 
-// Condensed, card-sized highlights derived from the subheadline — used by the
+// Condensed, card-sized highlights derived from the subheadline  used by the
 // Screen 2 floating-card collage on the homepage.
 export const heroHighlights: { icon: string; text: string }[] = [
   {
@@ -80,34 +80,34 @@ export const heroHighlights: { icon: string; text: string }[] = [
   },
   {
     icon: "Trophy",
-    text: "Silver — Web App Development Company of the Year, India Digital Awards 2025.",
+    text: "Silver  Web App Development Company of the Year, India Digital Awards 2025.",
   },
   {
     icon: "Award",
-    text: "Top 10 Web Development Start-ups in India — Silicon India, 2019.",
+    text: "Top 10 Web Development Start-ups in India  Silicon India, 2019.",
   },
   {
     icon: "Layers",
-    text: "Websites, web apps, custom ERP, SEO & workflow automation — engineered in India, delivered on time.",
+    text: "Websites, web apps, custom ERP, SEO & workflow automation  engineered in India, delivered on time.",
   },
 ];
 
 export const trustBadges = [
   "ISO 9001:2015 Certified",
-  "Silicon India — Top 10 Web Developers, India",
+  "Silicon India  Top 10 Web Developers, India",
   "AI Global Excellence Award 2019",
-  "Silver — 16th India Digital Awards 2025",
+  "Silver  16th India Digital Awards 2025",
 ];
 
 export type Award = {
-  image: string; // gold award badge — /images/awardsIcons/*.png
-  moment: string; // proof photo / certificate — /images/Moments/*
+  image: string; // gold award badge  /images/awardsIcons/*.png
+  moment: string; // proof photo / certificate  /images/Moments/*
   title: string;
   org: string;
   desc: string;
 };
 
-// Award / recognition cards — powers the scroll-stack showcase in "Why Cubiccode".
+// Award / recognition cards  powers the scroll-stack showcase in "Why Cubiccode".
 export const awards: Award[] = [
   {
     image: "/images/awardsIcons/a.png",
@@ -133,7 +133,7 @@ export const awards: Award[] = [
   {
     image: "/images/awardsIcons/a.png",
     moment: "/images/Moments/india-excellence-award-certificate1.jpg",
-    title: "Silver — Web Application Development Company of the Year",
+    title: "Silver  Web Application Development Company of the Year",
     org: "16th India Digital Awards · 2025",
     desc: "Won Silver in Web Application Development Company of the Year at the 16th India Digital Awards.",
   },
@@ -207,7 +207,7 @@ export const nav: NavGroup[] = [
     ],
     feature: {
       title: "End-to-end digital engineering",
-      text: "Strategy, design, engineering & growth — under one roof.",
+      text: "Strategy, design, engineering & growth  under one roof.",
       href: "/capabilities/website-development",
       cta: "Explore capabilities",
     },
@@ -272,9 +272,9 @@ export const nav: NavGroup[] = [
     links: [
       { label: "Become a Sales Partner", href: "/partner", desc: "Grow with us", icon: "Handshake" },
       { label: "Join the Team", href: "/careers", desc: "Open roles", icon: "Briefcase" },
-      { label: "CareerJump", href: "/careers", desc: "Career acceleration", icon: "Rocket" },
-      { label: "Advanced Data Analytics", href: "/capabilities/training", desc: "With Generative AI", icon: "BarChart3" },
-      { label: "Advanced Digital Marketing", href: "/capabilities/seo", desc: "Performance marketing", icon: "Megaphone" },
+      { label: "CareerJump", href: "/careerjump", desc: "Career acceleration", icon: "Rocket" },
+      { label: "Advanced Data Analytics", href: "/data-analytics", desc: "With Generative AI", icon: "BarChart3" },
+      { label: "Advanced Digital Marketing", href: "/digital-marketing", desc: "Performance marketing", icon: "Megaphone" },
       { label: "GDG Belgaum", href: "/gdg", desc: "Google Developer Group", icon: "Code2" },
     ],
   },

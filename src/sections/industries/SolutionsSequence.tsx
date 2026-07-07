@@ -54,16 +54,19 @@ export function SolutionsSequence({
 	title,
 	icon,
 	solutions,
+	images,
 }: {
 	title: string;
 	icon: string;
 	solutions: string[];
+	/** Per-solution artwork, index-aligned to `solutions`. Falls back to the pool. */
+	images?: string[];
 }) {
 	const reduce = useReducedMotion();
 	const items: Item[] = solutions.map((text, i) => ({
 		text,
 		label: shortLabel(text),
-		image: IMAGE_POOL[i % IMAGE_POOL.length],
+		image: images?.[i] ?? IMAGE_POOL[i % IMAGE_POOL.length],
 	}));
 
 	if (reduce)

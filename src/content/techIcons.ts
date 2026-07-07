@@ -2,7 +2,7 @@
 //
 // Real brand logos come from Simple Icons (react-icons/si). A handful of brands
 // were removed from Simple Icons for trademark reasons (AWS, Azure, Magento,
-// the Adobe apps, Canva, Twilio, ChatGPT/DALL·E, Midjourney, Ahrefs, …) — those
+// the Adobe apps, Canva, Twilio, ChatGPT/DALL·E, Midjourney, Ahrefs, …)  those
 // fall back to a well-matched Lucide glyph so every tool still shows an icon.
 
 import type { ComponentType, CSSProperties } from "react";

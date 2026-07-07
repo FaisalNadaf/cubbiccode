@@ -25,7 +25,7 @@ export const awards: Award[] = [
     image: "/images/certificates/brandcounselling.jpg",
   },
   {
-    title: "Silver — Web Application Development Company of the Year",
+    title: "Silver  Web Application Development Company of the Year",
     org: "16th India Digital Awards",
     year: "2025",
     kind: "Award",
@@ -45,7 +45,7 @@ export const awards: Award[] = [
     image: "/images/no.png",
   },
   {
-    title: "TEDx Speaker — “A New Age Teacher”",
+    title: "TEDx Speaker  “A New Age Teacher”",
     org: "TEDx Stage · Co-founder Sarvesh Kakkeri",
     kind: "Recognition",
     image: "/images/no.png",
@@ -71,14 +71,14 @@ export const certificateImages: CertificateImage[] = [
     title: "ISO 9001:2015 Certified",
     agency: "Quality Management System",
     description:
-      "An internationally recognised, formally audited quality management system — the backbone of our consistent, reliable delivery.",
+      "An internationally recognised, formally audited quality management system  the backbone of our consistent, reliable delivery.",
   },
   {
     src: "/images/certificates/cubic_code_gst_certificate_(1)_page-0001.jpg",
     title: "GST Registration Certificate",
     agency: "Government of India",
     description:
-      "Registered under the Goods & Services Tax — a fully compliant, tax-registered business.",
+      "Registered under the Goods & Services Tax  a fully compliant, tax-registered business.",
   },
   {
     src: "/images/certificates/Cubiccode_LLP_-_Certificate_of_Incorporation_(1)_page-0001.jpg",
@@ -104,14 +104,16 @@ export type Milestone = {
   image?: string;
   /** Optional secondary photo layered behind the primary for depth. */
   image2?: string;
+  /** True when `image2` is a portrait document (a certificate)  renders in a taller, fully-visible frame instead of a cropped landscape one. */
+  image2Certificate?: boolean;
 };
 
-// Our Journey — authoritative milestones.
+// Our Journey  authoritative milestones.
 export const journey: Milestone[] = [
   {
     year: "2016",
     title: "Cubiccode is founded",
-    text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision — to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
+    text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision  to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
     image: "/images/Moments/2016.jpeg",
     image2: "/images/Moments/1.jpg",
   },
@@ -128,18 +130,20 @@ export const journey: Milestone[] = [
     text: "We've trained numerous successful students who've gone on to build rewarding careers across industries. In recognition of his contribution to digital education, our Managing Director, Sarvesh Kakkeri, was honoured with the Best Youngest Digital Marketing Teacher in India award at the Indian Education Awards.",
     image: "/images/Moments/award-bg.jpg",
     image2: "/images/Moments/business-excellence-certificate1.jpg",
+    image2Certificate: true,
   },
   {
     year: "2019",
     title: "National recognition & 250+ companies",
-    text: "A major milestone — recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
+    text: "A major milestone  recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
     image: "/images/Moments/india-excellence-award-certificate1.jpg",
     image2: "/images/Moments/brandcounselling1.jpg",
+    image2Certificate: true,
   },
   {
     year: "2020",
     title: "On the TEDx stage",
-    text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs — further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
+    text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs  further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
     image: "/images/Moments/2020.jpg",
     image2: "/images/Moments/DSC_5539.JPG",
   },
@@ -153,14 +157,14 @@ export const journey: Milestone[] = [
   {
     year: "2024",
     title: "1,000+ students trained",
-    text: "Cubiccode's sister arm — the Belgaum Institute of Data Analytics and Digital Marketing with AI — had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
+    text: "Cubiccode's sister arm  the Belgaum Institute of Data Analytics and Digital Marketing with AI  had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
     image: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
     image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.16AM.jpeg",
   },
   {
     year: "2025",
     title: "Silver at the India Digital Awards",
-    text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally — we won Silver in the Web Application Development Company of the Year category at the 16th India Digital Awards.",
+    text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally  we won Silver in the Web Application Development Company of the Year category at the 16th India Digital Awards.",
     image: "/images/Moments/WhatsAppImage2025-11-01at6.28.58PM.jpeg",
     image2: "/images/Moments/WhatsAppImage2025-11-01at6.28.59PM.jpeg",
   },
@@ -172,18 +176,18 @@ export type Value = {
   text: string;
 };
 
-// Company Culture — the twelve principles.
+// Company Culture  the twelve principles.
 export const values: Value[] = [
   { icon: "ShieldCheck", title: "Ownership Over Excuses", text: "Take responsibility. Own the outcome. Never wait to be told twice. Solve problems." },
   { icon: "Zap", title: "Speed With Excellence", text: "Move fast. Maintain quality. Execute with precision. Delays kill momentum." },
   { icon: "Target", title: "Outcome Oriented", text: "Effort matters, but being busy means nothing. Results matter more. Deliver measurable impact." },
   { icon: "BookOpen", title: "Curiosity & Continuous Learning", text: "Stay adaptable. Keep learning. Keep improving. Stay ahead." },
   { icon: "TrendingUp", title: "Raise The Standard", text: "Good is not enough. Excellence is the expectation." },
-  { icon: "Scale", title: "Integrity Always", text: "Do the right thing — even when nobody is watching." },
+  { icon: "Scale", title: "Integrity Always", text: "Do the right thing  even when nobody is watching." },
   { icon: "MessagesSquare", title: "Open & Honest Feedback Without Ego", text: "Great teams grow through direct, transparent communication." },
   { icon: "Lightbulb", title: "Solution First Thinking", text: "Bring solutions, not just problems." },
   { icon: "HeartHandshake", title: "Respect For People", text: "Professionalism, empathy and mutual respect at all times." },
-  { icon: "BadgeCheck", title: "Reliability Builds Trust", text: "Do what you said you would do — every single time. Commitment to your deadlines." },
+  { icon: "BadgeCheck", title: "Reliability Builds Trust", text: "Do what you said you would do  every single time. Commitment to your deadlines." },
   { icon: "Compass", title: "Purpose Driven Work", text: "Understand the “why” behind everything we do." },
   { icon: "Users", title: "Win Together", text: "Collaboration over ego. Team success over individual credit. No egos. No silos. One mission." },
 ];
@@ -193,7 +197,7 @@ export const whyChooseUs = [
   { num: "02", title: "Talented Team", text: "Our developers, designers and project managers are passionate about what they do and committed to excellence." },
   { num: "03", title: "Affordable Quality", text: "Because our expertise is in-house and our teams stay lean, we deliver premium, ISO-certified work at honest, value-for-money pricing." },
   { num: "04", title: "Holistic Approach", text: "From design and development to ERP, automation and SEO, we offer a comprehensive suite of services for every digital need." },
-  { num: "05", title: "Customer-Centric", text: "We take ownership of your outcome as if it were our own — and we won't consider the job done until the work moves your business forward." },
+  { num: "05", title: "Customer-Centric", text: "We take ownership of your outcome as if it were our own  and we won't consider the job done until the work moves your business forward." },
 ];
 
 // Founders.
@@ -214,10 +218,10 @@ export const founderMessage = {
     "We also made a decision early on that we've never walked back: world-class work shouldn't come with a world-class invoice. Because our expertise is in-house and our teams stay lean, we deliver premium engineering at honest, value-for-money pricing and we deliver it on the date we promised, not “soon.” That commitment is why 500+ clients have stayed with us, referred us, and grown alongside us, and why we've shipped 700+ projects, trained over 1,000 students, stood on global stages, and been recognised across India for our work.",
     "Whether you're a hospital, a manufacturer, a start-up founder or a retail chain, our promise is the same: we'll take ownership of your outcome as if it were our own, and we won't consider the job done until the work moves your business forward. Your ambition is the reason we exist. Let's build something that matters.",
   ],
-  signature: "— Sarvesh Kakkeri & Shivani Jadhav",
+  signature: " Sarvesh Kakkeri & Shivani Jadhav",
 };
 
-// About — story, vision & mission.
+// About  story, vision & mission.
 export const aboutCopy = {
   eyebrow: "Who we are",
   headline: "Transforming businesses with innovation since 2016.",
@@ -225,14 +229,14 @@ export const aboutCopy = {
     "Cubiccode Digital Media LLP is a full-stack ITES company born in Belagavi, now serving 500+ clients nationwide from offices in Belagavi and Bengaluru.",
   storyHeading: "We started with one belief: a website should earn its keep.",
   story: [
-    "Cubiccode Digital Media LLP began in 2016 as the brainchild of co-founders Sarvesh Kakkeri and Shivani Jadhav. From a small office in Belagavi, we set out with a simple, stubborn idea — that a business website shouldn't just look good, it should be fast, reliable, and built to drive real sales.",
+    "Cubiccode Digital Media LLP began in 2016 as the brainchild of co-founders Sarvesh Kakkeri and Shivani Jadhav. From a small office in Belagavi, we set out with a simple, stubborn idea  that a business website shouldn't just look good, it should be fast, reliable, and built to drive real sales.",
     "That idea resonated. By 2018 we'd served 150+ clients. By 2019 we were named one of the 10 Best Web Development Start-ups in India by Silicon India and Most Outstanding Web Development Company in Karnataka at the AI Global Excellence Awards. Today, nearly a decade in, we've delivered 700+ projects, powered over a million daily visitors, and earned the trust of brands from local champions to Tata Sky, Asian Paints, Cognizant, Tech Mahindra and more.",
-    "We're still that same team at heart — lean, agile, obsessed with the outcome. The office is bigger. The ambition is the same.",
+    "We're still that same team at heart  lean, agile, obsessed with the outcome. The office is bigger. The ambition is the same.",
   ],
   vision:
     "To become a recognized digital growth company that helps businesses build powerful web experiences, dominate search and AI platforms, and generate sustainable online growth through innovative technology, web solutions, and AI-driven visibility strategies.",
   mission:
     "To deliver a wide range of quality services, creative solutions, exceptional after-sales support, and superfast on-time delivery, so that every client we serve grows because they worked with us.",
   clientele:
-    "We've worked with small start-ups and large corporations alike, but we love projects that excite us and people as passionate as we are. We stay lean and build agile — cross-functional teams run weekly sprints and evolve through collaboration to make sure every client gets exactly what they need.",
+    "We've worked with small start-ups and large corporations alike, but we love projects that excite us and people as passionate as we are. We stay lean and build agile  cross-functional teams run weekly sprints and evolve through collaboration to make sure every client gets exactly what they need.",
 };

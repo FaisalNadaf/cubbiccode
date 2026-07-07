@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { industries, type Industry } from "@/content/industries";
+import { industryImage } from "@/content/serviceImages";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
 /**
@@ -27,8 +28,6 @@ import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
  * Below `lg` the manual rows collapse to a clean 2-col (tablet) / 1-col (mobile)
  * grid; the parallelogram geometry is preserved at every breakpoint.
  */
-
-const NO_IMAGE = "/images/no.png";
 
 // One global slant — a FIXED length, so every tile shares one edge angle.
 const SLANT_VARS = "[--slant:0.9rem] sm:[--slant:1.4rem] lg:[--slant:2.5rem]";
@@ -214,7 +213,7 @@ function IndustryCard({
 				className="absolute inset-[1.5px] overflow-hidden bg-steel-900"
 				style={{ clipPath: clip }}>
 				<Image
-					src={NO_IMAGE}
+					src={industryImage(ind.slug)}
 					alt={ind.title}
 					fill
 					priority={priority}

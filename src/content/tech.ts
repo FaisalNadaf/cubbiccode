@@ -1,4 +1,4 @@
-// Technologies We Work With — authoritative, categorized stack. Drives the homepage TechEcosystem.
+// Technologies We Work With  authoritative, categorized stack. Drives the homepage TechEcosystem.
 
 export type TechCategory = {
   icon: string; // lucide-react name
