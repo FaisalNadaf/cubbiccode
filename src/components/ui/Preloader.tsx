@@ -29,7 +29,8 @@ import {
  *    globals.css hides the overlay before hydration (no flash on repeats).
  *  • <noscript> hides it for no-JS users/crawlers, and a pure-CSS failsafe
  *    in globals.css hides it after 9s even if hydration never runs.
- *  • Scroll is locked (html overflow + Lenis stop) only while visible.
+ *  • Scroll is locked (html/body overflow + capture-phase wheel/touch block,
+ *    which also neutralises Lenis smooth scroll) only while visible.
  *  • prefers-reduced-motion: content appears instantly, exit is a fade.
  */
 
@@ -66,8 +67,6 @@ const FACES = [
 		dy: 10,
 	},
 ];
-
-type LenisWindow = { lenis?: { stop: () => void; start: () => void } };
 
 export function Preloader() {
 	const reduce = useReducedMotion();
@@ -131,14 +130,17 @@ export function Preloader() {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	// Scroll lock while the overlay is up (native + Lenis).
+	// Scroll lock while the overlay is up.
 	//
-	// Lenis is created by the sibling <SmoothScroll> provider, whose effect
-	// fires *after* this one, so `window.lenis` is undefined on first run and a
-	// one-shot `stop()` would silently no-op  leaving smooth scroll running
-	// behind the overlay. Overflow:hidden can't catch it either, because Lenis
-	// preventDefaults the wheel and scrolls programmatically. So we poll and keep
-	// calling stop() until Lenis exists (idempotent), and release it on cleanup.
+	// `overflow: hidden` alone can't hold the page still: the smooth-scroll layer
+	// (Lenis) listens for wheel/touch on `window` and scrolls the page
+	// *programmatically*, which ignores overflow entirely. Reaching for the
+	// `window.lenis` global to stop it is unreliable (it may be absent or the
+	// wrong shape when we read it). So we swallow the gestures at the source: a
+	// capture-phase listener on `window` runs *before* Lenis's bubble-phase
+	// handler, so preventDefault() blocks native scroll and stopPropagation()
+	// keeps Lenis  and any other scroller  from ever seeing the event.
+	// overflow:hidden stays as a secondary guard for keyboard / scrollbar scroll.
 	useEffect(() => {
 		if (gone) return;
 		const html = document.documentElement;
@@ -148,15 +150,19 @@ export function Preloader() {
 		html.style.overflow = "hidden";
 		body.style.overflow = "hidden";
 
-		const getLenis = () => (window as unknown as LenisWindow).lenis;
-		getLenis()?.stop();
-		const poll = window.setInterval(() => getLenis()?.stop(), 80);
+		const block = (e: Event) => {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		const opts = { capture: true, passive: false } as const;
+		window.addEventListener("wheel", block, opts);
+		window.addEventListener("touchmove", block, opts);
 
 		return () => {
-			window.clearInterval(poll);
+			window.removeEventListener("wheel", block, opts);
+			window.removeEventListener("touchmove", block, opts);
 			html.style.overflow = prevHtmlOverflow;
 			body.style.overflow = prevBodyOverflow;
-			getLenis()?.start();
 		};
 	}, [gone]);
 
