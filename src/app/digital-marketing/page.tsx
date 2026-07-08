@@ -1,6 +1,8 @@
 /**
  * Designed & Developed by Faisal Nadaf
- * Contact: faisalfnadaf@gmail.com
+ * Email : faisalfnadaf@gmail.com
+ *
+ * @format
  */
 
 import { BrandSplash } from "@/components/splash/BrandSplash";
@@ -11,5 +13,5 @@ const brand = groupCompanyBySlug("digital-marketing")!;
 export const metadata = brand.meta;
 
 export default function DigitalMarketingPage() {
-  return <BrandSplash brand={brand} />;
+	return <BrandSplash brand={brand} />;
 }

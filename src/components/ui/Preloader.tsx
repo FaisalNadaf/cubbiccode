@@ -132,18 +132,31 @@ export function Preloader() {
 	}, []);
 
 	// Scroll lock while the overlay is up (native + Lenis).
+	//
+	// Lenis is created by the sibling <SmoothScroll> provider, whose effect
+	// fires *after* this one, so `window.lenis` is undefined on first run and a
+	// one-shot `stop()` would silently no-op  leaving smooth scroll running
+	// behind the overlay. Overflow:hidden can't catch it either, because Lenis
+	// preventDefaults the wheel and scrolls programmatically. So we poll and keep
+	// calling stop() until Lenis exists (idempotent), and release it on cleanup.
 	useEffect(() => {
 		if (gone) return;
 		const html = document.documentElement;
-		const prevOverflow = html.style.overflow;
+		const body = document.body;
+		const prevHtmlOverflow = html.style.overflow;
+		const prevBodyOverflow = body.style.overflow;
 		html.style.overflow = "hidden";
-		const lenis = (
-			window as unknown as { lenis?: { stop?: () => void; start?: () => void } }
-		).lenis;
-		lenis?.stop?.();
+		body.style.overflow = "hidden";
+
+		const getLenis = () => (window as unknown as LenisWindow).lenis;
+		getLenis()?.stop();
+		const poll = window.setInterval(() => getLenis()?.stop(), 80);
+
 		return () => {
-			html.style.overflow = prevOverflow;
-			lenis?.start?.();
+			window.clearInterval(poll);
+			html.style.overflow = prevHtmlOverflow;
+			body.style.overflow = prevBodyOverflow;
+			getLenis()?.start();
 		};
 	}, [gone]);
 

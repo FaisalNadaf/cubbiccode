@@ -38,7 +38,7 @@ const playfair = Playfair_Display({
 // "View Source". React strips normal JSX comments from output; the only way to
 // keep a real HTML comment node is to write it via dangerouslySetInnerHTML.
 const CREDIT_COMMENT =
-	"<!--\n  Designed & Developed by Faisal Nadaf\n  Contact: faisalfnadaf@gmail.com\n-->";
+	"<!--\n  Designed & Developed by Faisal Nadaf\n  Email : faisalfnadaf@gmail.com\n-->";
 
 export const metadata: Metadata = {
 	metadataBase: new URL(site.url),

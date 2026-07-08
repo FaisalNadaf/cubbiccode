@@ -52,7 +52,10 @@ const TRAVEL_START = 0.18;
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 const idx = (n: number) => String(n).padStart(2, "0");
-const lead = (feature: string) => feature.split("")[0].trim();
+// Features are authored as "Heading — description"; the em-dash separator was
+// stripped to a run of spaces in the source copy, so split on 2+ whitespace (or
+// a literal dash) to recover just the heading label for the compact list.
+const lead = (feature: string) => feature.split(/\s{2,}|\s[—–]\s/)[0].trim();
 
 export function CapabilitiesShowcase() {
 	const sectionRef = useRef<HTMLElement>(null);
@@ -173,37 +176,58 @@ export function CapabilitiesShowcase() {
 						</AnimatePresence>
 					</div>
 
-					{/* Dynamic feature + tech panel, right-centre */}
-					<div className="absolute right-[4vw] top-1/2 z-30 w-[clamp(200px,19vw,320px)] -translate-y-1/2">
+					{/* Dynamic feature panel, right-centre */}
+					<div className="absolute right-[4vw] top-1/2 z-30 w-[clamp(210px,20vw,330px)] -translate-y-1/2">
+						<span className="mb-4 flex items-center gap-2.5 font-sans text-[11px] font-semibold uppercase tracking-[0.22em] text-corporate-600">
+							<span className="h-px w-6 bg-corporate-300" />
+							What&rsquo;s included
+						</span>
 						<AnimatePresence mode="wait">
-							<motion.div
+							<motion.ul
 								key={active}
 								initial={{ opacity: 0, y: 16 }}
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0, y: -12 }}
-								transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-								<ul className="flex flex-col gap-2.5">
-									{cap.features.slice(0, 4).map((f) => (
-										<li
-											key={f}
-											className="flex items-start gap-2 font-sans text-[clamp(12.5px,0.95vw,14.5px)] leading-snug text-steel-700">
-											<Check className="mt-0.5 size-4 shrink-0 text-corporate-500" />
-											{lead(f)}
-										</li>
-									))}
-								</ul>
-							</motion.div>
+								transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+								className="flex flex-col divide-y divide-steel-200/70">
+								{cap.features.slice(0, 4).map((f) => (
+									<li
+										key={f}
+										className="flex items-start gap-3 py-3 first:pt-0 last:pb-0 font-sans text-[clamp(13px,0.95vw,15px)] font-medium leading-snug text-steel-700">
+										<span className="mt-px grid size-5 shrink-0 place-items-center rounded-full bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100">
+											<Check className="size-3" strokeWidth={2.75} />
+										</span>
+										{lead(f)}
+									</li>
+								))}
+							</motion.ul>
 						</AnimatePresence>
 					</div>
 
 					{/* CTA button, bottom-right */}
 					<Link
 						href={`/capabilities/${cap.slug}`}
-						className="group absolute bottom-[8vh] right-[6vw] z-40 flex h-[92px] w-[268px] flex-col justify-between rounded-2xl bg-white p-5 shadow-card ring-1 ring-steel-200 transition-transform duration-300 hover:-translate-y-1">
-						<span className="font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-ink">
-							View capability
+						aria-label={`View ${cap.title}`}
+						className="group absolute bottom-[8vh] right-[6vw] z-40 flex w-[300px] items-center justify-between gap-4 overflow-hidden rounded-2xl bg-white p-5 shadow-card ring-1 ring-steel-200/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:ring-corporate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-500 focus-visible:ring-offset-2">
+						{/* Blue sweep fills the card on hover */}
+						<span
+							aria-hidden
+							className="absolute inset-0 z-0 translate-y-full bg-corporate-600 transition-transform duration-300 ease-out group-hover:translate-y-0"
+						/>
+						<span className="relative z-10 flex flex-col">
+							<span className="font-sans text-[10.5px] font-semibold uppercase tracking-[0.2em] text-corporate-600 transition-colors duration-300 group-hover:text-white/70">
+								Explore
+							</span>
+							<span className="mt-1 font-sans text-[15px] font-semibold uppercase tracking-[0.14em] text-ink transition-colors duration-300 group-hover:text-white">
+								View capability
+							</span>
 						</span>
-						<ArrowUpRight className="size-5 self-end text-corporate-500 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+						<span className="relative z-10 grid size-11 shrink-0 place-items-center rounded-full bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100 transition-colors duration-300 group-hover:bg-white group-hover:ring-white">
+							<ArrowUpRight
+								className="size-5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+								strokeWidth={2}
+							/>
+						</span>
 					</Link>
 				</motion.div>
 

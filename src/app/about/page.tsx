@@ -1,6 +1,8 @@
 /**
  * Designed & Developed by Faisal Nadaf
- * Contact: faisalfnadaf@gmail.com
+ * Email : faisalfnadaf@gmail.com
+ *
+ * @format
  */
 
 /** @format */
@@ -52,10 +54,16 @@ export default function AboutPage() {
 				imageAlt="The Cubiccode team building websites and web apps"
 				breadcrumb={[{ label: "Home", href: "/" }, { label: "About" }]}>
 				<div className="flex flex-wrap items-center gap-3">
-					<Button href={site.proposalCta} external variant="accent" arrow>
+					<Button
+						href={site.proposalCta}
+						external
+						variant="accent"
+						arrow>
 						Get a Proposal
 					</Button>
-					<Button href="/journey" variant="outline">
+					<Button
+						href="/journey"
+						variant="outline">
 						Our journey
 					</Button>
 				</div>
@@ -122,9 +130,7 @@ export default function AboutPage() {
 											<p
 												className={cn(
 													"relative mt-4 text-pretty leading-relaxed",
-													i === 0
-														? "text-lg text-steel-700"
-														: "text-steel-600",
+													i === 0 ? "text-lg text-steel-700" : "text-steel-600",
 												)}>
 												{p}
 											</p>

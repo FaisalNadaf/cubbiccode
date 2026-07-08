@@ -1,6 +1,6 @@
 /**
  * Designed & Developed by Faisal Nadaf
- * Contact: faisalfnadaf@gmail.com
+ * Email : faisalfnadaf@gmail.com
  *
  * @format
  */
