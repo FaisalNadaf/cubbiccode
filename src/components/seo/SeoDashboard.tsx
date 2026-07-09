@@ -141,7 +141,7 @@ export function SeoDashboard() {
 					</Reveal>
 					<Reveal delay={0.1}>
 						<h2 className="mt-4 text-pretty font-display text-3xl font-bold leading-[1.08] tracking-tightest text-ink sm:text-4xl lg:text-5xl">
-							Businesses we've put on the map
+							Businesses we&apos;ve put on the map
 						</h2>
 					</Reveal>
 					<Reveal delay={0.18}>

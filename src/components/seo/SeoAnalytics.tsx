@@ -190,7 +190,7 @@ export function SeoAnalytics() {
 						Industry and city splits are derived directly from the showcased
 						clients below. The performance curve is an indicative aggregate of
 						tracked page-one and AI-answer placements; every individual ranking is
-						verifiable live via each client's “Search on Google” button.
+						verifiable live via each client&apos;s “Search on Google” button.
 					</p>
 				</Reveal>
 			</div>
