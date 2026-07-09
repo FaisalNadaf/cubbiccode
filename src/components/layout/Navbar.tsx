@@ -162,7 +162,7 @@ export function Navbar() {
 				className={cn(
 					"relative border-b transition-all duration-500",
 					scrolled || openIndex !== null ?
-						"border-steel-200/70 bg-white/85 shadow-soft backdrop-blur-xl backdrop-saturate-150"
+						"border-steel-200/60 bg-white/85 shadow-[0_1px_2px_-1px_rgba(11,27,58,0.08)] backdrop-blur-xl backdrop-saturate-150"
 					: overDarkHero ?
 						"border-transparent bg-gradient-to-b from-ink/65 via-ink/35 to-transparent"
 					:	"border-transparent bg-white/75 backdrop-blur-md",

@@ -285,7 +285,7 @@ export const nav: NavGroup[] = [
         heading: "Proof",
         links: [
           { label: "Web App & ERP Case Studies", href: "/case-studies", desc: "Platforms running real businesses", icon: "LineChart" },
-          { label: "SEO Results", href: "/capabilities/seo", desc: "Rankings & organic growth", icon: "TrendingUp" },
+          { label: "SEO Results", href: "/seo-results", desc: "Rankings & organic growth", icon: "TrendingUp" },
         ],
       },
     ],

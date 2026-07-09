@@ -15,7 +15,7 @@ export const featuredProjects: (WebsiteProject & {
 		name: "Prions Biotech",
 		url: "prionsbiotech.com",
 		category: "Website",
-		image: "/images/portfolio/prions-biotech.jpg",
+		image: "/images/portfolio/prionsbiotec.jpg",
 		blurb:
 			"A research-grade brand site with a fast, content-driven catalogue and a clean, publication-ready visual system.",
 	},
@@ -23,7 +23,7 @@ export const featuredProjects: (WebsiteProject & {
 		name: "Woodpecker Exotica",
 		url: "woodpeckerexotica.com",
 		category: "Website",
-		image: "/images/portfolio/woodpecker-exotic.jpg",
+		image: "/images/portfolio/woodpeckerexotic.jpg",
 		blurb:
 			"An immersive resort experience  cinematic imagery, smooth scroll storytelling and frictionless enquiries.",
 	},
@@ -31,7 +31,7 @@ export const featuredProjects: (WebsiteProject & {
 		name: "Aishwarya Cottons",
 		url: "aishwaryacottons.com",
 		category: "E-commerce",
-		image: "/images/portfolio/aishwarya-cottons.png",
+		image: "/images/portfolio/aishwaryacotton.jpg",
 		blurb:
 			"A conversion-focused storefront with rich merchandising, instant search and a checkout built to sell.",
 	},
@@ -44,18 +44,10 @@ export const featuredProjects: (WebsiteProject & {
 			"A data-dense investment platform with real-time dashboards, secure portals and automated reporting.",
 	},
 	{
-		name: "Laxis Analytics",
-		url: "laxisanalytics.com",
-		category: "Website",
-		image: "/images/portfolio/laxis-analytics.jpg",
-		blurb:
-			"A crisp product marketing site that turns a complex analytics suite into a clear, compelling story.",
-	},
-	{
 		name: "Harsha & Rakesh Salon",
 		url: "harsharakesh.com",
 		category: "E-commerce",
-		image: "/images/portfolio/harsha-rakesh.jpg",
+		image: "/images/portfolio/harsharakes.jpg",
 		blurb:
 			"An elegant booking-first experience with online ordering, gift cards and a polished mobile flow.",
 	},
@@ -310,7 +302,6 @@ export const websiteProjects: WebsiteProject[] = [
 		category: "Website",
 	},
 	{ name: "Jagvin", url: "jagvin.com", category: "Website" },
-	{ name: "Laxis Analytics", url: "laxisanalytics.com", category: "Website" },
 	{
 		name: "United Educators Foundation",
 		url: "uefindia.in",

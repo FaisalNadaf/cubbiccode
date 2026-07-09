@@ -12,11 +12,11 @@ const p = (name: string) => `${DIR}${name}`;
 // Real client screenshots  a neutral fallback if a mapping is ever missing.
 const FALLBACK_POOL = [
   "/images/portfolio/city-index.jpg",
-  "/images/portfolio/laxis-analytics.jpg",
-  "/images/portfolio/prions-biotech.jpg",
-  "/images/portfolio/woodpecker-exotic.jpg",
-  "/images/portfolio/harsha-rakesh.jpg",
-  "/images/portfolio/aishwarya-cottons.png",
+  "/images/portfolio/positron.jpeg",
+  "/images/portfolio/prionsbiotec.jpg",
+  "/images/portfolio/woodpeckerexotic.jpg",
+  "/images/portfolio/harsharakes.jpg",
+  "/images/portfolio/aishwaryacotton.jpg",
 ];
 const fallback = (i: number) => FALLBACK_POOL[i % FALLBACK_POOL.length];
 

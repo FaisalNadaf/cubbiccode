@@ -24,19 +24,19 @@ const ownership = [
 		icon: Users,
 		title: "A cross-functional team",
 		text: "Designers, full-stack developers and a dedicated project manager on every single engagement.",
-		image: "/images/downloads/A cross-functional team.webp",
+		image: "/images/downloads/crossTeam.jpg",
 	},
 	{
 		icon: Gauge,
 		title: "Your scorecard is ours",
 		text: "We treat your launch date, your traffic and your conversions as our own KPIs  not yours alone.",
-		image: "/images/downloads/Your scorecard is ours.webp",
+		image: "/images/downloads/creditscor.jpg",
 	},
 	{
 		icon: LifeBuoy,
 		title: "We don't vanish at launch",
 		text: "Ongoing support and AMC mean we're with you long after the site goes live.",
-		image: "/images/downloads/we dont vansih on launch.webp",
+		image: "/images/downloads/ongingsupport.jpg",
 	},
 ];
 
@@ -189,14 +189,14 @@ export function WhyTrust() {
 								ownership
 								<span className="absolute -bottom-1 left-0 h-[3px] w-full rounded-full bg-gradient-to-r from-corporate-500 via-corporate-400 to-transparent" />
 							</span>{" "}
-							of your outcome  not just your project.
+							of your outcome not just your project.
 						</h2>
 					</Reveal>
 
 					<Reveal delay={0.16}>
 						<p className="mt-6 max-w-xl text-pretty text-[15px] leading-relaxed text-steel-500 sm:text-base lg:text-[17px]">
 							Most agencies hand you a website and disappear. We don&apos;t work
-							that way  every Cubiccode engagement is run by a team that treats
+							that way every Cubiccode engagement is run by a team that treats
 							your launch date, your traffic and your conversions as their own
 							scorecard.
 						</p>

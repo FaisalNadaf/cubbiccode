@@ -49,7 +49,7 @@ type Shot = {
 
 const shots: Shot[] = [
 	{
-		src: "/images/portfolio/prions-biotech.jpg",
+		src: "/images/portfolio/prionsbiotec.jpg",
 		alt: "Prions Biotech  website built by Cubiccode",
 		pos: "lg:left-[1%] lg:top-[3%] lg:w-[52%]",
 		span: "col-span-2",
@@ -61,8 +61,8 @@ const shots: Shot[] = [
 		amp: 10,
 	},
 	{
-		src: "/images/portfolio/laxis-analytics.jpg",
-		alt: "Laxis Analytics  website built by Cubiccode",
+		src: "/images/portfolio/positron.jpeg",
+		alt: "Positron  website built by Cubiccode",
 		pos: "lg:left-[50%] lg:top-[0%] lg:w-[46%]",
 		z: "z-30",
 		speed: 26,
@@ -72,7 +72,7 @@ const shots: Shot[] = [
 		amp: 7,
 	},
 	{
-		src: "/images/portfolio/woodpecker-exotic.jpg",
+		src: "/images/portfolio/woodpeckerexotic.jpg",
 		alt: "Woodpecker Exotica  website built by Cubiccode",
 		pos: "lg:left-[9%] lg:top-[39%] lg:w-[50%]",
 		z: "z-40",
@@ -94,7 +94,7 @@ const shots: Shot[] = [
 		amp: 8,
 	},
 	{
-		src: "/images/portfolio/harsha-rakesh.jpg",
+		src: "/images/portfolio/harsharakes.jpg",
 		alt: "Harsha & Rakesh Salon  e-commerce store built by Cubiccode",
 		pos: "lg:left-[20%] lg:top-[71%] lg:w-[46%]",
 		z: "z-30",

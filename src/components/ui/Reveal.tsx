@@ -32,7 +32,7 @@ export function Reveal({
 	duration?: number;
 	once?: boolean;
 	amount?: number;
-	as?: "div" | "section" | "li" | "span" | "article";
+	as?: "div" | "section" | "li" | "span" | "article" | "p";
 }) {
 	const reduce = useReducedMotion();
 	const MotionTag = motion[as] as typeof motion.div;
@@ -104,7 +104,7 @@ export function RevealItem({
 	children: React.ReactNode;
 	className?: string;
 	direction?: Direction;
-	as?: "div" | "li" | "span" | "article";
+	as?: "div" | "li" | "span" | "article" | "p";
 }) {
 	const reduce = useReducedMotion();
 	const MotionTag = motion[as] as typeof motion.div;

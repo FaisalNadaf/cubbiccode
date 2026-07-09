@@ -23,7 +23,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		description:
 			"A research-grade brand site with a fast, content-driven catalogue and a publication-ready visual system.",
 		cta: { label: "Visit site", href: "https://prionsbiotech.com" },
-		image: `${P}/prions-biotech.jpg`,
+		image: `${P}/prionsbiotec.jpg`,
 	},
 	{
 		id: "woodpecker-exotica",
@@ -32,7 +32,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		description:
 			"An immersive resort experience  cinematic imagery, smooth scroll storytelling and frictionless enquiries.",
 		cta: { label: "Visit site", href: "https://woodpeckerexotica.com" },
-		image: `${P}/woodpecker-exotic.jpg`,
+		image: `${P}/woodpeckerexotic.jpg`,
 	},
 	{
 		id: "aishwarya-cottons",
@@ -41,7 +41,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		description:
 			"A conversion-focused storefront with rich merchandising, instant search and a checkout built to sell.",
 		cta: { label: "Visit site", href: "https://aishwaryacottons.com" },
-		image: `${P}/aishwarya-cottons.png`,
+		image: `${P}/aishwaryacotton.jpg`,
 	},
 	{
 		id: "city-index",
@@ -53,22 +53,13 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		image: `${P}/city-index.jpg`,
 	},
 	{
-		id: "laxis-analytics",
-		eyebrow: "Website · SaaS",
-		title: "Laxis Analytics",
-		description:
-			"A crisp product marketing site that turns a complex analytics suite into a clear, compelling story.",
-		cta: { label: "Visit site", href: "https://laxisanalytics.com" },
-		image: `${P}/laxis-analytics.jpg`,
-	},
-	{
 		id: "harsha-rakesh",
 		eyebrow: "E-commerce · Beauty",
 		title: "Harsha & Rakesh Salon",
 		description:
 			"An elegant booking-first experience with online ordering, gift cards and a polished mobile flow.",
 		cta: { label: "Visit site", href: "https://harsharakesh.com" },
-		image: `${P}/harsha-rakesh.jpg`,
+		image: `${P}/harsharakes.jpg`,
 	},
 	{
 		id: "trader-portfolio",
@@ -86,7 +77,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		description:
 			"A high-throughput ticketing marketplace handling ₹1.5 Cr+ monthly transactions at 99.99% uptime.",
 		cta: { label: "Learn more", href: "https://www.linkedin.com/company/cubiccode/" },
-		image: `${P}/laxis-analytics.jpg`,
+		image: `${P}/positron.jpeg`,
 	},
 	{
 		id: "global-hiring-hub",
@@ -95,7 +86,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		description:
 			"A cross-border hiring portal sourcing nursing staff for 100+ German clinics from verified applicants.",
 		cta: { label: "Learn more", href: "https://www.linkedin.com/company/cubiccode/" },
-		image: `${P}/prions-biotech.jpg`,
+		image: `${P}/prionsbiotec.jpg`,
 	},
 	{
 		id: "industrial-erp",
@@ -104,6 +95,6 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		description:
 			"A custom inventory & field-service ERP with full travel visibility and real-time management dashboards.",
 		cta: { label: "Learn more", href: "https://www.linkedin.com/company/cubiccode/" },
-		image: `${P}/woodpecker-exotic.jpg`,
+		image: `${P}/woodpeckerexotic.jpg`,
 	},
 ];

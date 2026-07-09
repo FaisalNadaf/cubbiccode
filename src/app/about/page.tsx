@@ -78,25 +78,7 @@ export default function AboutPage() {
 										<span className="absolute left-5 top-5 inline-flex items-center rounded-full bg-white/90 px-3.5 py-1.5 text-[12px] font-semibold text-ink backdrop-blur">
 											{storyImage.tag}
 										</span>
-										<div className="absolute inset-x-5 bottom-5 flex items-center gap-3 rounded-2xl border border-white/15 bg-ink/45 p-3.5 backdrop-blur-md">
-											<div className="flex -space-x-2">
-												{founders.map((f) => (
-													<span
-														key={f.initials}
-														className="flex size-10 items-center justify-center rounded-full border-2 border-ink/30 bg-white text-xs font-bold text-ink">
-														{f.initials}
-													</span>
-												))}
-											</div>
-											<div className="min-w-0">
-												<p className="truncate text-sm font-semibold text-white">
-													Sarvesh Kakkeri &amp; Shivani Jadhav
-												</p>
-												<p className="text-[12px] text-white/70">
-													Co-Founders, {site.name}
-												</p>
-											</div>
-										</div>
+								
 									</div>
 								</Reveal>
 							</div>

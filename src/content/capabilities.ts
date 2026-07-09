@@ -13,7 +13,12 @@ export type Capability = {
   problem: string; // the opening problem paragraph
   buildHeading: string; // "What We Build" / "What We Automate" / etc.
   features: string[]; // the bullet list
-  solution: string; // "How We Do It Better" paragraph
+  /**
+   * "How We Do It Better"  one block per point, rendered as a numbered card.
+   * Keep these balanced (roughly 150180 chars each) so no card looks starved
+   * or overstuffed next to its neighbours.
+   */
+  solution: string[];
   result?: string; // optional "What You Get" / outcome paragraph
   work?: { heading: string; items: WorkItem[]; caseStudies?: boolean };
   buildAfter?: { title: string; text: string }[]; // training only
@@ -57,8 +62,11 @@ export const capabilities: Capability[] = [
       "Speed & SEO Optimisation  fast load, strong Core Web Vitals, ranking-ready from day one.",
       "Maintenance & AMC  we don't vanish at launch.",
     ],
-    solution:
-      "Design is where we refuse to compromise. Every site is crafted from scratch around your brand and your customer  never a recycled template  so you look like the elite business you are. And we own the outcome, not just the pixels: a dedicated project manager owns your timeline, we agree a launch date and hit it, and every build is mobile-first, SEO-ready and tested before it touches your customers. Because our expertise is in-house, you get premium design at a price that respects your budget.",
+    solution: [
+      "Design is where we refuse to compromise. Every site is crafted from scratch around your brand and your customer, never a recycled template, so you look like the elite business you are.",
+      "We own the outcome, not just the pixels. A dedicated project manager owns your timeline, we agree a launch date and hit it, and every build ships mobile-first, SEO-ready and tested.",
+      "Premium design at a price that respects your budget. Because our expertise is in-house and our teams stay lean, you never pay an agency markup for outsourced work.",
+    ],
     work: {
       heading: "Our Work  Websites We've Built",
       items: [
@@ -94,8 +102,11 @@ export const capabilities: Capability[] = [
       "Progressive Web Apps (PWAs)  app-like experiences without the app store.",
       "Ongoing Support & AMC  we monitor, maintain and evolve what we build.",
     ],
-    solution:
-      "We build on a modern, proven technology stack chosen for performance, security and long-term maintainability  not trends. We architect for scale from day one, so your app grows with your user base instead of buckling under it. One accountable team takes you from blueprint to deployment to support, and you fully own the product  no lock-in, no per-seat ransom.",
+    solution: [
+      "We build on a modern, proven technology stack chosen for performance, security and long-term maintainability, never for trends. What ships today is still maintainable tomorrow.",
+      "We architect for scale from day one, so your app grows with your user base instead of buckling under it. Growth is a design constraint from the first blueprint, not a later emergency.",
+      "One accountable team takes you from blueprint to deployment to support, and you fully own the product. No vendor lock-in, no per-seat ransom, no developers who disappear.",
+    ],
     work: {
       heading: "Our Work  Web Apps We've Built",
       items: webApps,
@@ -122,8 +133,11 @@ export const capabilities: Capability[] = [
       "Integrations with your existing tools, website, payment systems and hardware.",
       "Cloud-based access so your team works from anywhere, securely.",
     ],
-    solution:
-      "We build the ERP around your workflow, not the other way around. We start by mapping how your business actually runs, then engineer a system that fits like a glove. You get one accountable team from blueprint to deployment to support, and software you fully own  no per-seat ransom, no vendor lock-in.",
+    solution: [
+      "We build the ERP around your workflow, not the other way around. Off-the-shelf systems make you change your business to fit the software; ours fits how you already run.",
+      "We start by mapping how your business actually runs, then engineer a system that fits like a glove. Sales, inventory, accounts and operations finally share one source of truth.",
+      "One accountable team takes you from blueprint to deployment to support, and you fully own the software. No per-seat ransom, no vendor lock-in, no month-end guesswork.",
+    ],
     work: {
       heading: "Our Work  Web Apps We've Built",
       items: webApps,
@@ -151,8 +165,11 @@ export const capabilities: Capability[] = [
       "Customer communication  onboarding, reminders and updates on autopilot.",
       "Document & invoice generation  triggered, not typed.",
     ],
-    solution:
-      "We start with your bottleneck, not a tool. We audit where your team loses hours, then design automations that remove that friction  with full accountability and clear before/after metrics. You see exactly how much time you've reclaimed.",
+    solution: [
+      "We start with your bottleneck, not a tool. Automation only pays off when it removes friction your team feels every week, so we study the work before we choose the software.",
+      "We audit where your team loses hours, then design automations that remove that friction. Approvals, follow-ups, data entry and reporting quietly run themselves in the background.",
+      "Every automation ships with clear before-and-after metrics, so you see exactly how much time you've reclaimed. Full accountability, no black boxes, no guesswork.",
+    ],
   },
   {
     slug: "seo",
@@ -175,8 +192,11 @@ export const capabilities: Capability[] = [
       "Content optimisation  built around what your buyers actually search.",
       "Analytics & reporting  transparent rankings, traffic and lead tracking.",
     ],
-    solution:
-      "We build authority that compounds, not shortcuts that get penalised. Our SEO is engineered into the website from the architecture up  and tracked with honest reporting, so you see ranking and traffic movement, not vanity metrics.",
+    solution: [
+      "We build authority that compounds, not shortcuts that get penalised. Keyword stuffing and spammy backlinks buy you a month of rankings and cost you years of trust.",
+      "Our SEO is engineered into the website from the architecture up. Speed, structure, indexing and Core Web Vitals are handled before a single keyword is ever targeted.",
+      "We track the work with honest reporting, so you see real ranking and traffic movement rather than vanity metrics. A clear line runs from search visibility to leads.",
+    ],
     result:
       "Higher rankings, more qualified organic traffic, a rising domain authority that gets harder for competitors to beat, and a clear line from search visibility to leads.",
   },

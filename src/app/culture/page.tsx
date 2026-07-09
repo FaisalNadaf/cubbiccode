@@ -5,6 +5,7 @@
  * @format
  */
 
+import { PageHero } from "@/components/layout/PageHero";
 import { CultureMosaic } from "@/components/culture/CultureMosaic";
 
 export const metadata = {
@@ -15,9 +16,25 @@ export const metadata = {
 
 export default function CulturePage() {
 	return (
-		<section className="relative min-h-screen w-screen overflow-hidden bg-canvas pt-[82px]">
-			<h1 className="sr-only">Company Culture at Cubiccode</h1>
-			<CultureMosaic />
-		</section>
+		<>
+			<PageHero
+				kicker="Life at Cubiccode"
+				title="The people behind nearly a decade of on-time delivery."
+				subtitle="Lean, agile and obsessed with the outcome  a glimpse of the moments and everyday culture that shape how we work."
+				image="/images/Moments/EPCSCL06-GroupPicture.JPG"
+				imageAlt="The Cubiccode team"
+				breadcrumb={[
+					{ label: "Home", href: "/" },
+					{ label: "Who We Are", href: "/about" },
+					{ label: "Company Culture" },
+				]}
+			/>
+
+			{/* The hero now carries the page's <h1>, so the mosaic no longer needs
+			    its own screen-reader heading or navbar offset. */}
+			<section className="relative w-screen overflow-hidden bg-canvas">
+				<CultureMosaic />
+			</section>
+		</>
 	);
 }

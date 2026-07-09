@@ -10,8 +10,14 @@ export type Industry = {
   cta: string;
   problem: string; // opening problem paragraph
   solutions: string[]; // "How We Help" bullets
-  better: string; // "How We Do It Better" paragraph
-  result: string; // "The Result" paragraph
+  /**
+   * "How We Do It Better"  one block per point, rendered as a numbered card.
+   * Keep these balanced (roughly 140175 chars each) so no card looks starved
+   * or overstuffed next to its neighbours.
+   */
+  better: string[];
+  /** "The Result"  short outcome phrases, rendered as a row of outcome cards. */
+  result: string[];
   proof?: { value: string; label: string }[];
 };
 
@@ -36,10 +42,16 @@ export const industries: Industry[] = [
       "Workflow automation for approvals, purchase orders, low-stock alerts and reporting.",
       "Industrial SEO so buyers searching your products and city find you first.",
     ],
-    better:
-      "We map your actual shop-floor and back-office workflow before we write a line of code  then build systems that fit how you already work, not the other way around. One accountable team, ISO 9001:2015 processes, and software you fully own.",
-    result:
-      "Real-time visibility from raw material to dispatch, fewer costly errors, and a digital front door that brings in qualified B2B enquiries while you focus on production.",
+    better: [
+      "We map your actual shop-floor and back-office workflow before we write a single line of code, then build systems that fit how you already work.",
+      "One accountable team carries you from that first workflow map through to deployment and support, under audited ISO 9001:2015 processes.",
+      "The software is yours outright. No per-seat licences, no vendor lock-in, and no month-end scramble to discover what your true margins were.",
+    ],
+    result: [
+      "Real-time visibility from raw material to dispatch",
+      "Fewer costly errors across production",
+      "A digital front door that wins qualified B2B enquiries",
+    ],
   },
   {
     slug: "education",
@@ -62,10 +74,16 @@ export const industries: Industry[] = [
       "Local & education SEO so you rank when parents search “best [course] in [city]”.",
       "Fee & communication automation  reminders, receipts and updates that send themselves.",
     ],
-    better:
-      "We're not guessing at this industry  we live in it. Cubiccode runs its own training brands and our co-founder was named Best Youngest Digital Marketing Teacher in India. We build the systems we'd want for our own institutes.",
-    result:
-      "More enquiries captured, more of them converted, less admin for your staff, and a digital presence that makes your institute the obvious choice.",
+    better: [
+      "We're not guessing at this industry, we live in it. Cubiccode runs its own training brands, so every system we ship has already been tested on our own institutes.",
+      "Our co-founder was named Best Youngest Digital Marketing Teacher in India, and that classroom experience shapes how we design admissions and student journeys.",
+      "We build the systems we'd want for ourselves: enquiry capture that never leaks, follow-ups that run on their own, and admin your staff stop dreading.",
+    ],
+    result: [
+      "More enquiries captured, more of them converted",
+      "Less admin for your teaching and office staff",
+      "A presence that makes your institute the obvious choice",
+    ],
   },
   {
     slug: "logistics",
@@ -87,10 +105,16 @@ export const industries: Industry[] = [
       "Automated notifications  pickup, in-transit and delivery updates sent automatically.",
       "SEO & web presence so shippers searching for transport partners find you.",
     ],
-    better:
-      "We start with your biggest bottleneck  usually status-tracking calls or dispatch coordination  and remove it first, with clear before/after metrics. You see exactly how many hours and how many calls you've eliminated.",
-    result:
-      "Customers who self-serve their tracking, a dispatch team that runs on data instead of guesswork, and an operation that scales without scaling the chaos.",
+    better: [
+      "We start with your biggest bottleneck, usually status-tracking calls or dispatch coordination, and remove that one first before touching anything else.",
+      "Every change ships with clear before-and-after metrics, so you see exactly how many hours and how many phone calls you've eliminated. Nothing is taken on faith.",
+      "Then we widen the fix outward, from tracking to dispatch to reporting, until growth stops meaning more chaos and more calls for your team to field.",
+    ],
+    result: [
+      "Customers who self-serve their own tracking",
+      "A dispatch team running on data, not guesswork",
+      "An operation that scales without the chaos",
+    ],
   },
   {
     slug: "healthcare",
@@ -112,10 +136,17 @@ export const industries: Industry[] = [
       "Local SEO & Google Business Profile  own the “[speciality] near me” searches.",
       "Review & reputation building  turn happy patients into your best marketing.",
     ],
-    better:
-      "We design for the realities of a busy practice: booking flows simple enough for a nervous or elderly patient, automated reminders that quietly cut no-shows, patient information handled with privacy and care, and local SEO that puts you above the clinic down the road when someone searches in a moment of need.",
-    result:
-      "A booked-out calendar, a front desk freed from phone tag, fewer no-shows, and a top-of-search presence that brings new patients to your door.",
+    better: [
+      "We design for the realities of a busy practice. Booking flows are simple enough for a nervous or elderly patient to finish on the first try, without a phone call.",
+      "Automated reminders quietly cut no-shows, and patient information is handled with the privacy and care your practice is held to.",
+      "Local SEO puts you above the clinic down the road, so you're the first result when someone searches in a moment of need, not the fourth.",
+    ],
+    result: [
+      "A calendar that stays booked out",
+      "A front desk freed from phone tag",
+      "Fewer no-shows, week after week",
+      "Top-of-search presence that brings new patients",
+    ],
   },
   {
     slug: "construction",
@@ -137,10 +168,16 @@ export const industries: Industry[] = [
       "Real estate SEO & local visibility for “flats/plots/villas in [location]”.",
       "Virtual tours & rich media that sell the space before the site visit.",
     ],
-    better:
-      "We treat your ad spend as sacred. Every system we build is engineered so that the leads you pay for get captured, responded to instantly, and nurtured until they convert  with reporting that shows you exactly where each deal came from.",
-    result:
-      "Projects that look as premium as they are, a lead pipeline that never leaks, and a clear line from enquiry to closed sale.",
+    better: [
+      "We treat your ad spend as sacred. Every rupee you put into generating a lead is wasted the moment that lead sits unanswered in somebody's inbox.",
+      "So every system is engineered so the leads you pay for get captured, responded to instantly, and nurtured patiently until they're ready to convert.",
+      "Reporting shows you exactly where each deal came from, so you can put more money behind what works and stop quietly funding what doesn't.",
+    ],
+    result: [
+      "Projects that look as premium as they are",
+      "A lead pipeline that never leaks",
+      "A clear line from enquiry to closed sale",
+    ],
   },
   {
     slug: "smes",
@@ -161,10 +198,16 @@ export const industries: Industry[] = [
       "SEO & local visibility so customers in your area find you, not a competitor.",
       "One accountable partner for all of it  no juggling vendors.",
     ],
-    better:
-      "Our in-house expertise makes us efficient, and we pass that efficiency straight to you  premium, ISO-certified work at SME-friendly pricing. “Worth Every Rupee,” in one client's words. You get a single team that owns your whole digital presence and actually picks up the phone.",
-    result:
-      "A professional digital presence that competes with businesses far bigger than you, fewer hours lost to admin, and a partner who grows with you.",
+    better: [
+      "Our in-house expertise makes us efficient, and we pass that efficiency straight to you: premium, ISO-certified work at genuinely SME-friendly pricing.",
+      "“Worth every rupee,” in one client's words. You're never paying an agency to quietly subcontract your project to somebody you'll never meet.",
+      "You get a single team that owns your whole digital presence, and a phone number that someone on that team actually picks up when you call.",
+    ],
+    result: [
+      "A presence that competes with far bigger businesses",
+      "Fewer hours lost to admin every week",
+      "A partner who grows alongside you",
+    ],
   },
   {
     slug: "retail",
@@ -186,10 +229,17 @@ export const industries: Industry[] = [
       "Automated reporting so head office sees performance across all outlets.",
       "Local SEO per location  every branch ranks in its own neighbourhood.",
     ],
-    better:
-      "We build for consistency and local relevance at once  central brand control with the local-search visibility each outlet needs to win its own area. One system, fully owned, that grows cleanly with every new location you open.",
-    result:
-      "A consistent brand everywhere, real-time visibility across every outlet, more online orders, and a chain that's actually easier to manage as it grows.",
+    better: [
+      "We build for consistency and local relevance at the same time, because a chain that looks different in every town is a chain nobody quite trusts.",
+      "Central brand control keeps every outlet on message, while local-search visibility gives each one what it needs to win its own neighbourhood.",
+      "It's one system, fully owned by you, that grows cleanly with every location you open instead of fighting you by the time you reach the tenth.",
+    ],
+    result: [
+      "A consistent brand across every outlet",
+      "Real-time visibility, location by location",
+      "More orders placed online",
+      "A chain that gets easier to manage as it grows",
+    ],
   },
   {
     slug: "staffing",
@@ -211,10 +261,17 @@ export const industries: Industry[] = [
       "Candidate–role matching to surface the right people faster.",
       "Communication automation for applications, updates and follow-ups.",
     ],
-    better:
-      "This is our own backyard. Cubiccode runs IT recruitment and a careers platform (CareerJump), so we build staffing systems we'd actually use  designed around how recruiters really work, not how software vendors imagine they do.",
-    result:
-      "Faster placements, no lost candidates, happier clients, and recruiters freed from data entry to do what they're good at  matching people to opportunity.",
+    better: [
+      "This is our own backyard. Cubiccode runs IT recruitment and the CareerJump careers platform, so we're building for a desk we sit at every single day.",
+      "That means staffing systems we'd actually use ourselves, designed around how recruiters really work rather than how software vendors imagine they work.",
+      "Candidates stop falling through the cracks, and your recruiters stop retyping the same details into three different tools. That's the whole point.",
+    ],
+    result: [
+      "Faster placements",
+      "No candidates lost between systems",
+      "Happier clients",
+      "Recruiters matching people, not retyping data",
+    ],
   },
   {
     slug: "startups",
@@ -236,10 +293,17 @@ export const industries: Industry[] = [
       "Payment & subscription systems ready for revenue.",
       "Growth & SEO from day one.",
     ],
-    better:
-      "We've been a start-up ourselves  bootstrapped, lean and obsessed with shipping. We help you spend capital where it counts: a credible brand and a fast MVP now, on an architecture that scales the moment traction hits. One accountable team, no wasted runway.",
-    result:
-      "A product that looks funded, ships fast, and is built to scale  so you can win your first customers and investors with confidence.",
+    better: [
+      "We've been a start-up ourselves: bootstrapped, lean and obsessed with shipping. We know which corners cost you nothing and which ones cost you the company.",
+      "So we help you spend capital where it counts, on a credible brand and a fast MVP now, rather than on infrastructure for users you don't have yet.",
+      "It ships on an architecture that scales the moment traction hits. One accountable team, one timeline, and not a single week of wasted runway.",
+    ],
+    result: [
+      "A product that looks funded",
+      "An MVP that ships fast",
+      "Architecture built to scale on traction",
+      "Confidence with first customers and investors",
+    ],
   },
 ];
 

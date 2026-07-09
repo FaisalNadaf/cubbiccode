@@ -239,3 +239,11 @@ export const groupCompanies: GroupCompany[] = [
 
 export const groupCompanyBySlug = (slug: string): GroupCompany | undefined =>
 	groupCompanies.find((c) => c.slug === slug);
+
+/** Flatten the segmented splash headline into plain text for a <PageHero title>. */
+export const splashHeadlineText = (brand: GroupCompany) =>
+	brand.headline.map((s) => s.text).join("");
+
+/** Flatten the segmented wordmark into plain text for breadcrumbs / alt text. */
+export const splashWordmarkText = (brand: GroupCompany) =>
+	brand.wordmark.map((w) => w.text).join("");

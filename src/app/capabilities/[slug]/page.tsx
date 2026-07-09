@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { ArrowUpRight, Check, Play, Sparkles } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { capabilities, capabilityBySlug } from "@/content/capabilities";
 import {
 	capabilityFeatureImages,
@@ -22,6 +22,7 @@ import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { CardStack } from "@/components/ui/card-stack";
 import { BuildShowcase } from "@/sections/capabilities/BuildShowcase";
 import { ProblemShowcase } from "@/sections/capabilities/ProblemShowcase";
+import { HowWeDoItBetter } from "@/sections/shared/HowWeDoItBetter";
 
 export function generateStaticParams() {
 	return capabilities.map((c) => ({ slug: c.slug }));
@@ -31,16 +32,16 @@ export function generateStaticParams() {
 // Exact matches by name; the rest cycle the available pool (swap in precise
 // shots as they're added to /public/images/portfolio).
 const WORK_IMAGE: Record<string, string> = {
-	"Harsha & Rakesh Salon": "/images/portfolio/harsha-rakesh.jpg",
+	"Harsha & Rakesh Salon": "/images/portfolio/harsharakes.jpg",
 	CityIndex: "/images/portfolio/city-index.jpg",
 };
 const WORK_IMAGE_POOL = [
-	"/images/portfolio/prions-biotech.jpg",
-	"/images/portfolio/woodpecker-exotic.jpg",
-	"/images/portfolio/aishwarya-cottons.png",
-	"/images/portfolio/laxis-analytics.jpg",
+	"/images/portfolio/prionsbiotec.jpg",
+	"/images/portfolio/woodpeckerexotic.jpg",
+	"/images/portfolio/aishwaryacotton.jpg",
+	"/images/portfolio/positron.jpeg",
 	"/images/portfolio/city-index.jpg",
-	"/images/portfolio/harsha-rakesh.jpg",
+	"/images/portfolio/harsharakes.jpg",
 ];
 const workImage = (name: string, i: number) =>
 	WORK_IMAGE[name] ?? WORK_IMAGE_POOL[i % WORK_IMAGE_POOL.length];
@@ -103,6 +104,7 @@ function splitFeature(f: string): { title: string; detail: string } {
 			{ title: f, detail: "" }
 		:	{ title: f.slice(0, idx), detail: f.slice(idx + 3) };
 }
+
 
 export async function generateMetadata({
 	params,
@@ -192,58 +194,10 @@ export default async function CapabilityPage({
 			</section>
 
 			{/* ============ HOW WE DO IT BETTER ============ */}
-			<section className="relative overflow-hidden bg-ink py-24 text-white lg:py-28">
-				<div className="pointer-events-none absolute inset-0 bg-blueprint [background-size:42px_42px] opacity-[0.14]" />
-				<div className="pointer-events-none absolute -left-24 top-1/3 size-[460px] rounded-full bg-corporate-600/20 blur-3xl" />
-				<div className="container-x relative grid items-center gap-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-					<div>
-						<span className="kicker !text-corporate-300">
-							How we do it better
-						</span>
-						<p className="mt-6 text-pretty text-xl font-medium leading-relaxed text-white lg:text-[1.6rem] lg:leading-[1.4]">
-							{cap.solution}
-						</p>
-						<div className="mt-9">
-							<Button
-								href={site.proposalCta}
-								external
-								variant="accent"
-								arrow>
-								{cap.cta}
-							</Button>
-						</div>
-					</div>
-
-					{/* video card */}
-					<div className="relative">
-						<figure className="group relative overflow-hidden rounded-4xl border border-white/10 shadow-lift">
-							<div className="relative aspect-video w-full">
-								<video
-									className="absolute inset-0 h-full w-full object-cover"
-									autoPlay
-									muted
-									loop
-									playsInline
-									preload="metadata"
-									poster="/images/no.png">
-									<source
-										src="/videos/demo.mp4"
-										type="video/mp4"
-									/>
-								</video>
-								<div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
-								<span className="absolute left-1/2 top-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition-transform duration-300 group-hover:scale-105">
-									<Play className="size-6 translate-x-0.5 fill-white text-white" />
-								</span>
-							</div>
-						</figure>
-						<span className="absolute -left-3 -top-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-ink shadow-lift">
-							<Sparkles className="size-3.5 text-corporate-600" />{" "}
-							{site.certification}
-						</span>
-					</div>
-				</div>
-			</section>
+			<HowWeDoItBetter
+				blocks={cap.solution}
+				cta={cap.cta}
+			/>
 
 			{/* ============ WHAT YOU'LL BUILD (training only) ============ */}
 			{cap.buildAfter && cap.buildAfter.length > 0 && (

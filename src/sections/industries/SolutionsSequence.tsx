@@ -27,12 +27,12 @@ import { cn } from "@/lib/utils";
  */
 
 const IMAGE_POOL = [
-	"/images/portfolio/laxis-analytics.jpg",
+	"/images/portfolio/positron.jpeg",
 	"/images/portfolio/city-index.jpg",
-	"/images/portfolio/prions-biotech.jpg",
-	"/images/portfolio/woodpecker-exotic.jpg",
-	"/images/portfolio/harsha-rakesh.jpg",
-	"/images/portfolio/aishwarya-cottons.png",
+	"/images/portfolio/prionsbiotec.jpg",
+	"/images/portfolio/woodpeckerexotic.jpg",
+	"/images/portfolio/harsharakes.jpg",
+	"/images/portfolio/aishwaryacotton.jpg",
 ];
 
 const EASE = [0.22, 1, 0.36, 1] as const;
