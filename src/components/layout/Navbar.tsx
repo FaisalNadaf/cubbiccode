@@ -322,7 +322,7 @@ function ProposalCta({
 			className={full ? "w-full" : undefined}>
 			<Link
 				href={site.proposalCta}
-				target="_blank"
+				
 				rel="noopener noreferrer"
 				className={cn(
 					"group relative inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5",
@@ -517,40 +517,58 @@ function LinkRow({
 	link: NavLink;
 	onNavigate: () => void;
 }) {
+	const className =
+		"group/link relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors duration-300 hover:bg-corporate-50/70";
+	const inner = (
+		<>
+			{/* animated border */}
+			<span className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent transition-colors duration-300 group-hover/link:ring-corporate-200" />
+
+			{link.icon && (
+				<motion.span
+					variants={{ hover: { scale: 1.18, y: -3, rotate: -4 } }}
+					transition={{ type: "spring", stiffness: 420, damping: 13 }}
+					className="relative flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-corporate-600 shadow-soft ring-1 ring-steel-200 transition-colors duration-300 group-hover/link:bg-corporate-600 group-hover/link:text-white group-hover/link:ring-corporate-600">
+					<Icon
+						name={link.icon}
+						className="size-[19px]"
+					/>
+				</motion.span>
+			)}
+			<span className="min-w-0 flex-1">
+				<span className="block text-[14.5px] font-semibold text-ink">
+					{link.label}
+				</span>
+				{link.desc && (
+					<span className="mt-0.5 block truncate text-[12.5px] text-steel-500">
+						{link.desc}
+					</span>
+				)}
+			</span>
+			<ArrowUpRight className="size-4 shrink-0 -translate-x-1 text-steel-300 opacity-0 transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:text-corporate-600 group-hover/link:opacity-100" />
+		</>
+	);
+
 	return (
 		<motion.div
 			variants={cardVariants}
 			whileHover="hover">
-			<Link
-				href={link.href}
-				onClick={onNavigate}
-				className="group/link relative flex items-center gap-3 rounded-2xl px-3 py-2.5 transition-colors duration-300 hover:bg-corporate-50/70">
-				{/* animated border */}
-				<span className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent transition-colors duration-300 group-hover/link:ring-corporate-200" />
-
-				{link.icon && (
-					<motion.span
-						variants={{ hover: { scale: 1.18, y: -3, rotate: -4 } }}
-						transition={{ type: "spring", stiffness: 420, damping: 13 }}
-						className="relative flex size-10 shrink-0 items-center justify-center rounded-xl bg-white text-corporate-600 shadow-soft ring-1 ring-steel-200 transition-colors duration-300 group-hover/link:bg-corporate-600 group-hover/link:text-white group-hover/link:ring-corporate-600">
-						<Icon
-							name={link.icon}
-							className="size-[19px]"
-						/>
-					</motion.span>
-				)}
-				<span className="min-w-0 flex-1">
-					<span className="block text-[14.5px] font-semibold text-ink">
-						{link.label}
-					</span>
-					{link.desc && (
-						<span className="mt-0.5 block truncate text-[12.5px] text-steel-500">
-							{link.desc}
-						</span>
-					)}
-				</span>
-				<ArrowUpRight className="size-4 shrink-0 -translate-x-1 text-steel-300 opacity-0 transition-all duration-300 group-hover/link:translate-x-0 group-hover/link:text-corporate-600 group-hover/link:opacity-100" />
-			</Link>
+			{link.external ?
+				<a
+					href={link.href}
+					target="_blank"
+					rel="noopener noreferrer"
+					onClick={onNavigate}
+					className={className}>
+					{inner}
+				</a>
+			:	<Link
+					href={link.href}
+					onClick={onNavigate}
+					className={className}>
+					{inner}
+				</Link>
+			}
 		</motion.div>
 	);
 }
@@ -736,25 +754,42 @@ function MobileMenu({
 													<div className="grid grid-cols-1 gap-1 pb-4 sm:grid-cols-2">
 														{cols
 															.flatMap((c) => c.links)
-															.map((link) => (
-																<Link
-																	key={link.label}
-																	href={link.href}
-																	onClick={onClose}
-																	className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-steel-300 transition-colors hover:bg-white/5 hover:text-white">
-																	{link.icon && (
-																		<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-corporate-200 ring-1 ring-white/10">
-																			<Icon
-																				name={link.icon}
-																				className="size-[18px]"
-																			/>
+															.map((link) => {
+																const linkClass =
+																	"flex items-center gap-3 rounded-xl px-2 py-2.5 text-steel-300 transition-colors hover:bg-white/5 hover:text-white";
+																const linkInner = (
+																	<>
+																		{link.icon && (
+																			<span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 text-corporate-200 ring-1 ring-white/10">
+																				<Icon
+																					name={link.icon}
+																					className="size-[18px]"
+																				/>
+																			</span>
+																		)}
+																		<span className="text-[15px] font-medium">
+																			{link.label}
 																		</span>
-																	)}
-																	<span className="text-[15px] font-medium">
-																		{link.label}
-																	</span>
-																</Link>
-															))}
+																	</>
+																);
+																return link.external ?
+																		<a
+																			key={link.label}
+																			href={link.href}
+																			target="_blank"
+																			rel="noopener noreferrer"
+																			onClick={onClose}
+																			className={linkClass}>
+																			{linkInner}
+																		</a>
+																	:	<Link
+																			key={link.label}
+																			href={link.href}
+																			onClick={onClose}
+																			className={linkClass}>
+																			{linkInner}
+																		</Link>;
+															})}
 													</div>
 												</motion.div>
 											)}

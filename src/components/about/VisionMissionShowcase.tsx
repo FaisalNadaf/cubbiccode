@@ -14,8 +14,10 @@ const INK_MID = "#13284f";
 const ACCENT = "#1B6EC2"; // corporate blue
 const ACCENT_LIGHT = "#6FA6DF"; // corporate-300
 
-const VISION_GRADIENT = `linear-gradient(120deg, ${INK_DEEP} 0%, ${INK_MID} 100%)`;
-const MISSION_GRADIENT = `linear-gradient(135deg, #05101f 0%, ${INK_DEEP} 100%)`;
+// Vision = bright, forward-looking corporate blue; Mission = deep navy anchor.
+// The strong two-tone contrast makes the interlocking diagonal clearly legible.
+const VISION_GRADIENT = `linear-gradient(125deg, ${ACCENT} 0%, #0B3A63 100%)`;
+const MISSION_GRADIENT = `linear-gradient(135deg, ${INK} 0%, ${INK_MID} 100%)`;
 
 const VISION_BG = "/images/about/parallax-2.jpg";
 const MISSION_BG = "/images/Moments/devfest2022_2.jpg";
@@ -129,7 +131,7 @@ function MobilePanel({ variant }: { variant: "vision" | "mission" }) {
 				aria-hidden
 				className="pointer-events-none absolute inset-0"
 				style={{
-					background: `linear-gradient(135deg, ${INK}cc 0%, ${INK_DEEP}99 100%)`,
+					background: `linear-gradient(135deg, ${INK}b3 0%, ${INK_DEEP}70 100%)`,
 				}}
 			/>
 			<span
@@ -140,8 +142,8 @@ function MobilePanel({ variant }: { variant: "vision" | "mission" }) {
 
 			<div className="relative">
 				<span
-					className="inline-flex size-12 items-center justify-center rounded-xl"
-					style={{ background: `${ACCENT}1f`, color: ACCENT }}
+					className="inline-flex size-12 items-center justify-center rounded-xl ring-1 ring-white/20"
+					style={{ background: "rgba(255,255,255,0.14)", color: "#fff" }}
 					aria-hidden>
 					<Icon
 						className="size-7"
@@ -156,7 +158,7 @@ function MobilePanel({ variant }: { variant: "vision" | "mission" }) {
 				<p className="mt-3 text-xl font-semibold leading-snug text-white">
 					{title}
 				</p>
-				<p className="mt-2 text-[15px] leading-relaxed text-steel-200">
+				<p className="mt-2 text-[15px] leading-relaxed text-white/85">
 					{body}
 				</p>
 			</div>
@@ -242,10 +244,10 @@ function DiagonalPanels() {
 						style={{ textShadow: "0 2px 22px rgba(5,16,31,0.65)" }}>
 						Mission
 					</h3>
-					<p className="mt-4 text-xl font-semibold leading-snug text-corporate-200 lg:text-2xl">
+					<p className="mt-4 text-xl font-semibold leading-snug text-corporate-100 lg:text-2xl">
 						What we deliver
 					</p>
-					<p className="mt-4 text-base leading-relaxed text-steel-200 lg:text-lg">
+					<p className="mt-4 text-base leading-relaxed text-white/85 lg:text-lg">
 						{aboutCopy.mission}
 					</p>
 				</motion.div>
@@ -276,7 +278,7 @@ function DiagonalPanels() {
 					aria-hidden
 					className="pointer-events-none absolute inset-0"
 					style={{
-						background: `linear-gradient(135deg, ${INK_DEEP}cc 0%, ${INK_MID}8c 100%)`,
+						background: `radial-gradient(135% 135% at 0% 0%, ${INK_DEEP}e6 0%, transparent 58%)`,
 					}}
 				/>
 				<span
@@ -310,10 +312,10 @@ function DiagonalPanels() {
 						style={{ textShadow: "0 2px 22px rgba(5,16,31,0.65)" }}>
 						Vision
 					</h3>
-					<p className="mt-4 text-xl font-semibold leading-snug text-corporate-200 lg:text-2xl">
+					<p className="mt-4 text-xl font-semibold leading-snug text-white lg:text-2xl">
 						Where we&apos;re headed
 					</p>
-					<p className="mt-4 text-base leading-relaxed text-steel-200 lg:text-lg">
+					<p className="mt-4 text-base leading-relaxed text-white/90 lg:text-lg">
 						{aboutCopy.vision}
 					</p>
 				</motion.div>
@@ -324,7 +326,7 @@ function DiagonalPanels() {
 					whileInView={{ scale: 1, opacity: 1, rotate: 0 }}
 					viewport={{ once: true }}
 					transition={{ duration: 0.9, ease: SMOOTH_EASE, delay: 0.6 }}
-					className="absolute bottom-10 left-10 text-corporate-400 lg:bottom-14 lg:left-14"
+					className="absolute bottom-10 left-10 text-white/85 lg:bottom-14 lg:left-14"
 					aria-hidden>
 					<Compass
 						className="size-12 lg:size-16"

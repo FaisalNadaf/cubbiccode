@@ -143,7 +143,7 @@ export const featuredProjects: (WebsiteProject & {
 		name: "Positron",
 		url: "positron-he.com",
 		category: "Website",
-		image: "/images/portfolio/positron.jpg",
+		image: "/images/portfolio/positron.jpeg",
 		blurb:
 			"A heat-transfer engineering site that turns complex thermal-management capability into a clear, credible story.",
 	},
@@ -162,6 +162,46 @@ export const featuredProjects: (WebsiteProject & {
 		image: "/images/portfolio/MabdaGroup.jpg",
 		blurb:
 			"A B2B supply-chain brand site that positions a global industrial trade network with clarity, authority and trust.",
+	},
+	{
+		name: "Avenore Events",
+		url: "avenoreevents.com",
+		category: "Website",
+		image: "/images/portfolio/avenoreevent.jpeg",
+		blurb:
+			"A premium events brand brought to life  cinematic galleries, service storytelling and enquiry flows that turn browsers into bookings.",
+	},
+	{
+		name: "Simple",
+		url: "simple.life",
+		category: "Website",
+		image: "/images/portfolio/simple.lif.jpeg",
+		blurb:
+			"A clean, modern lifestyle brand site  minimal by design, fast to load and built to make a confident first impression.",
+	},
+	{
+		name: "Julrey",
+		url: "julrey.com",
+		category: "E-commerce",
+		image: "/images/portfolio/julre.jpeg",
+		blurb:
+			"A jewellery label online  curated collections, rich product close-ups and a smooth, trust-building shopping flow.",
+	},
+	{
+		name: "The Silver Ora",
+		url: "thesilverora.com",
+		category: "E-commerce",
+		image: "/images/portfolio/thesilveror.jpeg",
+		blurb:
+			"A 925-silver jewellery boutique  elegant collection browsing, certified-purity trust cues and a frictionless mobile checkout.",
+	},
+	{
+		name: "The School Excel",
+		url: "theschoolexcel.com",
+		category: "Education",
+		image: "/images/portfolio/theschoolexce.jpeg",
+		blurb:
+			"A modern school website  warm storytelling, clear admissions pathways and parent-friendly information architecture.",
 	},
 ];
 
@@ -279,13 +319,19 @@ export const websiteProjects: WebsiteProject[] = [
 	{ name: "Dandeli Jungle Edge", url: "dandeliresort.in", category: "Website" },
 ];
 
+export type CaseStat = {
+	icon: string; // lucide-react icon name
+	value?: string; // headline metric (e.g. "₹250 Cr+"); omit for a qualitative capability
+	label: string; // short descriptor
+};
+
 export type CaseStudy = {
 	slug: string;
 	name: string;
 	category: string;
 	tagline: string;
 	image?: string;
-	stats: { icon: string; label: string }[];
+	stats: CaseStat[];
 	link: string;
 };
 
@@ -298,10 +344,10 @@ export const caseStudies: CaseStudy[] = [
 		tagline:
 			"A ₹250 Cr+ portfolio management platform for traders and investment firms, with monthly payout automation.",
 		stats: [
-			{ icon: "💰", label: "₹250+ Crore assets managed" },
-			{ icon: "👥", label: "3,500+ clients served" },
-			{ icon: "🔄", label: "₹5+ Crore monthly payouts" },
-			{ icon: "🏢", label: "Core business platform" },
+			{ icon: "Landmark", value: "₹250 Cr+", label: "Assets under management" },
+			{ icon: "Users", value: "3,500+", label: "Clients served" },
+			{ icon: "Banknote", value: "₹5 Cr+", label: "Monthly payouts" },
+			{ icon: "Server", label: "Core business platform" },
 		],
 		link: "https://www.linkedin.com/company/cubiccode/",
 	},
@@ -312,10 +358,10 @@ export const caseStudies: CaseStudy[] = [
 		tagline:
 			"A scalable ticket selling & reselling platform handling thousands of concurrent users and high transaction volume.",
 		stats: [
-			{ icon: "🎫", label: "10,000+ ticket listings / month" },
-			{ icon: "💸", label: "₹1.5 Cr+ monthly transactions" },
-			{ icon: "🔐", label: "20,000+ secure payments" },
-			{ icon: "⚡", label: "99.99% platform uptime" },
+			{ icon: "Ticket", value: "10K+", label: "Listings / month" },
+			{ icon: "IndianRupee", value: "₹1.5 Cr+", label: "Monthly transactions" },
+			{ icon: "ShieldCheck", value: "20K+", label: "Secure payments" },
+			{ icon: "Activity", value: "99.99%", label: "Platform uptime" },
 		],
 		link: "https://www.linkedin.com/company/cubiccode/",
 	},
@@ -326,10 +372,10 @@ export const caseStudies: CaseStudy[] = [
 		tagline:
 			"A smart job portal sourcing nursing staff for German clinics, processing thousands of verified applications.",
 		stats: [
-			{ icon: "👥", label: "5,000+ verified nursing applications" },
-			{ icon: "🏥", label: "100+ German clinics supported" },
-			{ icon: "📄", label: "1,500+ applications / month" },
-			{ icon: "⏱", label: "60% faster employer review" },
+			{ icon: "FileCheck", value: "5,000+", label: "Verified applications" },
+			{ icon: "Building2", value: "100+", label: "German clinics" },
+			{ icon: "FileText", value: "1,500+", label: "Applications / month" },
+			{ icon: "Timer", value: "60%", label: "Faster employer review" },
 		],
 		link: "https://www.linkedin.com/company/cubiccode/",
 	},
@@ -340,10 +386,10 @@ export const caseStudies: CaseStudy[] = [
 		tagline:
 			"An end-to-end management platform for an expanding education brand across 30+ centers.",
 		stats: [
-			{ icon: "🏫", label: "30+ active centers managed" },
-			{ icon: "🎓", label: "1,000+ students / month onboarded" },
-			{ icon: "💰", label: "Automated fee tracking & reminders" },
-			{ icon: "📜", label: "QR-verified certificates" },
+			{ icon: "Building2", value: "30+", label: "Active centers" },
+			{ icon: "GraduationCap", value: "1,000+", label: "Students / month" },
+			{ icon: "ReceiptText", label: "Automated fee tracking & reminders" },
+			{ icon: "QrCode", label: "QR-verified certificates" },
 		],
 		link: "https://www.linkedin.com/company/cubiccode/",
 	},
@@ -354,10 +400,10 @@ export const caseStudies: CaseStudy[] = [
 		tagline:
 			"A custom industrial service & inventory platform with full travel and allowance visibility.",
 		stats: [
-			{ icon: "🛠️", label: "5,000+ service visits logged / year" },
-			{ icon: "📦", label: "Thousands of inventory movements" },
-			{ icon: "💼", label: "Complete travel & allowance visibility" },
-			{ icon: "📊", label: "Real-time management dashboards" },
+			{ icon: "Wrench", value: "5,000+", label: "Service visits / year" },
+			{ icon: "Package", label: "Inventory movements tracked" },
+			{ icon: "Route", label: "Travel & allowance visibility" },
+			{ icon: "LayoutDashboard", label: "Real-time dashboards" },
 		],
 		link: "https://www.linkedin.com/company/cubiccode/",
 	},
@@ -368,10 +414,10 @@ export const caseStudies: CaseStudy[] = [
 		tagline:
 			"A scalable MLM platform with crypto payments, ROI tracking and a referral commission engine.",
 		stats: [
-			{ icon: "👥", label: "3,000+ users onboarded" },
-			{ icon: "💰", label: "₹7.5 Cr+ crypto investments" },
-			{ icon: "🧾", label: "₹1.7 Cr+ ROI & commissions paid" },
-			{ icon: "🔄", label: "15,000+ commission transactions" },
+			{ icon: "Users", value: "3,000+", label: "Users onboarded" },
+			{ icon: "Coins", value: "₹7.5 Cr+", label: "Crypto investments" },
+			{ icon: "Banknote", value: "₹1.7 Cr+", label: "ROI & commissions paid" },
+			{ icon: "Repeat", value: "15K+", label: "Commission transactions" },
 		],
 		link: "https://www.linkedin.com/company/cubiccode/",
 	},

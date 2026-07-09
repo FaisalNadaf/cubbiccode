@@ -4,8 +4,6 @@
  *
  * @format
  */
-
-import Link from "next/link";
 import {
 	Phone,
 	Mail,
@@ -91,9 +89,7 @@ export default function ContactPage() {
 
 							{/* Email card */}
 							<RevealItem>
-								<a
-									href={`mailto:${site.email}`}
-									className="group block rounded-3xl border border-steel-200 bg-white p-6 shadow-soft transition-shadow hover:shadow-card">
+								<div className="group rounded-3xl border border-steel-200 bg-white p-6 shadow-soft transition-shadow hover:shadow-card">
 									<div className="flex items-start gap-4">
 										<span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100">
 											<Mail className="size-[18px]" />
@@ -102,13 +98,19 @@ export default function ContactPage() {
 											<p className="text-[13px] font-semibold uppercase tracking-wider text-steel-400">
 												Email us
 											</p>
-											<p className="mt-1.5 break-all font-display text-lg font-semibold tracking-tight text-ink transition-colors group-hover:text-corporate-600">
-												{site.email}
-											</p>
+											<div className="mt-1.5 flex flex-col gap-0.5">
+												{site.emails.map((e) => (
+													<a
+														key={e}
+														href={`mailto:${e}`}
+														className="break-all font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-corporate-600">
+														{e}
+													</a>
+												))}
+											</div>
 										</div>
-										<ArrowUpRight className="ml-auto size-4 shrink-0 text-steel-300 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-corporate-500" />
 									</div>
-								</a>
+								</div>
 							</RevealItem>
 
 							{/* WhatsApp CTA  accent band */}
@@ -206,14 +208,14 @@ export default function ContactPage() {
 						</Reveal>
 						<Reveal delay={0.1}>
 							<h2 className="mt-5 text-pretty font-display text-3xl font-bold leading-[1.08] tracking-tightest text-ink sm:text-4xl lg:text-[2.9rem]">
-								Two offices, one standard of work
+								Three offices, one standard of work
 							</h2>
 						</Reveal>
 						<Reveal delay={0.2}>
 							<p className="mt-5 text-lg leading-relaxed text-steel-600">
-								Drop by our registered office in Belagavi or our Bengaluru
-								workspace or simply send your enquiry and we&apos;ll bring the
-								meeting to you.
+								Drop by our offices in Belagavi or our Bengaluru workspace or
+								simply send your enquiry and we&apos;ll bring the meeting to
+								you.
 							</p>
 						</Reveal>
 					</div>
@@ -251,7 +253,11 @@ export default function ContactPage() {
 									<div className="mt-auto border-t border-steel-200">
 										<iframe
 											title={`Map of ${office.label}`}
-											src={`https://www.google.com/maps?q=${office.coords.lat},${office.coords.lng}&z=15&output=embed`}
+											src={`https://www.google.com/maps?q=${
+												office.coords ?
+													`${office.coords.lat},${office.coords.lng}`
+												:	encodeURIComponent(office.lines.join(" "))
+											}&z=15&output=embed`}
 											loading="lazy"
 											referrerPolicy="no-referrer-when-downgrade"
 											className="h-64 w-full border-0 grayscale-[0.2] lg:h-72"

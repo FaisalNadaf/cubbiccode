@@ -6,6 +6,7 @@ import { caseStudies } from "@/content/portfolio";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { GlowCard } from "@/components/ui/GlowCard";
+import { Icon } from "@/components/ui/Icon";
 
 export function CaseStudies() {
 	return (
@@ -43,12 +44,21 @@ export function CaseStudies() {
 										{c.tagline}
 									</p>
 									<ul className="mt-5 space-y-2 border-t border-white/10 pt-4">
-										{c.stats.slice(0, 3).map((s, i) => (
+										{c.stats.slice(0, 3).map((s) => (
 											<li
-												key={i}
-												className="flex items-center gap-2.5 text-[13px] text-steel-200">
-												<span className="text-base">{s.icon}</span>
-												{s.label}
+												key={s.label}
+												className="flex items-center gap-2.5 text-[13px] text-steel-300">
+												<Icon
+													name={s.icon}
+													className="size-4 shrink-0 text-corporate-300"
+													strokeWidth={1.75}
+												/>
+												{s.value && (
+													<span className="font-semibold text-white">
+														{s.value}
+													</span>
+												)}
+												<span>{s.label}</span>
 											</li>
 										))}
 									</ul>

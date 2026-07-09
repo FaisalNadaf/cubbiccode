@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/Button";
 import { Carousel } from "@/components/ui/carousel";
 import type { ShowcaseSlide } from "@/content/showcase";
 
-// The seven sites featured on the home page, shown in this order.
+// The sites featured on the home page, shown in this order.
 const HOME_SHOWCASE_URLS = [
+	"thesilverora.com",
+	"simple.life",
+	"positron-he.com",
 	"harsharakesh.com",
 	"madhtara.com",
 	"foraam.com",

@@ -1,5 +1,13 @@
 // Authentic Cubiccode company data  extracted from the existing cubiccode.in site.
 
+export type Office = {
+  id: string; // stable key  legal pages reference the "registered" office by id
+  label: string;
+  lines: string[];
+  map: string; // "get directions" link
+  coords?: { lat: number; lng: number }; // present → embedded map by pin, else by address
+};
+
 export const site = {
   name: "Cubiccode",
   legalName: "Cubiccode Digital Media LLP",
@@ -14,11 +22,12 @@ export const site = {
   url: "https://cubiccode.in",
   educationUrl: "https://cubiccode.org",
   email: "biz@cubiccode.in",
-  phones: ["+91 91081 01795", "+91 80502 03399"],
+  emails: ["biz@cubiccode.in", "sales@cubiccode.org"],
+  phones: ["+91 91081 01795", "+91 80502 03399", "+91 91871 10657"],
   primaryPhoneRaw: "+919108101795",
   whatsapp: "https://api.whatsapp.com/send?phone=+919108101795",
   whatsappShort: "https://wa.link/qzlm1j",
-  proposalCta: "https://wa.link/qzlm1j",
+  proposalCta: "/contact",
   socials: {
     linkedin: "https://www.linkedin.com/company/cubiccode/mycompany/",
     instagram: "https://www.instagram.com/cubiccode.in/",
@@ -27,6 +36,19 @@ export const site = {
   },
   offices: [
     {
+      id: "work",
+      label: "Work Office  Belagavi",
+      lines: [
+        "75/1B, Cubiccode Office, First Floor,",
+        "Besides Subhas Photo Studio,",
+        "Above Bolas DryFruits, Ashoka Heights,",
+        "Deshmukh Road, Tilakawadi,",
+        "Belagavi, Karnataka, India  590006",
+      ],
+      map: "https://www.google.com/maps/search/?api=1&query=Cubiccode%20Office%20Ashoka%20Heights%20Deshmukh%20Road%20Tilakawadi%20Belagavi%20590006",
+    },
+    {
+      id: "registered",
       label: "Registered Office  Belagavi",
       lines: [
         "Plot No. 60, Saraf Colony,",
@@ -38,6 +60,7 @@ export const site = {
       coords: { lat: 15.835088, lng: 74.506782 },
     },
     {
+      id: "bengaluru",
       label: "Bengaluru Office",
       lines: [
         "Novel Office, MG Road,",
@@ -47,8 +70,13 @@ export const site = {
       map: "https://maps.app.goo.gl/LmYJarmyrMm8cwTy9",
       coords: { lat: 12.9756, lng: 77.6068 },
     },
-  ],
+  ] as Office[],
 };
+
+// The legally-registered office  used verbatim on Terms & Privacy. Referenced
+// by id so reordering the display list (e.g. work office first) never changes it.
+export const registeredOffice =
+  site.offices.find((o) => o.id === "registered") ?? site.offices[0];
 
 export type Stat = { value: number; suffix: string; prefix?: string; label: string };
 
@@ -126,9 +154,9 @@ export const awards: Award[] = [
   {
     image: "/images/awardsIcons/a.png",
     moment: "/images/Moments/award-bg.jpg",
-    title: "Top 3 Web Designers in Belgaum",
-    org: "BestThreeRated",
-    desc: "Recognized as one of the Top 3 Web Designers in Belgaum by BestThreeRated.",
+    title: "Best Overall Website Design",
+    org: "blindwink · India Excellence Awards · 2020",
+    desc: "Awarded to Cubiccode for Best Overall Website Design at the India Excellence Awards, presented by blindwink  Research, Branding, Media & Films.",
   },
   {
     image: "/images/awardsIcons/a.png",
@@ -144,6 +172,7 @@ export type NavLink = {
   href: string;
   desc?: string;
   icon?: string; // lucide-react icon name
+  external?: boolean; // href points to an external site → open in a new tab
 };
 
 export type NavGroup = {
@@ -270,13 +299,13 @@ export const nav: NavGroup[] = [
   {
     label: "More",
     links: [
-      { label: "Become a Sales Partner", href: "/partner", desc: "Grow with us", icon: "Handshake" },
+      // { label: "Become a Sales Partner", href: "/partner", desc: "Grow with us", icon: "Handshake" },
       { label: "Join the Team", href: "/careers", desc: "Open roles", icon: "Briefcase" },
-      { label: "CareerJump", href: "/careerjump", desc: "Career acceleration", icon: "Rocket" },
-      { label: "Advanced Data Analytics", href: "/data-analytics", desc: "With Generative AI", icon: "BarChart3" },
-      { label: "Advanced Digital Marketing", href: "/digital-marketing", desc: "Performance marketing", icon: "Megaphone" },
-      { label: "GDG Belgaum", href: "/gdg", desc: "Google Developer Group", icon: "Code2" },
+      { label: "CareerJump", href: "https://careerjump.co.in/", desc: "Career acceleration", icon: "Rocket", external: true },
+      { label: "Advanced Data Analytics", href: "https://dataanalyticsbelgaum.com/", desc: "With Generative AI", icon: "BarChart3", external: true },
+      { label: "Advanced Digital Marketing", href: "https://digitalmarketingbelgaum.com/", desc: "Performance marketing", icon: "Megaphone", external: true },
+      { label: "GDG Belgaum", href: "https://gdg.community.dev/gdg-belgaum/", desc: "Google Developer Group", icon: "Code2", external: true },
     ],
   },
-  { label: "Contact", href: "/contact" },
+  // { label: "Contact", href: "/contact" },
 ];

@@ -246,6 +246,7 @@ export function Footer() {
 											<li key={link.label}>
 												<SweepLink
 													href={link.href}
+													external={link.external}
 													className="text-[13.5px] leading-relaxed">
 													{link.label}
 												</SweepLink>
@@ -294,44 +295,38 @@ export function Footer() {
 							</motion.div>
 						))}
 
+						{/* Connect  phones + emails merged into one card */}
 						<motion.div
 							variants={fadeUp}
 							className="group rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-corporate-400/40 hover:bg-white/[0.06]">
 							<div className="flex items-center gap-2.5">
 								<IconTile icon={Phone} />
 								<h4 className="text-[12.5px] font-semibold text-white">
-									Call us
+									Connect
 								</h4>
 							</div>
-							<ul className="mt-3.5 space-y-1">
+							<ul className="mt-3.5 space-y-1.5">
 								{site.phones.map((p) => (
 									<li key={p}>
 										<a
 											href={`tel:${p.replace(/\s/g, "")}`}
-											className="rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
+											className="flex items-center gap-2 rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
+											<Phone className="size-3.5 shrink-0 text-corporate-300/80" />
 											{p}
 										</a>
 									</li>
 								))}
+								{site.emails.map((e) => (
+									<li key={e}>
+										<a
+											href={`mailto:${e}`}
+											className="flex items-center gap-2 rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
+											<Mail className="size-3.5 shrink-0 text-corporate-300/80" />
+											<span className="break-all">{e}</span>
+										</a>
+									</li>
+								))}
 							</ul>
-						</motion.div>
-
-						<motion.div
-							variants={fadeUp}
-							className="group rounded-2xl border border-white/10 bg-white/[0.04] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-corporate-400/40 hover:bg-white/[0.06]">
-							<div className="flex items-center gap-2.5">
-								<IconTile icon={Mail} />
-								<h4 className="text-[12.5px] font-semibold text-white">
-									Write to us
-								</h4>
-							</div>
-							<p className="mt-3.5">
-								<a
-									href={`mailto:${site.email}`}
-									className="rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
-									{site.email}
-								</a>
-							</p>
 						</motion.div>
 					</div>
 				</motion.div>

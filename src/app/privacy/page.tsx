@@ -7,7 +7,7 @@
 
 import { PageHero } from "@/components/layout/PageHero";
 import { Reveal } from "@/components/ui/Reveal";
-import { site } from "@/content/site";
+import { site, registeredOffice } from "@/content/site";
 
 export const metadata = {
 	title: "Privacy Policy | Cubiccode",
@@ -193,7 +193,7 @@ export default function PrivacyPage() {
 										className="font-medium text-corporate-600 hover:text-corporate-700">
 										{site.phones[0]}
 									</a>
-									. Registered office: {site.offices[0].lines.join(" ")}
+									. Registered office: {registeredOffice.lines.join(" ")}
 								</p>
 							</div>
 						</article>
