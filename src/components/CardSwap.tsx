@@ -216,8 +216,17 @@ const CardSwap: React.FC<CardSwapProps> = ({
 		const reduce = prefersReducedMotion();
 
 		const total = refs.length;
-		refs.forEach((r, i) =>
-			placeNow(r.current!, makeSlot(i, distX, distY, total), skewAmount),
+		// Seed from the CURRENT order, not from the original index. This effect
+		// re-runs whenever the fit changes (any resize below lg), and by then the
+		// deck is usually mid-rotation — placing card i into slot i would put a card
+		// in front that isn't the one we announce as active on the next line, so the
+		// copy panel would describe a screenshot that isn't the one on top.
+		order.current.forEach((idx, pos) =>
+			placeNow(
+				refs[idx].current!,
+				makeSlot(pos, distX, distY, total),
+				skewAmount,
+			),
 		);
 		onActiveRef.current?.(order.current[0]);
 
@@ -225,7 +234,19 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			if (order.current.length < 2) return;
 
 			const [front, ...rest] = order.current;
+			// Commit the rotation now, not in a trailing tl.call(). The timeline runs
+			// 2.2s + (n - 2) * 0.15s, which is 3.1s for an 8-card deck — longer than
+			// the 3s auto-advance — so a deferred commit landed *after* the next swap
+			// had already read `order`. That swap then dropped the same card twice and
+			// re-announced the same active index, stalling the copy panel a card behind
+			// the deck. moveToFront() below already commits synchronously; match it.
+			order.current = [...rest, front];
+
 			const elFront = refs[front].current!;
+			// Every card of a still-running swap is re-targeted below, so killing it
+			// strands nothing — it just stops two timelines fighting over the same
+			// element on decks long enough to overlap the interval.
+			tlRef.current?.kill();
 			const tl = gsap.timeline();
 			tlRef.current = tl;
 
@@ -276,10 +297,6 @@ const CardSwap: React.FC<CardSwapProps> = ({
 				},
 				"return",
 			);
-
-			tl.call(() => {
-				order.current = [...rest, front];
-			});
 		};
 
 		let paused = false;

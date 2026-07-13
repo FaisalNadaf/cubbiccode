@@ -29,14 +29,14 @@ export function BuildShowcase({
 	const current = items[active] ?? items[0];
 	const reduce = usePrefersReducedMotion();
 
-	// The deck imagery is ~1.88:1 (1200x637 and friends), so the card is sized to
-	// that ratio: a contained image then fills it edge-to-edge with nothing cropped
-	// and no letterbox bars. CardSwap bottom-anchors a stack of
+	// A card is a white titlebar over a screenshot body, so it wants the taller
+	// 600x440 box rather than the imagery's own ~1.88:1 — the body crops to fill and
+	// the bar sits on solid white above it. CardSwap bottom-anchors a stack of
 	// `height + (n - 1) * verticalDistance` and scales it by fit = min(1, host/600),
 	// so the wrapper reserves exactly that — derived from the real deck length,
 	// since decks run 5-8 cards.
 	const CARD_W = 600;
-	const CARD_H = 320;
+	const CARD_H = 440;
 	const STEP = 60;
 	const deckH = CARD_H + Math.max(0, items.length - 1) * STEP;
 
@@ -124,56 +124,39 @@ export function BuildShowcase({
 					{items.map((it, i) => (
 						<Card
 							key={it.title}
-							className="group/card relative cursor-pointer border border-steel-200 bg-ink-900 shadow-2xl ring-1 ring-black/5 transition-shadow hover:shadow-[0_28px_70px_-20px_rgba(11,27,58,0.45)]">
-							{/* Card is 600x320 (1.875) to match the ~1.88:1 deck imagery, so the
-							    contained image fills it edge-to-edge with nothing cropped. The
-							    blurred self-backdrop only shows for odd-ratio sources, letterboxing
-							    them into their own colours instead of dead grey. */}
-							<Image
-								src={it.image}
-								alt=""
-								aria-hidden
-								fill
-								sizes="(max-width: 1023.98px) 96px, 600px"
-								className="scale-110 object-cover blur-2xl saturate-125"
-							/>
-							<Image
-								src={it.image}
-								alt={it.title}
-								fill
-								sizes="(max-width: 639.98px) 448px, 600px"
-								className="object-contain"
-							/>
+							className="cursor-pointer border border-steel-200 bg-white shadow-2xl ring-1 ring-black/5 transition-shadow hover:shadow-[0_28px_70px_-20px_rgba(11,27,58,0.45)]">
+							<div className="flex h-full w-full flex-col">
+								{/* titlebar  icon + label on solid white, above the shot rather
+								    than floating over it. Padding tightens below sm, where CardSwap
+								    fits the box down to ~276px wide and the desktop padding would
+								    eat the bar; sm: restores the desktop values and >= 1024px is
+								    inside that range. */}
+								<div className="flex shrink-0 items-center gap-2 border-b border-steel-200 bg-white px-3 py-2 sm:gap-2.5 sm:px-5 sm:py-3">
+									<span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100 sm:size-7">
+										<Icon
+											name={it.icon}
+											className="size-3.5 sm:size-4"
+										/>
+									</span>
+									<span className="truncate text-xs font-semibold text-ink sm:text-sm">
+										{it.title}
+									</span>
+									<span className="ml-auto font-display text-[10px] font-bold text-steel-300 sm:text-xs">
+										{String(i + 1).padStart(2, "0")}
+									</span>
+								</div>
 
-							{/* Scrims: top carries the titlebar, bottom grounds the card. The middle
-							    stays clear so the screenshot itself is never washed out.
-
-							    Sized in PERCENT, not px. CardSwap fits the card in JS, so below lg
-							    the box really is smaller (~276x147 on a 320px phone) — a fixed
-							    h-20 + h-16 would be 144px of scrim on a 147px card, i.e. an almost
-							    solid black tile. 25% / 20% are exactly the old 80px / 64px on the
-							    320px-tall card the deck draws at >= lg, so desktop is unchanged. */}
-							<div className="pointer-events-none absolute inset-x-0 top-0 h-[25%] bg-gradient-to-b from-ink-900/85 via-ink-900/40 to-transparent" />
-							<div className="pointer-events-none absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-ink-900/60 to-transparent" />
-							<div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-corporate-900/40 to-transparent opacity-0 transition-opacity duration-500 group-hover/card:opacity-100" />
-
-							{/* titlebar  floats over the image instead of cropping it. Tightened
-							    below sm, where the fitted card is short enough that the desktop
-							    padding would eat a third of it; sm: restores the desktop values and
-							    >= 1024px is inside that range. */}
-							<div className="absolute inset-x-0 top-0 flex items-center gap-2 px-3 py-2 sm:gap-2.5 sm:px-5 sm:py-3.5">
-								<span className="flex size-6 shrink-0 items-center justify-center rounded-lg bg-white/15 text-white ring-1 ring-white/25 backdrop-blur-md sm:size-7">
-									<Icon
-										name={it.icon}
-										className="size-3.5 sm:size-4"
+								{/* body  the project screenshot fills whatever the bar leaves */}
+								<div className="relative flex-1">
+									<Image
+										src={it.image}
+										alt={it.title}
+										fill
+										sizes="(max-width: 639.98px) 448px, 600px"
+										className="object-cover"
 									/>
-								</span>
-								<span className="truncate text-xs font-semibold text-white drop-shadow-[0_1px_2px_rgba(8,20,39,0.6)] sm:text-sm">
-									{it.title}
-								</span>
-								<span className="ml-auto font-display text-[10px] font-bold text-white/60 sm:text-xs">
-									{String(i + 1).padStart(2, "0")}
-								</span>
+									<div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/15 to-transparent" />
+								</div>
 							</div>
 						</Card>
 					))}
