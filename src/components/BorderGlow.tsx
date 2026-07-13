@@ -45,16 +45,28 @@ interface AnimateOpts {
   ease?: (t: number) => number; onUpdate: (v: number) => void; onEnd?: () => void;
 }
 
-function animateValue({ start = 0, end = 100, duration = 1000, delay = 0, ease = easeOutCubic, onUpdate, onEnd }: AnimateOpts) {
+/** Returns a cancel fn. The sweep outlives a fast unmount otherwise, and keeps
+ *  a rAF loop calling setState on a dead component. */
+function animateValue({ start = 0, end = 100, duration = 1000, delay = 0, ease = easeOutCubic, onUpdate, onEnd }: AnimateOpts): () => void {
+  let cancelled = false;
+  let raf = 0;
   const t0 = performance.now() + delay;
   function tick() {
+    if (cancelled) return;
     const elapsed = performance.now() - t0;
     const t = Math.min(elapsed / duration, 1);
     onUpdate(start + (end - start) * ease(t));
-    if (t < 1) requestAnimationFrame(tick);
+    if (t < 1) raf = requestAnimationFrame(tick);
     else if (onEnd) onEnd();
   }
-  setTimeout(() => requestAnimationFrame(tick), delay);
+  const timer = setTimeout(() => {
+    if (!cancelled) raf = requestAnimationFrame(tick);
+  }, delay);
+  return () => {
+    cancelled = true;
+    clearTimeout(timer);
+    cancelAnimationFrame(raf);
+  };
 }
 
 const GRADIENT_POSITIONS = ['80% 55%', '69% 34%', '8% 6%', '41% 38%', '86% 85%', '82% 18%', '51% 4%'];
@@ -118,6 +130,12 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
   }, [getCenterOfElement]);
 
   const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    // A touch pointer only produces pointermove while the finger is dragging —
+    // i.e. while the page is scrolling — and each one here does a
+    // getBoundingClientRect() plus two setState calls, re-rendering the card and
+    // all four gradient layers mid-gesture. There is also no cursor for the cone
+    // to point at. Mouse and pen still take the full path, so desktop is unchanged.
+    if (e.pointerType === 'touch') return;
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
@@ -129,22 +147,31 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
 
   useEffect(() => {
     if (!animated) return;
+    // rAF-driven, so the global reduced-motion rule in globals.css (CSS
+    // animations/transitions only) cannot stop this sweep. Skipping it leaves
+    // the card at rest, which is the correct no-motion state.
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
     const angleStart = 110;
     const angleEnd = 465;
     setSweepActive(true);
     setCursorAngle(angleStart);
 
-    animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) });
-    animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
-      setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
-    }});
-    animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
-      setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
-    }});
-    animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
-      onUpdate: v => setEdgeProximity(v / 100),
-      onEnd: () => setSweepActive(false),
-    });
+    const cancels = [
+      animateValue({ duration: 500, onUpdate: v => setEdgeProximity(v / 100) }),
+      animateValue({ ease: easeInCubic, duration: 1500, end: 50, onUpdate: v => {
+        setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
+      }}),
+      animateValue({ ease: easeOutCubic, delay: 1500, duration: 2250, start: 50, end: 100, onUpdate: v => {
+        setCursorAngle((angleEnd - angleStart) * (v / 100) + angleStart);
+      }}),
+      animateValue({ ease: easeInCubic, delay: 2500, duration: 1500, start: 100, end: 0,
+        onUpdate: v => setEdgeProximity(v / 100),
+        onEnd: () => setSweepActive(false),
+      }),
+    ];
+
+    return () => cancels.forEach(cancel => cancel());
   }, [animated]);
 
   const colorSensitivity = edgeSensitivity + 20;
@@ -165,7 +192,7 @@ const BorderGlow: React.FC<BorderGlowProps> = ({
     <div
       ref={cardRef}
       onPointerMove={handlePointerMove}
-      onPointerEnter={() => setIsHovered(true)}
+      onPointerEnter={e => { if (e.pointerType !== 'touch') setIsHovered(true); }}
       onPointerLeave={() => setIsHovered(false)}
       className={`relative grid isolate border border-white/15 ${className}`}
       style={{

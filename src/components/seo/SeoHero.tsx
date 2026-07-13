@@ -21,7 +21,7 @@ export function SeoHero() {
 	const reduce = useReducedMotion();
 
 	return (
-		<section className="relative flex min-h-[92vh] w-full items-center overflow-hidden bg-ink text-white">
+		<section className="relative flex min-h-[92dvh] w-full items-center overflow-hidden bg-ink text-white lg:min-h-[92vh]">
 			<SeoBackground />
 
 			<div className="container-x relative z-10 w-full py-32 pt-40 text-center sm:pt-44">
@@ -100,7 +100,7 @@ export function SeoHero() {
 			<motion.a
 				href="#process"
 				aria-label="Scroll to our process"
-				className="absolute inset-x-0 bottom-6 z-10 mx-auto flex w-fit flex-col items-center gap-1.5 text-[11px] font-medium uppercase tracking-kicker text-steel-400"
+				className="tap-target-h absolute inset-x-0 bottom-6 z-10 mx-auto flex w-fit flex-col items-center gap-1.5 text-[11px] font-medium uppercase tracking-kicker text-steel-400"
 				animate={reduce ? undefined : { y: [0, 7, 0] }}
 				transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
 				Scroll

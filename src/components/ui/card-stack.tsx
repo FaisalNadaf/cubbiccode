@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { SquareArrowOutUpRight } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 function cn(...classes: Array<string | undefined | null | false>) {
   return classes.filter(Boolean).join(" ");
@@ -60,6 +61,8 @@ export type CardStackProps<T extends CardStackItem> = {
 
   /** UI */
   showDots?: boolean;
+  /** Primary call to action, centred beneath the fan. */
+  cta?: { label: string; href: string };
   className?: string;
 
   /** Hooks */
@@ -112,6 +115,7 @@ export function CardStack<T extends CardStackItem>({
   pauseOnHover = true,
 
   showDots = true,
+  cta,
   className,
 
   onChangeIndex,
@@ -140,6 +144,28 @@ export function CardStack<T extends CardStackItem>({
 
   const cardSpacing = Math.max(10, Math.round(cardWidth * (1 - overlap)));
   const stepDeg = maxOffset > 0 ? spreadDeg / maxOffset : 0;
+
+  // The fan is authored at a fixed px size, which is wider than a phone. Below
+  // the width at which the card stops fitting, min()/calc() shrink the card and
+  // the stage fluidly. `calc(100vw - 40px)` is >= 984px at every viewport
+  // >= 1024px, so each min() below resolves to the authored px value there and
+  // desktop cannot move; `fluid` proves that holds for the given props and
+  // falls back to the raw px values if it ever would not.
+  const FLUID_CEILING = 984;
+  const aspect = cardWidth > 0 ? cardHeight / cardWidth : 0;
+  const stagePx = Math.max(380, cardHeight + 80);
+  const fluid =
+    cardWidth > 0 &&
+    cardWidth <= FLUID_CEILING &&
+    FLUID_CEILING * aspect + 80 >= stagePx;
+
+  const cardW = fluid ? `min(${cardWidth}px, calc(100vw - 40px))` : cardWidth;
+  const cardH = fluid
+    ? `min(${cardHeight}px, calc((100vw - 40px) * ${aspect}))`
+    : cardHeight;
+  const stageH = fluid
+    ? `min(${stagePx}px, calc((100vw - 40px) * ${aspect} + 80px))`
+    : stagePx;
 
   const canGoPrev = loop || active > 0;
   const canGoNext = loop || active < len - 1;
@@ -202,9 +228,12 @@ export function CardStack<T extends CardStackItem>({
       {/* Stage */}
       <div
         className="relative w-full"
-        style={{ height: Math.max(380, cardHeight + 80) }}
+        style={{ height: stageH }}
         tabIndex={0}
         onKeyDown={onKeyDown}
+        role="group"
+        aria-roledescription="carousel"
+        aria-label="Project showcase"
       >
         {/* background wash / spotlight (unique feel) */}
         <div
@@ -279,8 +308,8 @@ export function CardStack<T extends CardStackItem>({
                       : "cursor-pointer",
                   )}
                   style={{
-                    width: cardWidth,
-                    height: cardHeight,
+                    width: cardW,
+                    height: cardH,
                     zIndex,
                     transformStyle: "preserve-3d",
                   }}
@@ -332,35 +361,58 @@ export function CardStack<T extends CardStackItem>({
         </div>
       </div>
 
-      {/* Dots navigation centered at bottom */}
-      {showDots ? (
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <div className="flex items-center gap-2">
-            {items.map((it, idx) => {
-              const on = idx === active;
-              return (
-                <button
-                  key={it.id}
-                  onClick={() => setActive(idx)}
-                  className={cn(
-                    "h-2 w-2 rounded-full transition",
-                    on ? "bg-ink" : "bg-ink/25 hover:bg-ink/45",
-                  )}
-                  aria-label={`Go to ${it.title}`}
-                />
-              );
-            })}
-          </div>
-          {activeItem.href ? (
-            <Link
-              href={activeItem.href}
-              target="_blank"
-              rel="noreferrer"
-              className="text-steel-500 transition hover:text-ink"
-              aria-label="Open link"
-            >
-              <SquareArrowOutUpRight className="h-4 w-4" />
-            </Link>
+      {/* Call to action, centred under the fan; dots tuck in beneath it. */}
+      {cta || showDots ? (
+        <div className="mt-8 flex flex-col items-center gap-5">
+          {cta ? (
+            <Button href={cta.href} variant="accent" size="lg" arrow>
+              {cta.label}
+            </Button>
+          ) : null}
+
+          {showDots ? (
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {items.map((it, idx) => {
+                  const on = idx === active;
+                  return (
+                    // The pill is the inner span so the button itself can grow
+                    // to the 44px WCAG target on touch without the pill growing
+                    // with it. At `pointer: fine` the button carries no padding
+                    // or border, so its box is exactly the pill's box — the row
+                    // is unchanged.
+                    <button
+                      key={it.id}
+                      type="button"
+                      onClick={() => setActive(idx)}
+                      className="flex items-center justify-center [@media(pointer:coarse)]:size-11"
+                      aria-label={`Go to ${it.title}`}
+                      aria-current={on || undefined}
+                    >
+                      <span
+                        className={cn(
+                          "block rounded-full transition-all duration-300",
+                          on
+                            ? "h-2 w-6 bg-corporate-600"
+                            : "h-2 w-2 bg-ink/20 hover:bg-ink/40",
+                        )}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+              {activeItem.href ? (
+                <Link
+                  href={activeItem.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="tap-target text-steel-500 transition hover:text-ink"
+                  aria-label="Open link"
+                >
+                  <SquareArrowOutUpRight className="h-4 w-4" />
+                </Link>
+              ) : null}
+            </div>
           ) : null}
         </div>
       ) : null}
@@ -369,11 +421,12 @@ export function CardStack<T extends CardStackItem>({
 }
 
 function DefaultFanCard({ item }: { item: CardStackItem; active: boolean }) {
+  const hasImage = Boolean(item.imageSrc);
+
   return (
     <div className="relative h-full w-full">
-      {/* image */}
       <div className="absolute inset-0">
-        {item.imageSrc ? (
+        {hasImage ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={item.imageSrc}
@@ -383,14 +436,15 @@ function DefaultFanCard({ item }: { item: CardStackItem; active: boolean }) {
             loading="eager"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center bg-steel-100 text-sm text-steel-500">
-            No image
-          </div>
+          <PlaceholderArt title={item.title} />
         )}
       </div>
 
-      {/* subtle gradient overlay at bottom for text readability */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+      {/* Readability wash. The placeholder is already dark and carries its own
+          monogram, so a second gradient over it would only mud the artwork. */}
+      {hasImage ? (
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+      ) : null}
 
       {/* content */}
       <div className="relative z-10 flex h-full flex-col justify-end p-5">
@@ -408,6 +462,56 @@ function DefaultFanCard({ item }: { item: CardStackItem; active: boolean }) {
           </div>
         ) : null}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Shown for projects whose screenshot we don't have. Deliberately branded rather
+ * than a grey "No image" box: the card sits in the same fan as real screenshots,
+ * so it has to look like a chosen treatment, not a broken one.
+ */
+function PlaceholderArt({ title }: { title: string }) {
+  // First letter of each of the first two words — "JL Wing Indian Army" ⇒ "JW".
+  const monogram = title
+    .split(/[\s.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
+
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-gradient-to-br from-ink-900 via-ink to-corporate-800">
+      {/* White rules, not the `bg-blueprint` utility — that grid is drawn in
+          corporate blue at 7% alpha, which vanishes against this navy. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          backgroundImage:
+            "radial-gradient(70% 60% at 78% 18%, rgba(63,134,208,0.35), transparent)",
+        }}
+      />
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-3 right-4 select-none font-display text-[4.5rem] font-black leading-none tracking-tightest text-white/[0.07] sm:text-[7rem]"
+      >
+        {monogram}
+      </span>
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-white/10"
+      />
     </div>
   );
 }

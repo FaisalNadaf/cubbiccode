@@ -15,36 +15,20 @@ import {
 	capabilityProblemImages,
 } from "@/content/serviceImages";
 import { site } from "@/content/site";
+import { withDemoShots } from "@/lib/demoShots";
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { CardStack } from "@/components/ui/card-stack";
 import { BuildShowcase } from "@/sections/capabilities/BuildShowcase";
+import { OutcomeShowcase } from "@/sections/capabilities/OutcomeShowcase";
 import { ProblemShowcase } from "@/sections/capabilities/ProblemShowcase";
 import { HowWeDoItBetter } from "@/sections/shared/HowWeDoItBetter";
 
 export function generateStaticParams() {
 	return capabilities.map((c) => ({ slug: c.slug }));
 }
-
-// Real Cubiccode project screenshots for the "Our Work" card stack.
-// Exact matches by name; the rest cycle the available pool (swap in precise
-// shots as they're added to /public/images/portfolio).
-const WORK_IMAGE: Record<string, string> = {
-	"Harsha & Rakesh Salon": "/images/portfolio/harsharakes.jpg",
-	CityIndex: "/images/portfolio/city-index.jpg",
-};
-const WORK_IMAGE_POOL = [
-	"/images/portfolio/prionsbiotec.jpg",
-	"/images/portfolio/woodpeckerexotic.jpg",
-	"/images/portfolio/aishwaryacotton.jpg",
-	"/images/portfolio/positron.jpeg",
-	"/images/portfolio/city-index.jpg",
-	"/images/portfolio/harsharakes.jpg",
-];
-const workImage = (name: string, i: number) =>
-	WORK_IMAGE[name] ?? WORK_IMAGE_POOL[i % WORK_IMAGE_POOL.length];
 
 // Distinct titlebar icons per card (Lucide names)  mirrors the reference's
 // per-card icon treatment. Neutral, feature-flavoured, cycled by index.
@@ -95,7 +79,7 @@ const PROBLEM_META: Record<string, { icons: string[]; badges: string[] }> = {
 	},
 };
 
-// Features are authored as "Title  description". Split on the em-dash so the
+// Features are authored as "Title description". Split on the em-dash so the
 // card can style the lead and the detail differently; sentences without one
 // become a standalone title.
 function splitFeature(f: string): { title: string; detail: string } {
@@ -129,8 +113,24 @@ export default async function CapabilityPage({
 	const cap = capabilityBySlug(slug);
 	if (!cap) notFound();
 
-	const others = capabilities.filter((c) => c.slug !== cap.slug);
 	const featImages = capabilityFeatureImages(cap.slug, cap.features.length);
+
+	// The fan's cards, built once and shared by both breakpoint branches of the
+	// OUR WORK stack below.
+	const work = cap.work;
+	const workCards =
+		work ?
+			withDemoShots(work.items, cap.slug).map((w) => ({
+				id: w.name,
+				title: w.name,
+				description: w.note,
+				// Projects we have no shot of borrow a generic dashboard from
+				// the demo pool — distinct per card — rather than showing the
+				// flat placeholder art or another client's site.
+				imageSrc: w.image,
+				tag: work.tag,
+			}))
+		:	[];
 
 	return (
 		<>
@@ -207,9 +207,9 @@ export default async function CapabilityPage({
 							align="center"
 							kicker="Portfolio-ready outcomes"
 							title="What you'll be able to build after this course"
-							intro="You won't just understand code  you'll have shipped real, portfolio-ready projects."
+							intro="You won't just understand code you'll have shipped real, portfolio-ready projects."
 						/>
-						<RevealGroup className="mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3">
+						<RevealGroup className="mt-14 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 							{cap.buildAfter.map((b, i) => (
 								<RevealItem key={b.title}>
 									<article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-steel-200 bg-white p-7 shadow-soft transition-all duration-300 hover:-translate-y-1 hover:border-corporate-200 hover:shadow-lift">
@@ -231,18 +231,11 @@ export default async function CapabilityPage({
 			)}
 
 			{/* ============ RESULT / WHAT YOU GET ============ */}
-			{cap.result && (
-				<section className="section relative overflow-hidden bg-canvas-soft">
-					<div className="pointer-events-none absolute inset-0 bg-grid-steel [background-size:46px_46px] [mask-image:radial-gradient(70%_60%_at_50%_50%,#000,transparent)] opacity-50" />
-					<div className="container-x relative">
-						<div className="mx-auto max-w-3xl rounded-4xl border border-steel-200 bg-white p-10 text-center shadow-soft lg:p-14">
-							<span className="kicker justify-center">What you get</span>
-							<p className="mt-6 text-pretty text-xl font-medium leading-relaxed text-ink lg:text-2xl">
-								{cap.result}
-							</p>
-						</div>
-					</div>
-				</section>
+			{cap.result && cap.results && cap.results.length > 0 && (
+				<OutcomeShowcase
+					lead={cap.result}
+					outcomes={cap.results}
+				/>
 			)}
 
 			{/* ============ OUR WORK ============ */}
@@ -256,7 +249,7 @@ export default async function CapabilityPage({
 							/>
 							<Link
 								href="/portfolio"
-								className="group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700">
+								className="tap-target group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700">
 								Explore our portfolio
 								<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 							</Link>
@@ -265,20 +258,36 @@ export default async function CapabilityPage({
 
 					{/* Full-bleed card stack  spans the viewport so the fan isn't clipped */}
 					<div className="relative mt-12 w-full">
-						<CardStack
-							items={cap.work.items.map((w, i) => ({
-								id: w.name,
-								title: w.name,
-								description: w.note,
-								imageSrc: workImage(w.name, i),
-							}))}
-							loop
-							autoAdvance
-							intervalMs={3200}
-							pauseOnHover
-							cardWidth={440}
-							cardHeight={290}
-						/>
+						{/* A 440px card is wider than a phone, so the active card's tag and
+						    title fall off both edges. Under sm the same fan runs on a
+						    phone-sized card: 288px clears a 320px screen, and 288+80 still
+						    fills the stack's 380px stage, so no dead space opens above it.
+						    From sm up — every width the 440px card already fits, desktop
+						    included — the original stack renders untouched. */}
+						<div className="sm:hidden">
+							<CardStack
+								items={workCards}
+								loop
+								autoAdvance
+								intervalMs={3200}
+								pauseOnHover
+								cardWidth={288}
+								cardHeight={300}
+								cta={{ label: "Explore our portfolio", href: "/portfolio" }}
+							/>
+						</div>
+						<div className="hidden sm:block">
+							<CardStack
+								items={workCards}
+								loop
+								autoAdvance
+								intervalMs={3200}
+								pauseOnHover
+								cardWidth={440}
+								cardHeight={290}
+								cta={{ label: "Explore our portfolio", href: "/portfolio" }}
+							/>
+						</div>
 					</div>
 
 					{cap.work.caseStudies && (

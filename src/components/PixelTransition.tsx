@@ -5,6 +5,7 @@
 import React, { useRef, useEffect, useState, CSSProperties } from "react";
 import { gsap } from "gsap";
 import { cn } from "@/lib/utils";
+import { prefersReducedMotion } from "@/lib/motion";
 
 interface PixelTransitionProps {
 	firstContent: React.ReactNode | string;
@@ -83,6 +84,16 @@ const PixelTransition: React.FC<PixelTransitionProps> = ({
 		gsap.killTweensOf(pixels);
 		if (delayedCallRef.current) {
 			delayedCallRef.current.kill();
+		}
+
+		// The global `prefers-reduced-motion` rule in globals.css only neutralises
+		// CSS animation and transition; a GSAP timeline is immune to it and has to
+		// opt out itself. Swap the two faces with no dissolve at all.
+		if (prefersReducedMotion()) {
+			gsap.set(pixels, { display: "none" });
+			activeEl.style.display = activate ? "block" : "none";
+			activeEl.style.pointerEvents = activate ? "none" : "";
+			return;
 		}
 
 		gsap.set(pixels, { display: "none" });

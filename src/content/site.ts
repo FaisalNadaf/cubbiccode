@@ -1,5 +1,7 @@
 // Authentic Cubiccode company data  extracted from the existing cubiccode.in site.
 
+import { recognitions } from "./company";
+
 export type Office = {
   id: string; // stable key  legal pages reference the "registered" office by id
   label: string;
@@ -14,15 +16,17 @@ export const site = {
   certification: "ISO 9001:2015 Certified",
   founded: 2016,
   tagline:
-    "We build websites and web apps that don't just look good  they drive traffic and sales.",
+    "We build websites and web apps that don't just look good they drive traffic and sales.",
   description:
-    "Cubiccode Digital Media LLP is a full-stack ITES company with nearly a decade of expertise  building websites, web applications, custom ERP, SEO and workflow automation for 500+ clients across India. Engineered in India, delivered on time.",
+    "Cubiccode Digital Media LLP is a full-stack ITES company with nearly a decade of expertise building websites, web applications, custom ERP, SEO and workflow automation for 500+ clients across India. Engineered in India, delivered on time.",
   metaDescription:
-    "Cubiccode is a 5x-awarded, ISO 9001:2015 certified web development company with 700+ projects and 500+ clients. Websites, web apps, custom ERP, automation & SEO  engineered in India, delivered on time.",
+    "Cubiccode is a 5x-awarded, ISO 9001:2015 certified web development company with 700+ projects and 500+ clients. Websites, web apps, custom ERP, automation & SEO engineered in India, delivered on time.",
   url: "https://cubiccode.in",
   educationUrl: "https://cubiccode.org",
   email: "biz@cubiccode.in",
   emails: ["biz@cubiccode.in", "sales@cubiccode.org"],
+  /** Applications go here, with `email` copied in. */
+  hrEmail: "hr@cubiccode.org",
   phones: ["+91 91081 01795", "+91 80502 03399", "+91 91871 10657"],
   primaryPhoneRaw: "+919108101795",
   whatsapp: "https://api.whatsapp.com/send?phone=+919108101795",
@@ -33,28 +37,30 @@ export const site = {
     instagram: "https://www.instagram.com/cubiccode.in/",
     youtube: "https://www.youtube.com/channel/UCinfpxrfs_N4npK7LtSup3g",
     googleBusiness: "https://g.page/cubiccode?share",
+    glassdoor:
+      "https://www.glassdoor.co.in/Reviews/Cubiccode-Digital-Media-Reviews-E4267180.htm",
   },
   offices: [
     {
       id: "work",
-      label: "Work Office  Belagavi",
+      label: "Work Office Belagavi",
       lines: [
         "75/1B, Cubiccode Office, First Floor,",
         "Besides Subhas Photo Studio,",
         "Above Bolas DryFruits, Ashoka Heights,",
         "Deshmukh Road, Tilakawadi,",
-        "Belagavi, Karnataka, India  590006",
+        "Belagavi, Karnataka, India 590006",
       ],
       map: "https://www.google.com/maps/search/?api=1&query=Cubiccode%20Office%20Ashoka%20Heights%20Deshmukh%20Road%20Tilakawadi%20Belagavi%20590006",
     },
     {
       id: "registered",
-      label: "Registered Office  Belagavi",
+      label: "Registered Office Belagavi",
       lines: [
         "Plot No. 60, Saraf Colony,",
         "Opp. Saraf Residency, Near Dominos Pizza,",
         "RPD Cross, Khanapur Road, Tilakwadi,",
-        "Belagavi, Karnataka, India  590006",
+        "Belagavi, Karnataka, India 590006",
       ],
       map: "https://maps.app.goo.gl/7xSdkUUG6Ubc3VPU7",
       coords: { lat: 15.835088, lng: 74.506782 },
@@ -65,7 +71,7 @@ export const site = {
       lines: [
         "Novel Office, MG Road,",
         "Opposite 1MG Mall,",
-        "Bengaluru, Karnataka  560042",
+        "Bengaluru, Karnataka 560042",
       ],
       map: "https://maps.app.goo.gl/LmYJarmyrMm8cwTy9",
       coords: { lat: 12.9756, lng: 77.6068 },
@@ -92,9 +98,9 @@ export const heroStats: Stat[] = [
 export const hero = {
   eyebrow: "ISO 9001:2015 Certified · 5x Awarded · Since 2016",
   headline:
-    "We build websites and web apps that don't just look good  they drive traffic and sales.",
+    "We build websites and web apps that don't just look good they drive traffic and sales.",
   subheadline:
-    "With 500+ clients and nearly a decade building websites and web apps, Cubiccode is recognised among the 10 Best Web Development Start-ups in India (Silicon India, 2019), named Most Outstanding Web Development Company in Karnataka (AI Global Excellence Awards, 2019), and a Silver winner for Web Application Development Company of the Year at the 16th India Digital Awards 2025. Websites, web apps, customised ERP, SEO and workflow automation  engineered in India, delivered on time.",
+    "With 500+ clients and nearly a decade building websites and web apps, Cubiccode is recognised among the 10 Best Web Development Start-ups in India (Silicon India, 2019), named Most Outstanding Web Development Company in Karnataka (AI Global Excellence Awards, 2019), and a Silver winner for Web Application Development Company of the Year at the 16th India Digital Awards 2025. Websites, web apps, customised ERP, SEO and workflow automation engineered in India, delivered on time.",
   primaryCta: "Get a Proposal",
   secondaryCta: "Explore Our Work",
 };
@@ -108,23 +114,23 @@ export const heroHighlights: { icon: string; text: string }[] = [
   },
   {
     icon: "Trophy",
-    text: "Silver  Web App Development Company of the Year, India Digital Awards 2025.",
+    text: "Silver Web App Development Company of the Year, India Digital Awards 2025.",
   },
   {
     icon: "Award",
-    text: "Top 10 Web Development Start-ups in India  Silicon India, 2019.",
+    text: "Top 10 Web Development Start-ups in India Silicon India, 2019.",
   },
   {
     icon: "Layers",
-    text: "Websites, web apps, custom ERP, SEO & workflow automation  engineered in India, delivered on time.",
+    text: "Websites, web apps, custom ERP, SEO & workflow automation engineered in India, delivered on time.",
   },
 ];
 
 export const trustBadges = [
   "ISO 9001:2015 Certified",
-  "Silicon India  Top 10 Web Developers, India",
+  "Silicon India Top 10 Web Developers, India",
   "AI Global Excellence Award 2019",
-  "Silver  16th India Digital Awards 2025",
+  "Silver 16th India Digital Awards 2026",
 ];
 
 export type Award = {
@@ -135,37 +141,23 @@ export type Award = {
   desc: string;
 };
 
-// Award / recognition cards  powers the scroll-stack showcase in "Why Cubiccode".
-export const awards: Award[] = [
-  {
+/**
+ * Award cards for the "Why Cubiccode" row on the home page — the four flagship
+ * honours, projected from the one authoritative list in `content/company.ts`.
+ *
+ * Derived, never retyped: this list used to be a hand-written copy and it drifted
+ * badly (wrong years, certificates pinned to the wrong award). To promote or
+ * demote a card, flip `featured` on the entry in `recognitions`.
+ */
+export const awards: Award[] = recognitions
+  .filter((r) => r.featured)
+  .map((r) => ({
     image: "/images/awardsIcons/a.png",
-    moment: "/images/Moments/paper.jpg",
-    title: "Top 10 Web Development Start-ups in India",
-    org: "Silicon India · 2019",
-    desc: "Ranked in the Top 10 Web Development Start-ups of 2019 by Silicon India.",
-  },
-  {
-    image: "/images/awardsIcons/a.png",
-    moment: "/images/Moments/business-excellence-certificate1.jpg",
-    title: "Most Outstanding Web Development Company",
-    org: "AI Global Excellence Awards · Karnataka · 2019",
-    desc: "Awarded Most Outstanding Web Development Company 2019 (Karnataka) by AI Global Excellence Awards.",
-  },
-  {
-    image: "/images/awardsIcons/a.png",
-    moment: "/images/Moments/award-bg.jpg",
-    title: "Best Overall Website Design",
-    org: "blindwink · India Excellence Awards · 2020",
-    desc: "Awarded to Cubiccode for Best Overall Website Design at the India Excellence Awards, presented by blindwink  Research, Branding, Media & Films.",
-  },
-  {
-    image: "/images/awardsIcons/a.png",
-    moment: "/images/Moments/india-excellence-award-certificate1.jpg",
-    title: "Silver  Web Application Development Company of the Year",
-    org: "16th India Digital Awards · 2025",
-    desc: "Won Silver in Web Application Development Company of the Year at the 16th India Digital Awards.",
-  },
-];
+    moment: r.image,
+    title: r.title,
+    org: [r.org, r.year].filter(Boolean).join(" · "),
+    desc: r.blurb,
+  }));
 
 export type NavLink = {
   label: string;
@@ -236,7 +228,7 @@ export const nav: NavGroup[] = [
     ],
     feature: {
       title: "End-to-end digital engineering",
-      text: "Strategy, design, engineering & growth  under one roof.",
+      text: "Strategy, design, engineering & growth under one roof.",
       href: "/capabilities/website-development",
       cta: "Explore capabilities",
     },

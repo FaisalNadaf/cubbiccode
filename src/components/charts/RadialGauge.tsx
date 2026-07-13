@@ -36,13 +36,18 @@ export function RadialGauge({
 			ref={ref}
 			className="relative flex w-full justify-center select-none"
 			style={{ minHeight: 132 }}>
+			{/* `d` falls back to `max` until the ResizeObserver reports, so on a
+			    container narrower than `max` the first paint would be wider than its
+			    parent. `maxWidth` caps the box and the viewBox scales the ring into
+			    it; the box's height comes from the (square, in-flow) svg. */}
 			<div
 				className="relative"
-				style={{ width: d, height: d }}>
+				style={{ width: d, maxWidth: "100%" }}>
 				<svg
+					viewBox={`0 0 ${d} ${d}`}
 					width={d}
 					height={d}
-					className="block -rotate-90"
+					className="block h-auto max-w-full -rotate-90"
 					role="img"
 					aria-label={`${spec.title}: ${spec.display.value}${
 						spec.display.suffix ?? ""

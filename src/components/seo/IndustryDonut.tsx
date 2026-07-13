@@ -138,7 +138,7 @@ export function IndustryDonut({
 					</div>
 
 					{/* direct-labelled legend */}
-					<ul className="grid grid-cols-1 gap-x-5 gap-y-1.5 sm:grid-cols-2">
+					<ul className="grid grid-cols-1 gap-x-5 gap-y-1.5 md:grid-cols-2">
 						{arcs.map((a) => (
 							<motion.li
 								key={a.i}

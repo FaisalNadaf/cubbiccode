@@ -21,6 +21,7 @@ import {
 	useScroll,
 	useTransform,
 	useMotionValue,
+	useMotionValueEvent,
 	useReducedMotion,
 	type MotionValue,
 } from "framer-motion";
@@ -33,6 +34,22 @@ export type Logo = { src: string; alt: string };
 const FLYER = 64; // px  a pinned logo chip
 const GLOBE_SPEED = 0.0045; // globe auto-spin per frame  shared with the pinned logos
 const AUTO_DIR = -1; // sign of the pins' auto-spin  flip to +1 if they rotate against the globe
+
+/** Scroll length of the pinned globe scene. 100vh of it is the pin itself. */
+const SCENE_VH = 250;
+
+/**
+ * Choreography, as fractions of the globe scene's scroll progress. Every value
+ * below is read through `useTransform`, so the whole sequence is *scrubbed*:
+ * scrolling back up runs it in reverse for free, with no state to unwind.
+ *
+ *   0 ─────────── .40 ──── .58 ─ .62 ──── .66 ─── .92 ─── 1
+ *   spin          logos leave │   globe fades      │
+ *                             grid slides up ──────────────►
+ */
+const LOGOS_EXIT: [number, number] = [0.4, 0.66];
+const GLOBE_OUT: [number, number] = [0.62, 0.92];
+const GRID_IN: [number, number] = [0.58, 1];
 
 /** Fixed set of logos pinned to the globe  the featured brands from clients.ts. */
 const FEATURED_LOGOS: Logo[] = featuredClients.map((c) => ({
@@ -74,12 +91,22 @@ export function ClientGlobeShowcase({ logos }: { logos: Logo[] }) {
 		return () => mq.removeEventListener("change", update);
 	}, [reduce]);
 
+	// One progress value drives both layers, so the globe's exit and the grid's
+	// entrance are two views of the same number and can never drift apart.
+	//
+	// It is owned here but *written* by GlobeScene, not by a `useScroll` at this
+	// level: `enhanced` is false on the first render, so a scroll target declared
+	// here would resolve against a ref that is still null. Framer reads
+	// `target.current` once, in an effect, and never re-reads it — the progress
+	// would then sit at 0 forever, even after GlobeScene mounted.
+	const progress = useMotionValue(0);
+
 	return enhanced ?
 			<>
-				<GlobeScene logos={logos} />
+				<GlobeScene progress={progress} />
 				<GridSection
 					logos={logos}
-					assemble
+					progress={progress}
 				/>
 			</>
 		:	<GridSection logos={logos} />;
@@ -90,10 +117,15 @@ export function ClientGlobeShowcase({ logos }: { logos: Logo[] }) {
 function Heading({ title, subtitle }: { title: string; subtitle?: string }) {
 	return (
 		<div className="mx-auto max-w-2xl text-center">
+			{/* The two rules are decoration. At tracking-kicker (0.22em) this label is
+			    already ~290px of type; with the rules and their gaps it needs ~370px,
+			    more than the 272px a 320px phone has inside container-x. They were
+			    being squeezed to stubs while the label broke to two lines, so drop
+			    them below sm, where the label fits on its own. */}
 			<span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-kicker text-corporate-600">
-				<span className="h-px w-8 bg-corporate-500/50" />
+				<span className="hidden h-px w-8 bg-corporate-500/50 sm:block" />
 				Trusted by industry leaders
-				<span className="h-px w-8 bg-corporate-500/50" />
+				<span className="hidden h-px w-8 bg-corporate-500/50 sm:block" />
 			</span>
 			<h2 className="mt-5 text-pretty font-display text-3xl font-bold leading-[1.08] tracking-tightest text-ink sm:text-4xl lg:text-[2.9rem]">
 				{title}
@@ -111,26 +143,49 @@ function Heading({ title, subtitle }: { title: string; subtitle?: string }) {
 
 function GridSection({
 	logos,
-	assemble = false,
+	progress,
 }: {
 	logos: Logo[];
-	assemble?: boolean;
+	progress?: MotionValue<number>;
 }) {
-	const ref = useRef<HTMLDivElement>(null);
-	const { scrollYProgress } = useScroll({
-		target: ref,
-		offset: ["start end", "start center"],
-	});
+	const assemble = Boolean(progress);
 
-	// The grid "grows into place" as it scrolls up from the globe (scrubbed).
-	const scale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
-	const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
-	const y = useTransform(scrollYProgress, [0, 1], [60, 0]);
+	// The reveal-on-view below is a framer transform, so the global
+	// `prefers-reduced-motion` block in globals.css cannot reach it. Zeroing the
+	// duration (rather than dropping `initial`/`whileInView`) keeps the tile
+	// visible either way — a guard that removed them would strand the sheet at
+	// the `opacity: 0` framer had already written inline. `assemble` is never
+	// true here: the globe only mounts when reduced motion is *off*.
+	const reduce = useReducedMotion();
+
+	// Stable hook order: without a globe above us there is nothing to slide over,
+	// so we park on a constant 0 and fall back to a plain reveal-on-view.
+	const idle = useMotionValue(0);
+	const p = progress ?? idle;
+
+	// The sheet starts one full viewport below its resting place and rides up to
+	// meet it. Its resting place is one viewport *above* where it would normally
+	// sit (see `-mt-[100vh]`), which is exactly the globe's pinned screen — so at
+	// progress 1 the grid has covered the globe completely.
+	const y = useTransform(p, GRID_IN, ["100vh", "0vh"]);
+	// Corners round off while airborne and square up as it docks.
+	const radius = useTransform(p, GRID_IN, [40, 0]);
+	const lift = useTransform(p, GRID_IN, [0.22, 0]);
+	const shadow = useTransform(
+		lift,
+		(a) => `0 -30px 60px -20px rgba(11,27,58,${a})`,
+	);
 
 	return (
-		<section
-			ref={ref}
-			className="relative overflow-hidden bg-gradient-to-b from-canvas to-white py-16 lg:py-24">
+		<motion.section
+			style={assemble ? { y, borderTopLeftRadius: radius, borderTopRightRadius: radius, boxShadow: shadow } : undefined}
+			className={
+				"relative overflow-hidden bg-gradient-to-b from-canvas to-white py-16 lg:py-24" +
+				// Overlap the globe's last viewport and paint above it. Margin moves
+				// only the layout box; the `y` transform above does the animating, so
+				// the page's total height is unaffected by the slide.
+				(assemble ? " z-10 -mt-[100vh] will-change-transform" : "")
+			}>
 			<div className="pointer-events-none absolute inset-0 bg-radial-fade" />
 			<div className="container-x relative">
 				<Heading
@@ -138,28 +193,43 @@ function GridSection({
 					subtitle="500+ businesses across India and beyond."
 				/>
 				<motion.div
-					style={assemble ? { scale, opacity, y } : undefined}
 					initial={assemble ? undefined : { opacity: 0, y: 24 }}
 					whileInView={assemble ? undefined : { opacity: 1, y: 0 }}
 					viewport={assemble ? undefined : { once: true, margin: "-80px" }}
 					transition={
-						assemble ? undefined : { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+						assemble ? undefined : (
+							{ duration: reduce ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }
+						)
 					}
-					className="mx-auto mt-14 max-w-6xl [transform-origin:top_center]">
+					className="mx-auto mt-14 max-w-6xl">
 					<MagicBento images={logos} />
 				</motion.div>
 			</div>
-		</section>
+		</motion.section>
 	);
 }
 
 /* ── desktop: pinned rotating globe with pinned logos ─────────────────── */
 
-function GlobeScene({ logos }: { logos: Logo[] }) {
-	void logos; // grid uses the full list; the globe pins the fixed featured set
+function GlobeScene({ progress }: { progress: MotionValue<number> }) {
 	const wrapRef = useRef<HTMLDivElement>(null);
 	const globeRef = useRef<HTMLDivElement>(null);
 	const dimsRef = useRef({ r: 260, vh: 800 });
+
+	// This component only ever mounts once `enhanced` is true, so by the time
+	// framer resolves the target the section is really in the DOM.
+	const { scrollYProgress } = useScroll({
+		target: wrapRef,
+		offset: ["start start", "end end"],
+	});
+
+	// Republish onto the value GridSection reads. `change` does not fire for the
+	// value framer computes on mount, so seed it too — otherwise a reload halfway
+	// down the page would leave the grid parked off-screen until you scrolled.
+	useMotionValueEvent(scrollYProgress, "change", (v) => progress.set(v));
+	useEffect(() => {
+		progress.set(scrollYProgress.get());
+	}, [progress, scrollYProgress]);
 
 	// Fixed pinned logos (featured brands), not a random sample.
 	const spinLogos = FEATURED_LOGOS;
@@ -195,11 +265,6 @@ function GlobeScene({ logos }: { logos: Logo[] }) {
 		[spheres],
 	);
 
-	const { scrollYProgress } = useScroll({
-		target: wrapRef,
-		offset: ["start start", "end end"],
-	});
-
 	// Pin radius = the globe's on-screen radius, so logos ride its surface.
 	useEffect(() => {
 		const measure = () => {
@@ -218,24 +283,18 @@ function GlobeScene({ logos }: { logos: Logo[] }) {
 		};
 	}, []);
 
-	// Stay visible right through the pin  the sticky globe then scrolls up
-	// into the grid (no faded-out empty div = no blank screen on the way out).
-	const globeOpacity = useTransform(scrollYProgress, [0, 0.9, 1], [1, 1, 0.85]);
-	const globeScale = useTransform(scrollYProgress, [0, 0.92], [1, 1.14]);
-	const glowOpacity = useTransform(
-		scrollYProgress,
-		[0, 0.85, 0.97],
-		[0.8, 0.5, 0],
-	);
-	const headingOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
-	const headingY = useTransform(scrollYProgress, [0, 0.4], [0, -28]);
-	const hintOpacity = useTransform(scrollYProgress, [0, 0.06], [1, 0]);
+	// Once the logos have flown off, the globe has nothing left to say: it recedes
+	// and fades out entirely while the grid slides up over it. Holding it at 0.85
+	// opacity was what left it sitting there after the animation had finished.
+	const globeOpacity = useTransform(progress, GLOBE_OUT, [1, 0]);
+	const globeScale = useTransform(progress, [0, ...GLOBE_OUT], [1, 1.08, 0.9]);
+	const glowOpacity = useTransform(progress, [0, ...GLOBE_OUT], [0.8, 0.5, 0]);
 
 	return (
 		<section
 			ref={wrapRef}
-			className="relative bg-gradient-to-b from-white via-white to-canvas"
-			style={{ height: "150vh" }}>
+			className="relative z-0 bg-gradient-to-b from-white via-white to-canvas"
+			style={{ height: `${SCENE_VH}vh` }}>
 			<div className="sticky top-0 flex h-screen items-center justify-center overflow-hidden">
 				<div className="pointer-events-none absolute inset-0 bg-radial-fade" />
 
@@ -270,7 +329,7 @@ function GlobeScene({ logos }: { logos: Logo[] }) {
 							key={logo.src + i}
 							i={i}
 							logo={logo}
-							progress={scrollYProgress}
+							progress={progress}
 							autoRot={autoRot}
 							spheres={spheres}
 							dimsRef={dimsRef}
@@ -323,7 +382,7 @@ function PinnedLogo({
 		let y = Y2 * r * persp;
 
 		// near the end, stream off the globe and downward toward the grid
-		const exit = smoothstep(0.66, 0.97, p);
+		const exit = smoothstep(LOGOS_EXIT[0], LOGOS_EXIT[1], p);
 		x *= 1 + exit * 0.6;
 		y = y * (1 + exit * 0.3) + exit * vh * 0.55;
 

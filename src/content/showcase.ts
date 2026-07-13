@@ -30,7 +30,7 @@ export const showcaseSlides: ShowcaseSlide[] = [
 		eyebrow: "Website · Hospitality",
 		title: "Woodpecker Exotica",
 		description:
-			"An immersive resort experience  cinematic imagery, smooth scroll storytelling and frictionless enquiries.",
+			"An immersive resort experience cinematic imagery, smooth scroll storytelling and frictionless enquiries.",
 		cta: { label: "Visit site", href: "https://woodpeckerexotica.com" },
 		image: `${P}/woodpeckerexotic.jpg`,
 	},

@@ -3,60 +3,157 @@
 // Awards, recognitions, certifications, journey, culture values & founder story.
 // Authoritative Cubiccode data.
 
-export type Award = {
+export type Recognition = {
 	title: string;
+	/** The awarding body, as printed on the certificate. */
 	org: string;
+	/** One sentence of context — the citation, the venue, what it was for. */
+	blurb: string;
 	year?: string;
-	image?: string;
-	kind: "Award" | "Recognition" | "Certification";
+	kind: "Award" | "Recognition" | "Talk" | "Certification";
+	/** Name of a lucide icon registered in `src/components/ui/Icon.tsx`. */
+	icon: string;
+	/** The proof: the certificate scan, press cutting or stage photograph. */
+	image: string;
+	/**
+	 * Certificates and press cuttings are documents — they must be shown whole
+	 * (`contain`) or the text is cropped away. Photographs may fill the frame
+	 * (`cover`), since cropping a photo costs nothing.
+	 */
+	fit: "contain" | "cover";
+	/**
+	 * The image's natural width ÷ height. A `contain` document is shown at the
+	 * card's full height, so its frame is widened to exactly this ratio — that is
+	 * the only way a document fills the frame top-to-bottom without being cropped.
+	 * Wrong value ⇒ empty bands return. Measure, don't guess.
+	 */
+	aspect: number;
+	/** Surfaced in the four-card "Awards & Recognition" row on the home page. */
+	featured?: boolean;
 };
 
-export const awards: Award[] = [
+/**
+ * Every award, honour and recognition Cubiccode holds — the single source of
+ * truth, transcribed from the certificate scans and press cuttings in
+ * `/public/images`. The achievements page, the home-page award row and the
+ * journey timeline all read from here, so a title, year or certificate pairing
+ * is corrected in exactly one place.
+ *
+ * Chronological. Every entry names the artefact that proves it; do not add one
+ * without a certificate, cutting or photograph to point `image` at.
+ */
+export const recognitions: Recognition[] = [
+	{
+		title: "Best Youngest Digital Marketing Teacher in India",
+		org: "Indian Education Awards",
+		blurb:
+			"Presented to co-founder Sarvesh Kakkeri for his contribution to digital education, after his first year of training students in Belgaum.",
+		year: "2018",
+		kind: "Award",
+		icon: "GraduationCap",
+		image: "/images/Moments/DSC_7895.JPG",
+		fit: "cover",
+		aspect: 1.51,
+	},
 	{
 		title: "10 Best Web Development Start-ups in India",
 		org: "Silicon India",
+		blurb:
+			"Ranked 5th in the country in Silicon India's survey of 2019's top web development start-ups — one of only ten firms listed, and the only one from Belagavi.",
 		year: "2019",
 		kind: "Recognition",
-		image: "/images/certificates/india-excellence-award-certificate.jpg",
+		icon: "Trophy",
+		image: "/images/Moments/paper.jpg",
+		fit: "contain",
+		aspect: 1.41,
+		featured: true,
 	},
 	{
-		title: "Most Outstanding Web Development Company in Karnataka",
+		title: "Most Outstanding Web Development Company",
 		org: "AI Global Excellence Awards",
+		blurb:
+			"Acquisition International's Business Excellence Awards named Cubiccode Karnataka's most outstanding web development company of 2019.",
 		year: "2019",
 		kind: "Award",
-		image: "/images/certificates/brandcounselling.jpg",
-	},
-	{
-		title: "Silver  Web Application Development Company of the Year",
-		org: "16th India Digital Awards",
-		year: "2025",
-		kind: "Award",
+		icon: "Award",
 		image: "/images/certificates/business-excellence-certificate.jpg",
+		fit: "contain",
+		aspect: 0.75,
+		featured: true,
 	},
 	{
-		title: "Best Website Designing & Development Company in Belgaum, Karnataka",
-		org: "Regional Recognition",
-		kind: "Recognition",
-		image: "/images/certificates/educationale.jpg",
-	},
-	{
-		title: "Best Youngest Digital Marketing Teacher in India",
-		org: "Indian Education Awards (supported by Zee Business) · Sarvesh Kakkeri",
-		year: "2019",
+		title: "Best Overall Website Design",
+		org: "India Excellence Awards",
+		blurb:
+			"Awarded to Cubiccode in the Best Overall Website Design category at the India Excellence Awards, presented by blindwink.",
+		year: "2020",
 		kind: "Award",
-		image: "/images/no.png",
+		icon: "Sparkles",
+		image: "/images/certificates/india-excellence-award-certificate.jpg",
+		fit: "contain",
+		aspect: 0.75,
+		featured: true,
 	},
 	{
-		title: "TEDx Speaker  “A New Age Teacher”",
-		org: "TEDx Stage · Co-founder Sarvesh Kakkeri",
+		title: "On the TEDx Stage",
+		org: "TEDxSJEC",
+		blurb:
+			"Co-founder Sarvesh Kakkeri delivered his first TEDx talk, on teaching in the digital age, to an audience of students and aspiring entrepreneurs.",
+		year: "2020",
+		kind: "Talk",
+		icon: "Mic",
+		image: "/images/Moments/2020.jpg",
+		fit: "cover",
+		aspect: 0.92,
+	},
+	{
+		title: "Most Innovative and Creative Web Solution of the Year",
+		org: "Brandscouncil Ratings Conclave & Awards",
+		blurb:
+			"Presented at Hotel Radisson, Mumbai on 28 July 2021, following the second phase of the Brandscouncil Ratings Survey.",
+		year: "2021",
+		kind: "Award",
+		icon: "Star",
+		image: "/images/certificates/brandcounselling.jpg",
+		fit: "contain",
+		aspect: 0.75,
+	},
+	{
+		title: "Most Innovative & Futuristic Training Platform of the Year, South India",
+		org: "Educational Excellence Awards & Conference",
+		blurb:
+			"Presented by BeginUp Research Intelligence at the Taj West End, Bengaluru, citing our quality training, technology courses and outstanding trainers.",
+		year: "2023",
 		kind: "Recognition",
-		image: "/images/no.png",
+		icon: "BookOpen",
+		image: "/images/certificates/educationale.jpg",
+		fit: "contain",
+		aspect: 0.75,
+	},
+	{
+		title: "Silver — Web Application Development Company of the Year",
+		org: "16th India Digital Awards",
+		blurb:
+			"Cubiccode Digital Media LLP took Silver at the IAMAI's 16th India Digital Awards, for enterprise-grade web application work.",
+		year: "2026",
+		kind: "Award",
+		icon: "Medal",
+		image: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
+		fit: "cover",
+		aspect: 1.9,
+		featured: true,
 	},
 	{
 		title: "ISO 9001:2015 Certified Company",
-		org: "Quality Management Systems",
+		org: "Quality Control Certification (UASL, UK)",
+		blurb:
+			"An audited quality management system covering our IT, training and consulting services — certificate QMS/B9F3/0125, valid to January 2028.",
+		year: "2025",
 		kind: "Certification",
-		image: "/images/no.png",
+		icon: "BadgeCheck",
+		image: "/images/certificates/ISO Certificate.jpeg",
+		fit: "contain",
+		aspect: 0.7,
 	},
 ];
 
@@ -80,7 +177,7 @@ export const certificateImages: CertificateImage[] = [
 		title: "GST Registration Certificate",
 		agency: "Government of India",
 		description:
-			"Registered under the Goods & Services Tax  a fully compliant, tax-registered business.",
+			"Registered under the Goods & Services Tax a fully compliant, tax-registered business.",
 	},
 
 	{
@@ -95,7 +192,7 @@ export const certificateImages: CertificateImage[] = [
 		title: "ISO 9001:2015 Certified",
 		agency: "Quality Management System",
 		description:
-			"An internationally recognised, formally audited quality management system  the backbone of our consistent, reliable delivery.",
+			"An internationally recognised, formally audited quality management system the backbone of our consistent, reliable delivery.",
 	},
 ];
 
@@ -116,7 +213,7 @@ export const journey: Milestone[] = [
 	{
 		year: "2016",
 		title: "Cubiccode is founded",
-		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision  to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
+		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
 		image: "/images/Moments/2016.jpeg",
 		image2: "/images/Moments/1.jpg",
 	},
@@ -136,7 +233,7 @@ export const journey: Milestone[] = [
 	{
 		year: "2019",
 		title: "National recognition & 250+ companies",
-		text: "A major milestone  recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
+		text: "A major milestone recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
 		image: "/images/Moments/DSC_5557.JPG",
 		image2: "/images/Moments/business-excellence-certificate1.jpg",
 		image2Certificate: true,
@@ -144,7 +241,7 @@ export const journey: Milestone[] = [
 	{
 		year: "2020",
 		title: "On the TEDx stage",
-		text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs  further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
+		text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
 		image: "/images/Moments/IMG_7820.JPG",
 		image2: "/images/Moments/2020.jpg",
 	},
@@ -167,23 +264,27 @@ export const journey: Milestone[] = [
 		year: "2023",
 		title: "Most Innovative & Futuristic Training Platform",
 		text: "Our training arm was recognised as the Most Innovative & Futuristic Training Platform / Institute of the Year 2023 for South India at the Educational Excellence Awards & Conference 2023, National Edition. Presented by BeginUp Research Intelligence at the Taj West End, Bengaluru, the Certificate of Recognition cited our quality training, technology courses and outstanding trainers.",
-		image: "/images/Moments/WhatsAppImage2026-06-16at11.09.55AM.jpeg",
+		image: "/images/Moments/79074b8b-a3d8-4bf9-accb-708b6acb57a1.jpg",
 		image2: "/images/Moments/EducationalE.jpg",
 		image2Certificate: true,
 	},
 	{
 		year: "2024",
 		title: "1,000+ students trained",
-		text: "Cubiccode's sister arm  the Belgaum Institute of Data Analytics and Digital Marketing with AI  had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
+		text: "Cubiccode's sister arm the Belgaum Institute of Data Analytics and Digital Marketing with AI had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
 		image: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
 		image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.16AM.jpeg",
 	},
 	{
 		year: "2025",
 		title: "Silver at the India Digital Awards",
-		text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally  we won Silver in the Web Application Development Company of the Year category at the 16th India Digital Awards.",
+		text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally we won Silver in the Web Application Development Company of the Year category at the IAMAI's 16th India Digital Awards.",
 		image: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
-		image2: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
+	},
+	{
+		year: "2026",
+		title: "Our new office",
+		text: "Ten years on from the small office we started in, we moved into a new home for the team a space with room to build, to train, and to host the community that has grown around us.",
 	},
 ];
 
@@ -223,7 +324,7 @@ export const values: Value[] = [
 	{
 		icon: "Scale",
 		title: "Integrity Always",
-		text: "Do the right thing  even when nobody is watching.",
+		text: "Do the right thing even when nobody is watching.",
 	},
 	{
 		icon: "MessagesSquare",
@@ -243,7 +344,7 @@ export const values: Value[] = [
 	{
 		icon: "BadgeCheck",
 		title: "Reliability Builds Trust",
-		text: "Do what you said you would do  every single time. Commitment to your deadlines.",
+		text: "Do what you said you would do every single time. Commitment to your deadlines.",
 	},
 	{
 		icon: "Compass",
@@ -281,12 +382,24 @@ export const whyChooseUs = [
 	{
 		num: "05",
 		title: "Customer-Centric",
-		text: "We take ownership of your outcome as if it were our own  and we won't consider the job done until the work moves your business forward.",
+		text: "We take ownership of your outcome as if it were our own and we won't consider the job done until the work moves your business forward.",
 	},
 ];
 
 // Founders.
-export const founders = [
+export type Founder = {
+	name: string;
+	role: string;
+	initials: string;
+	/**
+	 * Portrait in /public  a square crop reads best. Drop the file in and set
+	 * the path here; until then the signature block falls back to an initials
+	 * monogram rather than rendering a broken image.
+	 */
+	photo?: string;
+};
+
+export const founders: Founder[] = [
 	{ name: "Sarvesh Kakkeri", role: "Co-Founder", initials: "SK" },
 	{ name: "Shivani Jadhav", role: "Co-Founder", initials: "SJ" },
 ];
@@ -315,18 +428,18 @@ export const aboutCopy = {
 	storyHeading: "We started with one belief: a website should earn its keep.",
 	// Distilled, IT-company positioning for the About "story" band (image + ScrollReveal).
 	storyStatement:
-		"We're an IT company that turns ideas into software that works. Websites, web apps, custom ERP, automation and AI  we design it, build it, and ship it on time. Engineered in India, trusted by 500+ businesses.",
+		"We're an IT company that turns ideas into software that works. Websites, web apps, custom ERP, automation and AI we design it, build it, and ship it on time. Engineered in India, trusted by 500+ businesses.",
 	storySupport:
-		"From a single Belagavi office in 2016 to teams in Belagavi and Bengaluru, one obsession has never changed  building technology that moves your business forward.",
+		"From a single Belagavi office in 2016 to teams in Belagavi and Bengaluru, one obsession has never changed building technology that moves your business forward.",
 	story: [
-		"Cubiccode Digital Media LLP began in 2016 as the brainchild of co-founders Sarvesh Kakkeri and Shivani Jadhav. From a small office in Belagavi, we set out with a simple, stubborn idea  that a business website shouldn't just look good, it should be fast, reliable, and built to drive real sales.",
+		"Cubiccode Digital Media LLP began in 2016 as the brainchild of co-founders Sarvesh Kakkeri and Shivani Jadhav. From a small office in Belagavi, we set out with a simple, stubborn idea that a business website shouldn't just look good, it should be fast, reliable, and built to drive real sales.",
 		"That idea resonated. By 2018 we'd served 150+ clients. By 2019 we were named one of the 10 Best Web Development Start-ups in India by Silicon India and Most Outstanding Web Development Company in Karnataka at the AI Global Excellence Awards. Today, nearly a decade in, we've delivered 700+ projects, powered over a million daily visitors, and earned the trust of brands from local champions to Tata Sky, Asian Paints, Cognizant, Tech Mahindra and more.",
-		"We're still that same team at heart  lean, agile, obsessed with the outcome. The office is bigger. The ambition is the same.",
+		"We're still that same team at heart lean, agile, obsessed with the outcome. The office is bigger. The ambition is the same.",
 	],
 	vision:
 		"To become a recognized digital growth company that helps businesses build powerful web experiences, dominate search and AI platforms, and generate sustainable online growth through innovative technology, web solutions, and AI-driven visibility strategies.",
 	mission:
 		"To deliver a wide range of quality services, creative solutions, exceptional after-sales support, and superfast on-time delivery, so that every client we serve grows because they worked with us.",
 	clientele:
-		"We've worked with small start-ups and large corporations alike, but we love projects that excite us and people as passionate as we are. We stay lean and build agile  cross-functional teams run weekly sprints and evolve through collaboration to make sure every client gets exactly what they need.",
+		"We've worked with small start-ups and large corporations alike, but we love projects that excite us and people as passionate as we are. We stay lean and build agile cross-functional teams run weekly sprints and evolve through collaboration to make sure every client gets exactly what they need.",
 };

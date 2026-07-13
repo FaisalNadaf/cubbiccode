@@ -57,9 +57,35 @@ export function CertificateGallery() {
 		document.addEventListener("keydown", onKey);
 		const prevOverflow = document.body.style.overflow;
 		document.body.style.overflow = "hidden";
+
+		// `overflow: hidden` does not actually hold the page still on either pointer:
+		// Lenis drives the document with *programmatic* scrolls, which ignore overflow
+		// entirely, and iOS Safari scrolls behind a modal regardless. So swallow the
+		// gestures at the source, exactly as the preloader's scroll lock does — a
+		// capture-phase listener runs before Lenis's bubble-phase handler, so
+		// `preventDefault` blocks native scroll and `stopPropagation` keeps Lenis from
+		// ever seeing the event. `passive: false` is what makes `preventDefault`
+		// binding on iOS. overflow:hidden stays as the secondary keyboard/scrollbar
+		// guard.
+		const blockWheel = (e: Event) => {
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		// Multi-touch is let through so the scan can still be pinch-zoomed.
+		const blockTouch = (e: TouchEvent) => {
+			if (e.touches.length > 1) return;
+			e.preventDefault();
+			e.stopPropagation();
+		};
+		const opts = { capture: true, passive: false } as const;
+		window.addEventListener("wheel", blockWheel, opts);
+		window.addEventListener("touchmove", blockTouch, opts);
+
 		return () => {
 			document.removeEventListener("keydown", onKey);
 			document.body.style.overflow = prevOverflow;
+			window.removeEventListener("wheel", blockWheel, opts);
+			window.removeEventListener("touchmove", blockTouch, opts);
 		};
 	}, [open, close, prev, next]);
 
@@ -188,7 +214,12 @@ function Lightbox({
 				exit={{ opacity: 0, scale: reduce ? 1 : 0.96, y: reduce ? 0 : 10 }}
 				transition={{ duration: 0.3, ease: EASE }}
 				onClick={(e) => e.stopPropagation()}
-				className="relative flex h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+				// `90vh` measures the URL-bar-hidden viewport on mobile Safari, so the
+				// panel's footer sits below the fold while the bar is showing. `dvh`
+				// tracks the visible viewport; it is scoped under lg (where the two are
+				// equal anyway) and leaves `h-[90vh]` standing as the fallback for
+				// engines without `dvh`.
+				className="relative flex h-[90vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl max-lg:h-[90dvh]">
 				{/* Header */}
 				<div className="flex items-start justify-between gap-4 border-b border-steel-200 px-6 py-4">
 					<div className="min-w-0">

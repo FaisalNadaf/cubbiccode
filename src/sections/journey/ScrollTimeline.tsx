@@ -130,7 +130,12 @@ function PinnedTimeline({ items }: { items: Milestone[] }) {
 			ref={wrapRef}
 			className="relative bg-ink"
 			style={{ height: `${total * 100}vh` }}>
-			<div className="sticky top-0 h-screen overflow-hidden">
+			{/* On mobile Safari `100vh` is the *large* viewport (URL bar hidden), so a
+			    100vh pin is taller than what you can actually see: the caption lands
+			    under the browser chrome and the pin releases before progress reaches 1.
+			    `100dvh` tracks the visible viewport; the @supports gate keeps the 100vh
+			    fallback for pre-dvh browsers. On desktop 100dvh === 100vh. */}
+			<div className="sticky top-0 h-screen overflow-hidden supports-[height:100dvh]:h-[100dvh]">
 				{/* Backdrop  a dark/light theme layer per slide, cross-fading on scroll */}
 				<div className="absolute inset-0">
 					{items.map((m, i) => (
@@ -312,11 +317,15 @@ function Slide({
 								"relative aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 shadow-[0_50px_130px_-40px_rgba(0,0,0,0.6)] [will-change:transform]",
 								t.ring,
 							)}>
+							{/* This composition is display:none below lg, but `priority` still
+							    preloads slide 0 — the media condition stops a phone fetching a
+							    half-viewport photo it will never paint. >= lg resolves to the
+							    original 50vw, so the chosen candidate there is unchanged. */}
 							<Image
 								src={m.image ?? "/images/Moments/1.jpg"}
 								alt={m.title}
 								fill
-								sizes="50vw"
+								sizes="(min-width: 1024px) 50vw, 1px"
 								priority={i === 0}
 								className="object-cover"
 							/>
@@ -392,22 +401,26 @@ function Slide({
 				<motion.div
 					style={{ scale: imgScale }}
 					className="absolute inset-0 [will-change:transform]">
+					{/* Mirror of the desktop hint: this subtree is display:none at lg, so a
+					    desktop preload of slide 0 must not pull the full-width phone crop. */}
 					<Image
 						src={m.image ?? "/images/Moments/1.jpg"}
 						alt={m.title}
 						fill
-						sizes="100vw"
+						sizes="(min-width: 1024px) 1px, 100vw"
 						priority={i === 0}
 						className="object-cover"
 					/>
 				</motion.div>
 				<div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/85 to-ink/30" />
 
+				{/* 26vw alone overruns a landscape phone, where the viewport is wide but
+				    only ~375px tall — cap the year against the short axis too. */}
 				<motion.span
 					style={{
 						y: yearY,
 						opacity: yearOpacity,
-						fontSize: "clamp(4.5rem, 26vw, 8rem)",
+						fontSize: "clamp(4.5rem, min(26vw, 20vh), 8rem)",
 					}}
 					className="pointer-events-none absolute right-5 top-[12%] font-display font-black leading-none tracking-tightest text-white/90 [text-shadow:0_10px_40px_rgba(0,0,0,0.6)]">
 					{m.year}
@@ -428,7 +441,7 @@ function Slide({
 						<h3 className="font-display text-xl font-bold leading-tight text-white">
 							{m.title}
 						</h3>
-						<p className="mt-2.5 text-[13px] leading-relaxed text-white/85">
+						<p className="mt-2.5 text-sm leading-relaxed text-white/85">
 							{m.text}
 						</p>
 					</div>

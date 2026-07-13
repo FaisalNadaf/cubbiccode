@@ -36,7 +36,10 @@ const slides: ShowcaseSlide[] = HOME_SHOWCASE_URLS.map((url) =>
 
 export function PortfolioShowcase() {
 	return (
-		<section className="relative flex h-screen w-screen flex-col mt-20 overflow-hidden bg-canvas-soft">
+		// Height-locked to the viewport only at lg. Below it the heading plus the
+		// carousel's wrapping thumbnail rail leave the card almost no room, so the
+		// section is allowed to grow and scroll instead.
+		<section className="relative flex h-auto w-full flex-col mt-20 overflow-hidden bg-canvas-soft lg:h-screen lg:w-screen">
 			{/* Ambient brand-colour blur shades */}
 			<div
 				aria-hidden
@@ -48,7 +51,7 @@ export function PortfolioShowcase() {
 
 			<div className="container-x relative z-10 flex h-full flex-col py-8 lg:py-10">
 				{/* Heading row  fixed at top */}
-				<div className="flex shrink-0 flex-col items-start justify-between gap-5 md:flex-row md:items-center px-10">
+				<div className="flex shrink-0 flex-col items-start justify-between gap-5 md:flex-row md:items-center px-0 lg:px-10">
 					<SectionHeading
 						kicker="Our work"
 						title="700+ builds. Here are a few we're proud of."
@@ -63,13 +66,18 @@ export function PortfolioShowcase() {
 					</Button>
 				</div>
 
-				{/* Carousel fills + is centred in the remaining space (capped on big screens) */}
-				<div className="mt-6 flex min-h-0 flex-1 items-center lg:mt-8">
+				{/* Carousel fills + is centred in the remaining space (capped on big screens).
+				    `fill` needs a definite height or the absolutely-positioned slide
+				    collapses, so below lg  where there is no viewport-locked space to
+				    flex into  the rail is given an explicit one instead. It grows with
+				    the breakpoint because the card stacks its 16/10 image under the copy
+				    until lg puts them side by side. */}
+				<div className="mt-6 flex h-[760px] min-h-0 items-center sm:h-[820px] md:h-[940px] lg:mt-8 lg:h-auto lg:flex-1">
 					<Carousel
 						slides={slides}
 						theme="light"
 						fill
-						className="max-h-[600px]"
+						className="max-h-none lg:max-h-[600px]"
 					/>
 				</div>
 			</div>

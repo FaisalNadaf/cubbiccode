@@ -58,6 +58,11 @@ export function GlowCard({
 	const onMove =
 		reduce ? undefined : (
 			(e: React.PointerEvent<HTMLDivElement>) => {
+				// Touch pointers only ever fire pointermove mid-scroll, and there is
+				// no cursor for the hotspot to follow anyway — reading the rect on
+				// every one of those frames forces a synchronous layout during the
+				// gesture. Mouse and pen are untouched, so desktop is unchanged.
+				if (e.pointerType === "touch") return;
 				const r = e.currentTarget.getBoundingClientRect();
 				mx.set(e.clientX - r.left);
 				my.set(e.clientY - r.top);

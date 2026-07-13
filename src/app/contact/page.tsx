@@ -4,6 +4,8 @@
  *
  * @format
  */
+import { Fragment } from "react";
+import Image from "next/image";
 import {
 	Phone,
 	Mail,
@@ -22,7 +24,7 @@ import { EnquiryForm } from "@/components/contact/EnquiryForm";
 import { site } from "@/content/site";
 
 export const metadata = {
-	title: "Contact Cubiccode  Let's Build Something That Matters",
+	title: "Contact Cubiccode Let's Build Something That Matters",
 	description:
 		"Talk to Cubiccode Digital Media LLP about your website, web app, ERP or growth project. Reach us by phone, email or WhatsApp, or visit our Belagavi & Bengaluru offices. We reply within a day.",
 };
@@ -39,7 +41,7 @@ export default function ContactPage() {
 			<PageHero
 				kicker="Contact us"
 				title="Let's transform your business for a change that matters"
-				subtitle="Would you like to discuss a project? Tell us where you are and where you'd like to go  and we'll come back with a clear plan, timeline and proposal, typically within a day."
+				subtitle="Would you like to discuss a project? Tell us where you are and where you'd like to go and we'll come back with a clear plan, timeline and proposal, typically within a day."
 				image="/images/about/parallax-2.jpg"
 				imageAlt="Get in touch with the Cubiccode team"
 				breadcrumb={[{ label: "Home", href: "/" }, { label: "Contact" }]}
@@ -77,7 +79,7 @@ export default function ContactPage() {
 													<a
 														key={p}
 														href={`tel:${p.replace(/\s/g, "")}`}
-														className="font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-corporate-600">
+														className="tap-target-h font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-corporate-600 [@media(pointer:coarse)]:flex [@media(pointer:coarse)]:items-center">
 														{p}
 													</a>
 												))}
@@ -103,7 +105,7 @@ export default function ContactPage() {
 													<a
 														key={e}
 														href={`mailto:${e}`}
-														className="break-all font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-corporate-600">
+														className="tap-target-h break-all font-display text-lg font-semibold tracking-tight text-ink transition-colors hover:text-corporate-600 [@media(pointer:coarse)]:flex [@media(pointer:coarse)]:items-center">
 														{e}
 													</a>
 												))}
@@ -185,7 +187,7 @@ export default function ContactPage() {
 												target="_blank"
 												rel="noopener noreferrer"
 												aria-label={name}
-												className="flex size-10 items-center justify-center rounded-xl border border-steel-200 bg-canvas-soft text-steel-500 transition-colors hover:border-corporate-300 hover:bg-white hover:text-corporate-600">
+												className="tap-target flex size-10 items-center justify-center rounded-xl border border-steel-200 bg-canvas-soft text-steel-500 transition-colors hover:border-corporate-300 hover:bg-white hover:text-corporate-600">
 												<Icon className="size-[18px]" />
 											</a>
 										))}
@@ -220,12 +222,16 @@ export default function ContactPage() {
 						</Reveal>
 					</div>
 
+					{/* Three offices + the company panel fill a 2x2: the panel is emitted
+					    straight after the first office, so at lg the rows read
+					    [office 1 | Cubiccode] / [office 2 | office 3]. Below lg the grid is a
+					    single column and they simply stack in that same order. */}
 					<div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
 						{site.offices.map((office, i) => (
-							<Reveal
-								key={office.label}
-								delay={i * 0.1}
-								amount={0.2}>
+							<Fragment key={office.label}>
+								<Reveal
+									delay={i * 0.1}
+									amount={0.2}>
 								<article className="flex h-full flex-col overflow-hidden rounded-4xl border border-steel-200 bg-white shadow-soft">
 									<div className="p-7 lg:p-8">
 										<div className="flex items-start gap-4">
@@ -245,7 +251,7 @@ export default function ContactPage() {
 											href={office.map}
 											target="_blank"
 											rel="noopener noreferrer"
-											className="group mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-corporate-600 transition-colors hover:text-corporate-700">
+											className="tap-target group mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-corporate-600 transition-colors hover:text-corporate-700">
 											Get directions
 											<ArrowUpRight className="size-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
 										</a>
@@ -265,6 +271,38 @@ export default function ContactPage() {
 									</div>
 								</article>
 							</Reveal>
+
+							{/* Company panel  fills the 2x2's remaining cell, beside the first
+							    office. Cubiccode's own photography, so no stock scrim. */}
+							{i === 0 && (
+								<Reveal
+									delay={0.15}
+									amount={0.2}>
+									<article className="relative flex h-full min-h-[24rem] flex-col overflow-hidden rounded-4xl border border-steel-200 bg-ink shadow-soft">
+										<Image
+											src="/images/about/about-main.png"
+											alt={`${site.legalName}  award wins, TEDx stage and training rooms`}
+											fill
+											sizes="(min-width: 1024px) 50vw, 100vw"
+											className="object-cover"
+										/>
+										<div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
+										<div className="relative mt-auto p-7 lg:p-8">
+											<span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-kicker text-corporate-200">
+												<span className="h-px w-8 bg-corporate-300/60" />
+												{site.name}
+											</span>
+											<h3 className="mt-4 text-balance font-display text-2xl font-bold tracking-tight text-white">
+												{site.legalName}
+											</h3>
+											<p className="mt-3 max-w-sm text-pretty leading-relaxed text-steel-200">
+												{site.tagline}
+											</p>
+										</div>
+									</article>
+								</Reveal>
+							)}
+							</Fragment>
 						))}
 					</div>
 				</div>

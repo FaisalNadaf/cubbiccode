@@ -38,7 +38,7 @@ export const testimonials: Testimonial[] = [
     photo: "/images/testimonials/mrs-sapna-jaini.jpg",
     rating: 5,
     quote:
-      "If I have to say about Cubiccode's services in just three words: \"Worth Every Rupee\". What makes Cubiccode so special is the way they understand our business and the development requirements within a couple of meetings and delivered what they promised  which significantly improved our business.",
+      "If I have to say about Cubiccode's services in just three words: \"Worth Every Rupee\". What makes Cubiccode so special is the way they understand our business and the development requirements within a couple of meetings and delivered what they promised which significantly improved our business.",
   },
   {
     name: "Elizabeth Pollard",
@@ -46,6 +46,6 @@ export const testimonials: Testimonial[] = [
     photo: "/images/testimonials/elizabeth-pollard.jpg",
     rating: 5,
     quote:
-      "We could not recommend choosing Cubiccode enough! The web app development industry is saturated with companies that are unprofessional, and we were very hesitant as to which would be best for our product. I would HIGHLY urge you to move forward with Cubiccode  for the quality of the product, the kindness of the people, and the attentiveness of the entire process.",
+      "We could not recommend choosing Cubiccode enough! The web app development industry is saturated with companies that are unprofessional, and we were very hesitant as to which would be best for our product. I would HIGHLY urge you to move forward with Cubiccode for the quality of the product, the kindness of the people, and the attentiveness of the entire process.",
   },
 ];

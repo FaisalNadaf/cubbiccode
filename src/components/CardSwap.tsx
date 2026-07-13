@@ -20,10 +20,23 @@ import React, {
 	ReactNode,
 	RefObject,
 	useEffect,
+	useLayoutEffect,
 	useMemo,
 	useRef,
+	useState,
 } from "react";
 import gsap from "gsap";
+
+// Runs before paint on the client so the fitted geometry lands in the same frame
+// as hydration; falls back to useEffect on the server, where useLayoutEffect warns.
+const useIsomorphicLayoutEffect =
+	typeof window !== "undefined" ? useLayoutEffect : useEffect;
+
+// GSAP animates via rAF/transforms, so a CSS `prefers-reduced-motion` block
+// cannot reach it — it has to opt out in JS.
+const prefersReducedMotion = () =>
+	typeof window !== "undefined" &&
+	window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 export interface CardSwapProps {
 	width?: number | string;
@@ -145,14 +158,66 @@ const CardSwap: React.FC<CardSwapProps> = ({
 	const container = useRef<HTMLDivElement>(null);
 	const moveToFrontRef = useRef<((idx: number) => void) | null>(null);
 
+	/**
+	 * Below lg the caller's 600px card is wider than the column it sits in. The
+	 * previous fix CSS-scaled the whole stack (to 0.72, then 0.58), which rendered
+	 * the card's 14px titlebar at ~8px  unreadable. Instead we shrink the card
+	 * *box* and the fan offsets with it, so the type still renders at full size.
+	 *
+	 * `fit` is hard-gated on `(min-width: 1024px)`: at desktop widths it is pinned
+	 * to 1 and every value derived from it collapses back to the raw prop, so the
+	 * >= 1024 render is untouched. It also *starts* at 1, so SSR and the first
+	 * client render emit the desktop geometry and hydration always matches.
+	 */
+	const [fit, setFit] = useState(1);
+
+	useIsomorphicLayoutEffect(() => {
+		const host = container.current?.parentElement;
+		if (!host || typeof width !== "number") return;
+
+		const desktop = window.matchMedia("(min-width: 1024px)");
+		const measure = () => {
+			if (desktop.matches) {
+				setFit(1);
+				return;
+			}
+			const avail = host.clientWidth;
+			if (!avail) return;
+			// Quantised to 2% steps so a drag-resize can't restart the GSAP timeline
+			// on every pixel of travel.
+			const raw = Math.min(1, avail / width);
+			setFit(Math.max(0.4, Math.round(raw * 50) / 50));
+		};
+
+		measure();
+		const ro = new ResizeObserver(measure);
+		ro.observe(host);
+		desktop.addEventListener("change", measure);
+		return () => {
+			ro.disconnect();
+			desktop.removeEventListener("change", measure);
+		};
+	}, [width]);
+
+	const fitted = fit < 1;
+	const boxW =
+		typeof width === "number" && fitted ? Math.round(width * fit) : width;
+	const boxH =
+		typeof height === "number" && fitted ? Math.round(height * fit) : height;
+	const distX =
+		fitted ? Math.max(10, Math.round(cardDistance * fit)) : cardDistance;
+	const distY =
+		fitted ? Math.max(10, Math.round(verticalDistance * fit)) : verticalDistance;
+	const dropY = fitted ? Math.max(220, Math.round(500 * fit)) : 500;
+
 	useEffect(() => {
+		// GSAP drives rAF/transforms, so the global `prefers-reduced-motion` block
+		// in globals.css cannot touch it  it has to opt out by hand.
+		const reduce = prefersReducedMotion();
+
 		const total = refs.length;
 		refs.forEach((r, i) =>
-			placeNow(
-				r.current!,
-				makeSlot(i, cardDistance, verticalDistance, total),
-				skewAmount,
-			),
+			placeNow(r.current!, makeSlot(i, distX, distY, total), skewAmount),
 		);
 		onActiveRef.current?.(order.current[0]);
 
@@ -165,7 +230,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			tlRef.current = tl;
 
 			tl.to(elFront, {
-				y: "+=500",
+				y: `+=${dropY}`,
 				duration: config.durDrop,
 				ease: config.ease,
 			});
@@ -176,7 +241,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			tl.call(() => onActiveRef.current?.(upcoming), undefined, "promote");
 			rest.forEach((idx, i) => {
 				const el = refs[idx].current!;
-				const slot = makeSlot(i, cardDistance, verticalDistance, refs.length);
+				const slot = makeSlot(i, distX, distY, refs.length);
 				tl.set(el, { zIndex: slot.zIndex }, "promote");
 				tl.to(
 					el,
@@ -191,12 +256,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 				);
 			});
 
-			const backSlot = makeSlot(
-				refs.length - 1,
-				cardDistance,
-				verticalDistance,
-				refs.length,
-			);
+			const backSlot = makeSlot(refs.length - 1, distX, distY, refs.length);
 			tl.addLabel("return", `promote+=${config.durMove * config.returnDelay}`);
 			tl.call(
 				() => {
@@ -238,12 +298,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 			const tl = gsap.timeline();
 			tlRef.current = tl;
 			newOrder.forEach((idx, pos) => {
-				const slot = makeSlot(
-					pos,
-					cardDistance,
-					verticalDistance,
-					newOrder.length,
-				);
+				const slot = makeSlot(pos, distX, distY, newOrder.length);
 				const el = refs[idx].current!;
 				tl.set(el, { zIndex: slot.zIndex }, 0);
 				tl.to(
@@ -252,7 +307,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
 						x: slot.x,
 						y: slot.y,
 						z: slot.z,
-						duration: config.durMove,
+						duration: reduce ? 0 : config.durMove,
 						ease: config.ease,
 					},
 					0,
@@ -261,14 +316,24 @@ const CardSwap: React.FC<CardSwapProps> = ({
 
 			onActiveRef.current?.(originalIdx);
 			clearInterval(intervalRef.current);
-			if (!paused) intervalRef.current = window.setInterval(swap, delay);
+			if (!paused && !reduce)
+				intervalRef.current = window.setInterval(swap, delay);
 		};
 		moveToFrontRef.current = moveToFront;
 
-		swap();
-		intervalRef.current = window.setInterval(swap, delay);
+		// Under reduced motion the deck is laid out statically  no opening swap,
+		// no auto-advance. Tapping a card still re-slots it, just instantly.
+		if (!reduce) {
+			swap();
+			intervalRef.current = window.setInterval(swap, delay);
+		}
 
-		if (pauseOnHover) {
+		// Touch browsers (notably iOS Safari) synthesise mouseenter on tap, which
+		// would pause the deck with no matching mouseleave to ever resume it. Bind
+		// the pause listeners only where a real hover exists.
+		const canHover = window.matchMedia("(hover: hover)").matches;
+
+		if (pauseOnHover && canHover && !reduce) {
 			const node = container.current!;
 			const pause = () => {
 				paused = true;
@@ -287,18 +352,22 @@ const CardSwap: React.FC<CardSwapProps> = ({
 				node.removeEventListener("mouseenter", pause);
 				node.removeEventListener("mouseleave", resume);
 				clearInterval(intervalRef.current);
+				tlRef.current?.kill();
 			};
 		}
-		return () => clearInterval(intervalRef.current);
+		return () => {
+			clearInterval(intervalRef.current);
+			tlRef.current?.kill();
+		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+	}, [distX, distY, dropY, delay, pauseOnHover, skewAmount, easing]);
 
 	const rendered = childArr.map((child, i) =>
 		isValidElement<CardProps>(child) ?
 			cloneElement(child, {
 				key: i,
 				ref: refs[i],
-				style: { width, height, ...(child.props.style ?? {}) },
+				style: { width: boxW, height: boxH, ...(child.props.style ?? {}) },
 				onClick: (e: React.MouseEvent<HTMLDivElement>) => {
 					child.props.onClick?.(e);
 					moveToFrontRef.current?.(i);
@@ -308,11 +377,15 @@ const CardSwap: React.FC<CardSwapProps> = ({
 		:	child,
 	);
 
+	// The `max-lg:` rules can only ever match below 1024px, and the base
+	// (>= 1024) transform is left exactly as it was. The old below-lg CSS scale
+	// is gone: the box is fitted in JS above, so the stack no longer needs
+	// shrinking and its type stays at full size.
 	return (
 		<div
 			ref={container}
-			className="absolute bottom-0 right-0 origin-bottom-right -translate-x-[3%] -translate-y-[2%] transform overflow-visible [perspective:1400px] max-[768px]:translate-x-0 max-[768px]:translate-y-[6%] max-[768px]:scale-[0.72] max-[480px]:translate-x-[2%] max-[480px]:translate-y-[4%] max-[480px]:scale-[0.58]"
-			style={{ width, height }}>
+			className="absolute bottom-0 right-0 origin-bottom-right -translate-x-[3%] -translate-y-[2%] transform overflow-visible [perspective:1400px] max-lg:translate-x-0 max-lg:translate-y-0"
+			style={{ width: boxW, height: boxH }}>
 			{rendered}
 		</div>
 	);

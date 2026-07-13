@@ -12,38 +12,6 @@ export const featuredProjects: (WebsiteProject & {
 	blurb: string;
 })[] = [
 	{
-		name: "Prions Biotech",
-		url: "prionsbiotech.com",
-		category: "Website",
-		image: "/images/portfolio/prionsbiotec.jpg",
-		blurb:
-			"A research-grade brand site with a fast, content-driven catalogue and a clean, publication-ready visual system.",
-	},
-	{
-		name: "Woodpecker Exotica",
-		url: "woodpeckerexotica.com",
-		category: "Website",
-		image: "/images/portfolio/woodpeckerexotic.jpg",
-		blurb:
-			"An immersive resort experience  cinematic imagery, smooth scroll storytelling and frictionless enquiries.",
-	},
-	{
-		name: "Aishwarya Cottons",
-		url: "aishwaryacottons.com",
-		category: "E-commerce",
-		image: "/images/portfolio/aishwaryacotton.jpg",
-		blurb:
-			"A conversion-focused storefront with rich merchandising, instant search and a checkout built to sell.",
-	},
-	{
-		name: "CityIndex WebApp",
-		url: "cityindexinvestment.com",
-		category: "Web App",
-		image: "/images/portfolio/city-index.jpg",
-		blurb:
-			"A data-dense investment platform with real-time dashboards, secure portals and automated reporting.",
-	},
-	{
 		name: "Harsha & Rakesh Salon",
 		url: "harsharakesh.com",
 		category: "E-commerce",
@@ -57,8 +25,116 @@ export const featuredProjects: (WebsiteProject & {
 		category: "E-commerce",
 		image: "/images/portfolio/madhtara.jpg",
 		blurb:
-			"A refined 925-silver jewellery storefront  collection-led merchandising, tactile product galleries and a checkout tuned to convert.",
+			"A refined 925-silver jewellery storefront collection-led merchandising, tactile product galleries and a checkout tuned to convert.",
 	},
+	{
+		name: "Positron",
+		url: "positron-he.com",
+		category: "Website",
+		image: "/images/portfolio/positron.jpeg",
+		blurb:
+			"A heat-transfer engineering site that turns complex thermal-management capability into a clear, credible story.",
+	},
+	{
+		name: "Foraam",
+		url: "foraam.com",
+		category: "E-commerce",
+		image: "/images/portfolio/FORAAM.jpg",
+		blurb:
+			"An ethnic-wear label brought online editorial lookbooks, rich product styling and a frictionless, mobile-first checkout.",
+	},
+	{
+		name: "Simple",
+		url: "simple.life",
+		category: "Website",
+		image: "/images/portfolio/simple.lif.jpeg",
+		blurb:
+			"A clean, modern lifestyle brand site minimal by design, fast to load and built to make a confident first impression.",
+	},
+
+	{
+		name: "Mabda Global",
+		url: "mabdaglobal.com/en",
+		category: "Website",
+		image: "/images/portfolio/MabdaGroup.jpg",
+		blurb:
+			"A B2B supply-chain brand site that positions a global industrial trade network with clarity, authority and trust.",
+	},
+	{
+		name: "Prions Biotech",
+		url: "prionsbiotech.com",
+		category: "Website",
+		image: "/images/portfolio/prionsbiotec.jpg",
+		blurb:
+			"A research-grade brand site with a fast, content-driven catalogue and a clean, publication-ready visual system.",
+	},
+	{
+		name: "RareU",
+		url: "rareu.in",
+		category: "E-commerce",
+		image: "/images/portfolio/RAREU.jpg",
+		blurb:
+			"A premium streetwear drop-shop bold visual identity, immersive product pages and a checkout built for launch-day rushes.",
+	},
+	{
+		name: "Avenore Events",
+		url: "avenoreevents.com",
+		category: "Website",
+		image: "/images/portfolio/avenoreevent.jpeg",
+		blurb:
+			"A premium events brand brought to life cinematic galleries, service storytelling and enquiry flows that turn browsers into bookings.",
+	},
+	{
+		name: "Creintors",
+		url: "creintors.com",
+		category: "Website",
+		image: "/images/portfolio/creintors.jpg",
+		blurb:
+			"A multi-division engineering group site hydraulics, environmental and automation unified under one clean corporate system.",
+	},
+
+	{
+		name: "Julrey",
+		url: "julrey.com",
+		category: "E-commerce",
+		image: "/images/portfolio/julre.jpeg",
+		blurb:
+			"A jewellery label online curated collections, rich product close-ups and a smooth, trust-building shopping flow.",
+	},
+	{
+		name: "The Silver Ora",
+		url: "thesilverora.com",
+		category: "E-commerce",
+		image: "/images/portfolio/thesilveror.jpeg",
+		blurb:
+			"A 925-silver jewellery boutique elegant collection browsing, certified-purity trust cues and a frictionless mobile checkout.",
+	},
+	{
+		name: "IMA Curve",
+		url: "imacurve.com",
+		category: "E-commerce",
+		image: "/images/portfolio/IMACURVE.jpg",
+		blurb:
+			"A women's streetwear store with high-energy merchandising, quick browsing and a conversion-first mobile checkout.",
+	},
+	{
+		name: "Woodpecker Exotica",
+		url: "woodpeckerexotica.com",
+		category: "Website",
+		image: "/images/portfolio/woodpeckerexotic.jpg",
+		blurb:
+			"An immersive resort experience cinematic imagery, smooth scroll storytelling and frictionless enquiries.",
+	},
+	{
+		name: "Aishwarya Cottons",
+		url: "aishwaryacottons.com",
+		category: "E-commerce",
+		image: "/images/portfolio/aishwaryacotton.jpg",
+		blurb:
+			"A conversion-focused storefront with rich merchandising, instant search and a checkout built to sell.",
+	},
+
+
 	{
 		name: "Ankur Jewels",
 		url: "ankurjewels.com",
@@ -75,14 +151,7 @@ export const featuredProjects: (WebsiteProject & {
 		blurb:
 			"A luxe lab-grown diamond boutique with custom-design journeys, certified-purity trust badges and an elegant shopping flow.",
 	},
-	{
-		name: "Foraam",
-		url: "foraam.com",
-		category: "E-commerce",
-		image: "/images/portfolio/FORAAM.jpg",
-		blurb:
-			"An ethnic-wear label brought online  editorial lookbooks, rich product styling and a frictionless, mobile-first checkout.",
-	},
+
 	{
 		name: "Sassy Kids",
 		url: "sassykids.in",
@@ -105,95 +174,25 @@ export const featuredProjects: (WebsiteProject & {
 		category: "E-commerce",
 		image: "/images/portfolio/dimensionsverse.jpg",
 		blurb:
-			"A modern retail storefront built on a fast, scalable commerce stack  designed to launch clean and grow.",
+			"A modern retail storefront built on a fast, scalable commerce stack designed to launch clean and grow.",
 	},
-	{
-		name: "RareU",
-		url: "rareu.in",
-		category: "E-commerce",
-		image: "/images/portfolio/RAREU.jpg",
-		blurb:
-			"A premium streetwear drop-shop  bold visual identity, immersive product pages and a checkout built for launch-day rushes.",
-	},
-	{
-		name: "IMA Curve",
-		url: "imacurve.com",
-		category: "E-commerce",
-		image: "/images/portfolio/IMACURVE.jpg",
-		blurb:
-			"A women's streetwear store with high-energy merchandising, quick browsing and a conversion-first mobile checkout.",
-	},
+
 	{
 		name: "Topex Enterprise",
 		url: "topexenterprise.com",
 		category: "Website",
 		image: "/images/portfolio/TopEXEnterprise.jpg",
 		blurb:
-			"A one-stop industrial-supply brand site  structured product categories, brand credibility and clear enquiry paths.",
+			"A one-stop industrial-supply brand site structured product categories, brand credibility and clear enquiry paths.",
 	},
-	{
-		name: "Positron",
-		url: "positron-he.com",
-		category: "Website",
-		image: "/images/portfolio/positron.jpeg",
-		blurb:
-			"A heat-transfer engineering site that turns complex thermal-management capability into a clear, credible story.",
-	},
-	{
-		name: "Creintors",
-		url: "creintors.com",
-		category: "Website",
-		image: "/images/portfolio/creintors.jpg",
-		blurb:
-			"A multi-division engineering group site  hydraulics, environmental and automation  unified under one clean corporate system.",
-	},
-	{
-		name: "Mabda Global",
-		url: "mabdaglobal.com/en",
-		category: "Website",
-		image: "/images/portfolio/MabdaGroup.jpg",
-		blurb:
-			"A B2B supply-chain brand site that positions a global industrial trade network with clarity, authority and trust.",
-	},
-	{
-		name: "Avenore Events",
-		url: "avenoreevents.com",
-		category: "Website",
-		image: "/images/portfolio/avenoreevent.jpeg",
-		blurb:
-			"A premium events brand brought to life  cinematic galleries, service storytelling and enquiry flows that turn browsers into bookings.",
-	},
-	{
-		name: "Simple",
-		url: "simple.life",
-		category: "Website",
-		image: "/images/portfolio/simple.lif.jpeg",
-		blurb:
-			"A clean, modern lifestyle brand site  minimal by design, fast to load and built to make a confident first impression.",
-	},
-	{
-		name: "Julrey",
-		url: "julrey.com",
-		category: "E-commerce",
-		image: "/images/portfolio/julre.jpeg",
-		blurb:
-			"A jewellery label online  curated collections, rich product close-ups and a smooth, trust-building shopping flow.",
-	},
-	{
-		name: "The Silver Ora",
-		url: "thesilverora.com",
-		category: "E-commerce",
-		image: "/images/portfolio/thesilveror.jpeg",
-		blurb:
-			"A 925-silver jewellery boutique  elegant collection browsing, certified-purity trust cues and a frictionless mobile checkout.",
-	},
+
 	{
 		name: "The School Excel",
 		url: "theschoolexcel.com",
 		category: "Education",
 		image: "/images/portfolio/theschoolexce.jpeg",
 		blurb:
-			"A modern school website  warm storytelling, clear admissions pathways and parent-friendly information architecture.",
+			"A modern school website warm storytelling, clear admissions pathways and parent-friendly information architecture.",
 	},
 ];
 
@@ -321,7 +320,10 @@ export type CaseStudy = {
 	name: string;
 	category: string;
 	tagline: string;
-	image?: string;
+	/** Product screenshot. Intrinsic dimensions travel with the src so the panel
+	 *  can render each shot whole  the crops differ per platform, so a shared
+	 *  aspect box would either cut UI off or letterbox it. */
+	image?: { src: string; width: number; height: number };
 	stats: CaseStat[];
 	link: string;
 };
@@ -334,6 +336,11 @@ export const caseStudies: CaseStudy[] = [
 		category: "FinTech · Portfolio Management",
 		tagline:
 			"A ₹250 Cr+ portfolio management platform for traders and investment firms, with monthly payout automation.",
+		image: {
+			src: "/images/portfolio/TraderPortfolioSystem-clea.jpg",
+			width: 1200,
+			height: 655,
+		},
 		stats: [
 			{ icon: "Landmark", value: "₹250 Cr+", label: "Assets under management" },
 			{ icon: "Users", value: "3,500+", label: "Clients served" },
@@ -348,6 +355,11 @@ export const caseStudies: CaseStudy[] = [
 		category: "Marketplace · Ticketing",
 		tagline:
 			"A scalable ticket selling & reselling platform handling thousands of concurrent users and high transaction volume.",
+		image: {
+			src: "/images/portfolio/EventTicketHub-clea.jpg",
+			width: 1200,
+			height: 689,
+		},
 		stats: [
 			{ icon: "Ticket", value: "10K+", label: "Listings / month" },
 			{ icon: "IndianRupee", value: "₹1.5 Cr+", label: "Monthly transactions" },
@@ -362,6 +374,11 @@ export const caseStudies: CaseStudy[] = [
 		category: "HR Tech · Cross-border Hiring",
 		tagline:
 			"A smart job portal sourcing nursing staff for German clinics, processing thousands of verified applications.",
+		image: {
+			src: "/images/portfolio/GlobalHiringHub-clea.jpg",
+			width: 1200,
+			height: 819,
+		},
 		stats: [
 			{ icon: "FileCheck", value: "5,000+", label: "Verified applications" },
 			{ icon: "Building2", value: "100+", label: "German clinics" },
@@ -376,6 +393,11 @@ export const caseStudies: CaseStudy[] = [
 		category: "EdTech · Multi-center ERP",
 		tagline:
 			"An end-to-end management platform for an expanding education brand across 30+ centers.",
+		image: {
+			src: "/images/portfolio/EdTechMulti-centerERP-clea.jpg",
+			width: 1200,
+			height: 655,
+		},
 		stats: [
 			{ icon: "Building2", value: "30+", label: "Active centers" },
 			{ icon: "GraduationCap", value: "1,000+", label: "Students / month" },
@@ -390,6 +412,11 @@ export const caseStudies: CaseStudy[] = [
 		category: "Industrial · ERP",
 		tagline:
 			"A custom industrial service & inventory platform with full travel and allowance visibility.",
+		image: {
+			src: "/images/portfolio/ERPIndustrialInventory-clea.jpg",
+			width: 1200,
+			height: 655,
+		},
 		stats: [
 			{ icon: "Wrench", value: "5,000+", label: "Service visits / year" },
 			{ icon: "Package", label: "Inventory movements tracked" },
@@ -404,6 +431,11 @@ export const caseStudies: CaseStudy[] = [
 		category: "Web3 · Payments",
 		tagline:
 			"A scalable MLM platform with crypto payments, ROI tracking and a referral commission engine.",
+		image: {
+			src: "/images/portfolio/Web3Payments-clea.jpg",
+			width: 1200,
+			height: 655,
+		},
 		stats: [
 			{ icon: "Users", value: "3,000+", label: "Users onboarded" },
 			{ icon: "Coins", value: "₹7.5 Cr+", label: "Crypto investments" },

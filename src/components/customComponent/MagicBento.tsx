@@ -439,10 +439,22 @@ const GlobalSpotlight: React.FC<{
 const useMobileDetection = () => {
 	const [isMobile, setIsMobile] = useState(false);
 	useEffect(() => {
-		const check = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+		// Coarse pointer counts as "mobile" whatever the width. iOS Safari
+		// synthesises `mouseenter`/`mousemove` on a tap, so on a tablet every tap
+		// would light up the particle field, the magnetism tween and the global
+		// spotlight — and, with no `mouseleave` to follow, never tear them down.
+		// A mouse/trackpad always reports `pointer: fine`, so desktop never enters
+		// this branch and its code path is unchanged.
+		const coarse = window.matchMedia("(pointer: coarse)");
+		const check = () =>
+			setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT || coarse.matches);
 		check();
 		window.addEventListener("resize", check);
-		return () => window.removeEventListener("resize", check);
+		coarse.addEventListener("change", check);
+		return () => {
+			window.removeEventListener("resize", check);
+			coarse.removeEventListener("change", check);
+		};
 	}, []);
 	return isMobile;
 };
@@ -553,9 +565,13 @@ export default function MagicBento({
 						const cardClass = baseClassName;
 
 						// Every tile: same size, full colour (no grayscale).
+						// The tile is a 16:10 box, so its height is a function of the column
+						// width — ~80px in a 2-up grid at 320px. A fixed 24px inset would
+						// eat 48 of those 80 and leave the logo an illegible sliver, so the
+						// padding scales with the tile. `lg:p-6` restores the desktop inset.
 						const inner = (
 							<div className="aspect-[16/10] w-full">
-								<div className="flex h-full w-full items-center justify-center bg-white p-6">
+								<div className="flex h-full w-full items-center justify-center bg-white p-3 sm:p-4 lg:p-6">
 									{/* eslint-disable-next-line @next/next/no-img-element */}
 									<img
 										src={card.src}

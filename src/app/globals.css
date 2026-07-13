@@ -20,9 +20,41 @@
     overflow-x: hidden;
   }
 
+  /* Both rules below are narrow-viewport overflow/CLS measures, and both would
+     otherwise change rendering at >= 1024px if left unprefixed: `overflow-wrap`
+     re-breaks any long unbroken string that currently overflows on desktop, and
+     `max-width` clamps any image a desktop layout deliberately lets bleed past
+     its column. Desktop is frozen, so they stop at 1023.98px.
+     `height: auto` keeps the aspect ratio intact when max-width does clamp; it
+     is omitted for svg/canvas, which collapse without an explicit height. */
+  @media (max-width: 1023.98px) {
+    body {
+      overflow-wrap: break-word;
+    }
+
+    img,
+    video {
+      max-width: 100%;
+      height: auto;
+    }
+
+    svg,
+    canvas {
+      max-width: 100%;
+    }
+  }
+
   ::selection {
     background: theme("colors.corporate.500");
     color: #fff;
+  }
+
+  /* Visible keyboard focus everywhere. Pointer focus is untouched, so this is
+     invisible to mouse users and changes nothing at rest. */
+  :focus-visible {
+    outline: 2px solid theme("colors.corporate.500");
+    outline-offset: 2px;
+    border-radius: 2px;
   }
 
   h1, h2, h3, h4, h5 {
@@ -30,21 +62,49 @@
     text-wrap: balance;
   }
 
-  /* Custom slim scrollbar */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+  /* Custom slim scrollbar  fine pointers only.
+     Touch WebKit paints scrollbars as transient overlays and reserves no space
+     for them, but the moment ::-webkit-scrollbar is given a width/height it
+     degrades to a classic scrollbar that permanently eats 10px out of the page
+     and out of every horizontal rail. Every desktop pointing device reports
+     `pointer: fine`, so the declarations below are byte-identical there. */
+  @media (pointer: fine) {
+    ::-webkit-scrollbar {
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track {
+      background: theme("colors.canvas.silver");
+    }
+    ::-webkit-scrollbar-thumb {
+      background: theme("colors.steel.300");
+      border-radius: 999px;
+      border: 2px solid theme("colors.canvas.silver");
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: theme("colors.steel.400");
+    }
   }
-  ::-webkit-scrollbar-track {
-    background: theme("colors.canvas.silver");
-  }
-  ::-webkit-scrollbar-thumb {
-    background: theme("colors.steel.300");
-    border-radius: 999px;
-    border: 2px solid theme("colors.canvas.silver");
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: theme("colors.steel.400");
+
+  /* iOS Safari zooms the whole page when a focused control's text is under
+     16px, and never zooms back out. Scoped below lg, so the desktop type scale
+     on every form is untouched. */
+  @media (max-width: 1023.98px) {
+    input:not([type]),
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="search"],
+    input[type="password"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
   }
 }
 
@@ -96,6 +156,18 @@
   .hairline {
     @apply h-px w-full bg-gradient-to-r from-transparent via-steel-300 to-transparent;
   }
+
+  /* Legibility scrim for STOCK imagery (/images/downloads/**, remote photos).
+     One treatment everywhere, so every stock photo sits behind the same ink
+     wash. Never apply to Cubiccode's own photography — team, office, culture,
+     certificates, client work. Layer as a sibling *after* the <Image>. */
+  .stock-scrim {
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/35 to-ink/10;
+  }
+  /* Lighter variant for small thumbs where the image itself is the content. */
+  .stock-scrim-soft {
+    @apply pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/60 via-ink/20 to-transparent;
+  }
 }
 
 @layer utilities {
@@ -107,6 +179,16 @@
   }
   .container-x {
     @apply mx-auto w-full max-w-[1360px] px-6 lg:px-8 xl:px-10;
+  }
+  /* Landscape on a notched iPhone drives the notch and the rounded corner into
+     that 24px gutter. Guarded twice over: the media query stops at 1023.98px,
+     and max() collapses back to the same 1.5rem the base class already sets
+     whenever the inset is 0  which it is on every desktop browser. */
+  @media (max-width: 1023.98px) {
+    .container-x {
+      padding-left: max(1.5rem, env(safe-area-inset-left, 0px));
+      padding-right: max(1.5rem, env(safe-area-inset-right, 0px));
+    }
   }
 
   /* Edge mask for marquees */
@@ -150,6 +232,70 @@
   .anim-paused {
     animation-play-state: paused;
   }
+
+  /* Enlarges the hit area to the 44px WCAG minimum on touch devices only.
+     EVERYTHING is inside the coarse-pointer query, including `position:
+     relative` — at `pointer: fine` these classes must contribute no declaration
+     at all, because several of the elements that carry them have absolutely
+     positioned children that a stray `position: relative` would re-anchor. */
+  @media (pointer: coarse) {
+    .tap-target {
+      position: relative;
+    }
+    .tap-target::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      min-width: 44px;
+      min-height: 44px;
+      transform: translate(-50%, -50%);
+    }
+    .tap-target-h {
+      min-height: 44px;
+    }
+  }
+
+  /* Mobile browsers' collapsing URL bar makes 100vh taller than the visible
+     viewport. `dvh` tracks it; the vh line is the fallback for old browsers. */
+  .min-h-screen-dvh {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  .h-screen-dvh {
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+/* ── SplitReveal anti-FOUC gate ─────────────────────────────────────────────
+   SplitReveal animates words in with `gsap.from`, which only applies its
+   `from` state once the effect runs. The server-rendered heading is therefore
+   painted at full opacity first and yanked to hidden a frame later.
+
+   The inline <head> script in app/layout.tsx sets `data-anim` on <html> when
+   (and only when) JS is running and reduced-motion is off. Gating on it means
+   no-JS visitors and reduced-motion users always see the heading, and everyone
+   else never sees the flash. */
+html[data-anim] [data-split-reveal] {
+  opacity: 0;
+}
+/* Failsafe, mirroring the preloader's: if the effect never runs (bundle error),
+   the heading fades itself back in rather than staying invisible forever. */
+@keyframes split-reveal-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+html[data-anim] [data-split-reveal] {
+  animation: split-reveal-failsafe 0.3s linear 3s forwards;
+}
+/* Once SplitReveal has taken control, drop the failsafe so it cannot fight the
+   tween. */
+html[data-anim] [data-split-reveal][data-split-ready] {
+  animation: none;
 }
 
 /* First-load preloader guards (see components/ui/Preloader.tsx) */

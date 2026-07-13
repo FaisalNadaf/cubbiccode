@@ -8,13 +8,13 @@
 import { PageHero } from "@/components/layout/PageHero";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
-import { RecognitionZigzag } from "@/components/achievements/RecognitionZigzag";
+import { RecognitionStack } from "@/components/achievements/RecognitionStack";
 import { site } from "@/content/site";
 
 export const metadata = {
-	title: "Achievements  Awards & Recognition | Cubiccode",
+	title: "Achievements Awards & Recognition | Cubiccode",
 	description:
-		"Recognised by the industry and trusted by the market  the awards and honours that mark Cubiccode's track record.",
+		"Recognised by the industry and trusted by the market the awards and honours that mark Cubiccode's track record.",
 };
 
 export default function AchievementsPage() {
@@ -55,14 +55,17 @@ export default function AchievementsPage() {
 					<SectionHeading
 						kicker="Awards & Honours"
 						title="A decade of recognition"
-						intro="From national start-up rankings to global excellence awards and the TEDx stage  the milestones that mark the way we work."
+						intro="From national start-up rankings to global excellence awards and the TEDx stage the milestones that mark the way we work."
 					/>
 				</div>
 			</section>
 
 			{/* Scroll-pinned slideshow  kept OUTSIDE any overflow-hidden ancestor so
           the sticky viewport works (same as the Journey timeline). */}
-			<RecognitionZigzag />
+			<section className="relative bg-canvas">
+				<div className="pointer-events-none absolute inset-0 bg-grid-steel [background-size:46px_46px] [-webkit-mask-image:radial-gradient(80%_50%_at_50%_0%,#000,transparent)] [mask-image:radial-gradient(80%_50%_at_50%_0%,#000,transparent)] opacity-50" />
+				<RecognitionStack />
+			</section>
 		</>
 	);
 }

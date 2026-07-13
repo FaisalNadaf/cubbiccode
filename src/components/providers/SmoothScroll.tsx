@@ -14,6 +14,11 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
     if (typeof window === "undefined") return;
     gsap.registerPlugin(ScrollTrigger);
 
+    // NOTE: do not call ScrollTrigger.config({ ignoreMobileResize: true }) here.
+    // ScrollTrigger already sets that flag itself on touch-only devices during
+    // init, so it buys nothing — and config() with no `syncInterval` key
+    // overwrites the interval handle with undefined without clearing the live
+    // 250ms interval, so a later kill/disable can never stop it.
     const prefersReduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;

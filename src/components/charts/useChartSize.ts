@@ -19,29 +19,53 @@ export function useChartSize<T extends HTMLElement = HTMLDivElement>() {
 		const el = ref.current;
 		if (!el) return;
 
-		const ro = new ResizeObserver((entries) => {
-			const w = entries[0]?.contentRect.width ?? 0;
+		const measure = () => {
+			const w = el.getBoundingClientRect().width;
 			if (w) setWidth(Math.round(w));
-		});
-		ro.observe(el);
+		};
 		// Seed immediately so we don't wait a frame on mount.
-		const rect = el.getBoundingClientRect();
-		if (rect.width) setWidth(Math.round(rect.width));
+		measure();
 
-		const io = new IntersectionObserver(
-			([entry]) => {
-				if (entry?.isIntersecting) {
-					setInView(true);
-					io.disconnect();
-				}
-			},
-			{ rootMargin: "0px 0px -12% 0px", threshold: 0.2 },
-		);
-		io.observe(el);
+		let ro: ResizeObserver | undefined;
+		if (typeof ResizeObserver !== "undefined") {
+			ro = new ResizeObserver((entries) => {
+				const w = entries[0]?.contentRect.width ?? 0;
+				if (w) setWidth(Math.round(w));
+			});
+			ro.observe(el);
+		} else {
+			// iOS Safari below 13.4 ships no ResizeObserver. Without a fallback the
+			// width would never update and the chart would sit on its skeleton for
+			// the life of the page (including after a rotation).
+			window.addEventListener("resize", measure);
+			window.addEventListener("orientationchange", measure);
+		}
+
+		let io: IntersectionObserver | undefined;
+		if (typeof IntersectionObserver !== "undefined") {
+			const observer = new IntersectionObserver(
+				([entry]) => {
+					if (entry?.isIntersecting) {
+						setInView(true);
+						observer.disconnect();
+					}
+				},
+				{ rootMargin: "0px 0px -12% 0px", threshold: 0.2 },
+			);
+			observer.observe(el);
+			io = observer;
+		} else {
+			// No IntersectionObserver means `inView` would never flip, which leaves
+			// the draw-in clip rect at width 0 — i.e. a blank chart, not an
+			// un-animated one. Reveal it immediately instead.
+			setInView(true);
+		}
 
 		return () => {
-			ro.disconnect();
-			io.disconnect();
+			ro?.disconnect();
+			io?.disconnect();
+			window.removeEventListener("resize", measure);
+			window.removeEventListener("orientationchange", measure);
 		};
 	}, []);
 

@@ -22,15 +22,36 @@ export type ZoomImage = {
 	href?: string;
 };
 
-/** Scatter layout for the 7 zoom tiles (vw/vh, relative to the viewport centre). */
-const LAYOUT: { w: string; h: string; top?: string; left?: string }[] = [
+/**
+ * Every shot in /images/portfolio is a landscape website capture, ~1.88:1.
+ * Tiles therefore take a width and inherit this ratio, never an explicit height.
+ * Sizing them `vw × vh` made a tile's shape a function of the *viewport's*
+ * shape, so on a tall window they turned portrait and `object-cover` sliced each
+ * screenshot down to an unreadable vertical strip.
+ */
+const SHOT_RATIO = "15 / 8"; // 1.875
+
+/**
+ * Scatter layout for the 7 zoom tiles, offset from the viewport centre.
+ *
+ * Each width is `min(<vw>, <vh>)`. The `vw` term sizes the tile on ordinary
+ * screens; the `vh` term caps how tall it may get, because a width-driven tile
+ * with a fixed ratio grows in *viewport heights* as the window widens — on a
+ * 21:9 monitor the uncapped tiles collided with each other. The vh cap is the
+ * tile's target height × 1.875, so it bounds the height directly.
+ *
+ * Only the centre tile carries an explicit `h`: it is deliberately
+ * viewport-shaped (25vw × 25vh) so that at its 4× scale it lands exactly
+ * full-screen and hands off to the carousel.
+ */
+const LAYOUT: { w: string; h?: string; top?: string; left?: string }[] = [
 	{ w: "25vw", h: "25vh" }, // centre  zooms to fill, hands off to the carousel
-	{ w: "35vw", h: "30vh", top: "-30vh", left: "5vw" },
-	{ w: "20vw", h: "45vh", top: "-10vh", left: "-25vw" },
-	{ w: "25vw", h: "25vh", left: "27.5vw" },
-	{ w: "20vw", h: "25vh", top: "27.5vh", left: "5vw" },
-	{ w: "30vw", h: "25vh", top: "27.5vh", left: "-22.5vw" },
-	{ w: "15vw", h: "15vh", top: "22.5vh", left: "25vw" },
+	{ w: "min(30vw, 48.75vh)", top: "-31vh", left: "7vw" }, // ≤ 26vh tall
+	{ w: "min(23vw, 39.4vh)", top: "-4vh", left: "-31vw" }, // ≤ 21vh
+	{ w: "min(25vw, 41.25vh)", top: "1vh", left: "31vw" }, // ≤ 22vh
+	{ w: "min(22vw, 37.5vh)", top: "29vh", left: "8vw" }, // ≤ 20vh
+	{ w: "min(27vw, 45vh)", top: "28vh", left: "-25vw" }, // ≤ 24vh
+	{ w: "min(15vw, 26.25vh)", top: "26vh", left: "31vw" }, // ≤ 14vh
 ];
 
 /** Cross-fade keyframes for carousel slide `i`, clean first/last endpoints. */
@@ -60,7 +81,7 @@ function opacityStops(i: number, total: number) {
  *     cross-fades, with centre prev/next buttons, a place name + counter, and an
  *     optional "Visit website" button. Spring-smoothed throughout.
  */
-export function ZoomParallax({
+export function 	ZoomParallax({
 	images,
 	caption,
 }: {
@@ -130,7 +151,10 @@ export function ZoomParallax({
 			ref={wrapRef}
 			className="relative"
 			style={{ height: `${N * 100 + 160}vh` }}>
-			<div className="sticky top-0 h-screen w-full overflow-hidden bg-ink">
+			{/* `h-screen-dvh` (not `h-screen`): on mobile Safari `100vh` is the *large*
+			    viewport, so the pane hangs behind the address bar and the carousel's
+			    bottom controls sit off-screen. `100dvh` === `100vh` on desktop. */}
+			<div className="sticky top-0 h-screen-dvh w-full overflow-hidden bg-ink">
 				{/* ── Base layer: full-screen carousel (hidden until the hand-off) ── */}
 				<motion.div
 					style={{ opacity: carouselOpacity }}
@@ -159,7 +183,12 @@ export function ZoomParallax({
 								className="relative overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10"
 								style={{
 									width: LAYOUT[i].w,
-									height: LAYOUT[i].h,
+									// Height only for the viewport-shaped centre tile; the rest
+									// take the screenshots' own landscape ratio, so `object-cover`
+									// has essentially nothing left to crop.
+									...(LAYOUT[i].h ?
+										{ height: LAYOUT[i].h }
+									:	{ aspectRatio: SHOT_RATIO }),
 									top: LAYOUT[i].top,
 									left: LAYOUT[i].left,
 								}}>
@@ -169,7 +198,9 @@ export function ZoomParallax({
 									fill
 									sizes="60vw"
 									priority={i === 0}
-									className="object-cover"
+									// Top-aligned: whatever little a tile does trim should come
+									// off the footer, never the site's header and hero.
+									className="object-cover object-top"
 								/>
 							</div>
 						</motion.div>
@@ -199,12 +230,15 @@ export function ZoomParallax({
 					</span>
 
 					{/* Visit website  bottom centre */}
+					{/* Below 768 the centred button and the bottom-right counter + arrows
+					    are wide enough to collide, so the button rides above them. It is
+					    back on the shared bottom line from `md:` up — desktop is untouched. */}
 					{current?.href ?
 						<a
 							href={current.href}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="pointer-events-auto group absolute bottom-9 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink shadow-lift transition-transform hover:-translate-y-0.5">
+							className="pointer-events-auto group absolute bottom-28 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink shadow-lift transition-transform hover:-translate-y-0.5 md:bottom-9">
 							Visit website
 							<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 						</a>

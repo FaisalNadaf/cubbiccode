@@ -154,7 +154,9 @@ export function IndustriesGrid() {
 
 function HeadingPanel() {
 	return (
-		<div className="group relative h-full min-h-[150px] w-full transition-transform duration-300 ease-out hover:-translate-y-1 lg:min-h-0">
+		// Below lg the panel has no definite height to position against, so the fill
+		// is left in flow and the copy drives the height; at lg it is pinned again.
+		<div className="group relative h-auto min-h-[150px] w-full transition-transform duration-300 ease-out hover:-translate-y-1 lg:h-full lg:min-h-0">
 			{/* Thin border */}
 			<div
 				className="absolute inset-0 bg-steel-300"
@@ -162,7 +164,7 @@ function HeadingPanel() {
 			/>
 			{/* Fill */}
 			<div
-				className="absolute inset-[1.5px] overflow-hidden bg-white"
+				className="relative m-[1.5px] overflow-hidden bg-white lg:absolute lg:inset-[1.5px] lg:m-0"
 				style={{ clipPath: HEAD_CLIP }}>
 				<div
 					aria-hidden

@@ -119,7 +119,7 @@ export function Testimonials() {
 				<div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
 					<SectionHeading
 						kicker="What our clients say"
-						title="Worth every rupee  in their words"
+						title="Worth every rupee in their words"
 						intro="Five-star reviews from the founders, doctors and business owners we've built for."
 					/>
 					<div className="flex gap-3">
@@ -142,7 +142,10 @@ export function Testimonials() {
 				<div
 					className="mt-12 overflow-hidden"
 					ref={emblaRef}>
-					<div className="flex">
+					{/* Embla sets no touch-action of its own and preventDefaults touchmove,
+					    so without this its horizontal drag fights native vertical scrolling
+					    on iOS. pinch-zoom is kept so the page stays zoomable. */}
+					<div className="flex touch-pan-y touch-pinch-zoom">
 						{testimonials.map((t, i) => (
 							<div
 								key={t.name}

@@ -2,6 +2,7 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Search, Sparkles, MapPin, TrendingUp, Star, Globe } from "lucide-react";
 
@@ -37,8 +38,34 @@ const GLYPHS = [
 	{ Icon: Globe, left: 40, top: 82, size: 20, dur: 13 },
 ];
 
+/**
+ * True only after mount, and only on a coarse-pointer (touch) device. The server
+ * and the first client render both report `false`, so hydration is byte-identical
+ * and a fine-pointer machine never leaves that branch.
+ */
+function useCoarsePointer(): boolean {
+	const [coarse, setCoarse] = useState(false);
+
+	useEffect(() => {
+		const mq = window.matchMedia("(pointer: coarse)");
+		const sync = () => setCoarse(mq.matches);
+		sync();
+		mq.addEventListener("change", sync);
+		return () => mq.removeEventListener("change", sync);
+	}, []);
+
+	return coarse;
+}
+
 export function SeoBackground({ dense = true }: { dense?: boolean }) {
 	const reduce = useReducedMotion();
+	const coarse = useCoarsePointer();
+
+	// Phones pay a real frame budget for this backdrop: a non-composited
+	// background-position tween over a full-bleed grid, three 500px blurred blobs
+	// and 34 infinitely-looping nodes. Freeze it to the same static composition
+	// reduced-motion already gets. Fine-pointer devices never take this branch.
+	const still = reduce || coarse;
 
 	return (
 		<div
@@ -47,7 +74,7 @@ export function SeoBackground({ dense = true }: { dense?: boolean }) {
 			{/* panning blueprint grid */}
 			<motion.div
 				className="absolute inset-[-40%] bg-blueprint [background-size:46px_46px] opacity-[0.14]"
-				animate={reduce ? undefined : { backgroundPosition: ["0px 0px", "46px 46px"] }}
+				animate={still ? undefined : { backgroundPosition: ["0px 0px", "46px 46px"] }}
 				transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
 			/>
 
@@ -55,7 +82,7 @@ export function SeoBackground({ dense = true }: { dense?: boolean }) {
 			<motion.div
 				className="absolute -left-24 top-[-10%] size-[520px] rounded-full bg-corporate-600/30 blur-3xl"
 				animate={
-					reduce ? undefined : (
+					still ? undefined : (
 						{ x: [0, 60, 0], y: [0, 40, 0], opacity: [0.35, 0.6, 0.35] }
 					)
 				}
@@ -63,12 +90,12 @@ export function SeoBackground({ dense = true }: { dense?: boolean }) {
 			/>
 			<motion.div
 				className="absolute -right-20 bottom-[-15%] size-[480px] rounded-full bg-corporate-400/20 blur-3xl"
-				animate={reduce ? undefined : { x: [0, -50, 0], y: [0, -30, 0], opacity: [0.25, 0.5, 0.25] }}
+				animate={still ? undefined : { x: [0, -50, 0], y: [0, -30, 0], opacity: [0.25, 0.5, 0.25] }}
 				transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
 			/>
 			<motion.div
 				className="absolute left-1/2 top-1/3 size-[360px] -translate-x-1/2 rounded-full bg-teal-500/10 blur-3xl"
-				animate={reduce ? undefined : { scale: [1, 1.18, 1], opacity: [0.15, 0.3, 0.15] }}
+				animate={still ? undefined : { scale: [1, 1.18, 1], opacity: [0.15, 0.3, 0.15] }}
 				transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
 			/>
 
@@ -85,7 +112,7 @@ export function SeoBackground({ dense = true }: { dense?: boolean }) {
 							height: p.size,
 						}}
 						animate={
-							reduce ? { opacity: 0.4 } : (
+							still ? { opacity: 0.4 } : (
 								{ y: [0, p.drift, 0], opacity: [0.15, 0.7, 0.15] }
 							)
 						}
@@ -105,7 +132,7 @@ export function SeoBackground({ dense = true }: { dense?: boolean }) {
 						key={`g-${i}`}
 						className="absolute text-corporate-300/25"
 						style={{ left: `${left}%`, top: `${top}%` }}
-						animate={reduce ? undefined : { y: [0, -18, 0], rotate: [0, 8, 0] }}
+						animate={still ? undefined : { y: [0, -18, 0], rotate: [0, 8, 0] }}
 						transition={{
 							duration: dur,
 							delay: i * 0.6,

@@ -149,6 +149,9 @@ export function BarChart({
 					{/* per-bar hover targets */}
 					<div
 						className="absolute inset-0"
+						// A touch that turns into a page scroll is cancelled, not "left" —
+						// without this the tooltip sticks after the gesture.
+						onPointerCancel={() => setActive(null)}
 						onPointerLeave={() => setActive(null)}>
 						{pts.map((_, i) => (
 							<div

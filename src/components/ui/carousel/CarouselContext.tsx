@@ -50,7 +50,7 @@ export function useCarousel() {
 export function CarouselProvider({
 	count,
 	autoPlay = true,
-	interval = 5000,
+	interval = 3500,
 	children,
 }: {
 	count: number;
@@ -95,8 +95,26 @@ export function CarouselProvider({
 		return () => document.removeEventListener("visibilitychange", onVis);
 	}, []);
 
+	/**
+	 * Touch browsers synthesise `mouseenter` on tap but only fire the matching
+	 * `mouseleave` once something *else* is tapped — so a tap or a swipe on the
+	 * carousel leaves `hovered` stuck true and autoplay dead for the rest of the
+	 * session. Hover is a fine-pointer concept, so the hover pause is only
+	 * honoured where a real hover exists. Starts `true` so SSR and the desktop
+	 * (`hover: hover`) client are identical to the previous behaviour.
+	 */
+	const [canHover, setCanHover] = useState(true);
+	useEffect(() => {
+		const mq = window.matchMedia("(hover: hover)");
+		const sync = () => setCanHover(mq.matches);
+		sync();
+		mq.addEventListener("change", sync);
+		return () => mq.removeEventListener("change", sync);
+	}, []);
+
 	const enabled = autoPlay && !reduce && count > 1;
-	const isAutoPlaying = enabled && !hovered && !focused && !dragging && !hidden;
+	const isAutoPlaying =
+		enabled && !(hovered && canHover) && !focused && !dragging && !hidden;
 
 	useEffect(() => {
 		if (!isAutoPlaying) return;

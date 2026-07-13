@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { Icon } from "@/components/ui/Icon";
 import { values } from "@/content/company";
@@ -13,8 +14,34 @@ const card: Variants = {
   },
 };
 
+/**
+ * True only on a coarse pointer, and only after mount.
+ *
+ * A tap fires `pointerenter` but no `pointerleave` until you tap something else,
+ * so a hover lift latches: the tapped card stays raised for as long as you are
+ * looking at it. There is no hover on touch to preserve, so the lift is simply
+ * not offered there. Starting `false` keeps the server's markup and the first
+ * client render identical, so hydration matches; a fine pointer never leaves
+ * that state, which is what keeps the desktop hover untouched.
+ */
+function useIsTouch(): boolean {
+  const [touch, setTouch] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(pointer: coarse)");
+    setTouch(mq.matches);
+
+    const onChange = (e: MediaQueryListEvent) => setTouch(e.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+
+  return touch;
+}
+
 export function ValuesGrid() {
   const reduce = useReducedMotion();
+  const isTouch = useIsTouch();
 
   return (
     <motion.div
@@ -31,7 +58,7 @@ export function ValuesGrid() {
         <motion.article
           key={v.title}
           variants={reduce ? { hidden: { opacity: 0 }, show: { opacity: 1 } } : card}
-          whileHover={reduce ? undefined : { y: -6 }}
+          whileHover={reduce || isTouch ? undefined : { y: -6 }}
           transition={{ type: "spring", stiffness: 300, damping: 24 }}
           className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-steel-200 bg-white p-8 shadow-soft transition-shadow duration-300 hover:shadow-lift"
         >

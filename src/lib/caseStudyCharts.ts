@@ -93,8 +93,17 @@ export type Capability = { icon: string; label: string };
 
 export type CaseChartData = {
 	slug: string;
-	/** One or two visualizations, primary (hero) first. */
-	charts: ChartSpec[];
+	/**
+	 * The one visualization rendered beside the product screenshot.
+	 *
+	 * It is deliberately never an `area`/line: the signature tile already draws
+	 * this platform's growth as a sparkline, so a line chart here restates the
+	 * same series in the same form — the panel ends up showing one curve twice.
+	 * Each study therefore picks the shape its data actually wants (funnel,
+	 * donut, comparison, bars), which also keeps the six panels from reading as
+	 * one chart repeated six times.
+	 */
+	chart: ChartSpec;
 	/** Small stat tiles beside the charts. */
 	kpis: Kpi[];
 	/** Qualitative capability chips (for platforms whose value isn't a number). */
@@ -113,47 +122,26 @@ export type CaseChartData = {
  * ══════════════════════════════════════════════════════════════════════════ */
 const traderPortfolio: CaseChartData = {
 	slug: "trader-portfolio-system",
-	charts: [
-		{
-			kind: "area",
-			title: "Assets under management",
-			caption: "Cumulative AUM growth to ₹250 Cr+",
-			unit: "₹ Cr",
-			prefix: "₹",
-			suffix: " Cr",
-			color: "blue",
-			// endpoint = 250 (real). Decelerating compounding curve.
-			points: [
-				{ label: "Q1", value: 42 },
-				{ label: "Q2", value: 68 },
-				{ label: "Q3", value: 96 },
-				{ label: "Q4", value: 128 },
-				{ label: "Q5", value: 162 },
-				{ label: "Q6", value: 198 },
-				{ label: "Q7", value: 228 },
-				{ label: "Q8", value: 250 },
-			],
-		},
-		{
-			kind: "bar",
-			title: "Monthly payouts automated",
-			caption: "Payout run-rate to ₹5 Cr+ / month",
-			unit: "₹ Cr",
-			prefix: "₹",
-			suffix: " Cr",
-			decimals: 1,
-			color: "teal",
-			// endpoint = 5 (real ₹5 Cr+/mo).
-			points: [
-				{ label: "Jan", value: 3.6 },
-				{ label: "Feb", value: 4.0 },
-				{ label: "Mar", value: 4.3 },
-				{ label: "Apr", value: 4.6 },
-				{ label: "May", value: 4.8 },
-				{ label: "Jun", value: 5.0 },
-			],
-		},
-	],
+	// AUM growth is the sparkline; the chart shows the payout engine instead.
+	chart: {
+		kind: "bar",
+		title: "Monthly payouts automated",
+		caption: "Payout run-rate to ₹5 Cr+ / month",
+		unit: "₹ Cr",
+		prefix: "₹",
+		suffix: " Cr",
+		decimals: 1,
+		color: "teal",
+		// endpoint = 5 (real ₹5 Cr+/mo).
+		points: [
+			{ label: "Jan", value: 3.6 },
+			{ label: "Feb", value: 4.0 },
+			{ label: "Mar", value: 4.3 },
+			{ label: "Apr", value: 4.6 },
+			{ label: "May", value: 4.8 },
+			{ label: "Jun", value: 5.0 },
+		],
+	},
 	kpis: [
 		{ icon: "Users", value: "3,500+", label: "Clients served" },
 		{ icon: "Banknote", value: "₹5 Cr+", label: "Monthly payouts" },
@@ -171,41 +159,34 @@ const traderPortfolio: CaseChartData = {
  * ══════════════════════════════════════════════════════════════════════════ */
 const eventTicket: CaseChartData = {
 	slug: "event-ticket-hub",
-	charts: [
-		{
-			kind: "radial",
-			title: "Platform uptime",
-			caption: "Sustained across peak on-sale traffic",
-			percent: 99.99, // arc fill
-			display: { value: 99.99, suffix: "%", decimals: 2 },
-			color: "teal",
-		},
-		{
-			kind: "area",
-			title: "Monthly transaction volume",
-			caption: "Run-rate to ₹1.5 Cr+ / month",
-			unit: "₹ Cr",
-			prefix: "₹",
-			suffix: " Cr",
-			decimals: 2,
-			color: "blue",
-			// endpoint = 1.5 (real ₹1.5 Cr+/mo).
-			points: [
-				{ label: "M1", value: 0.9 },
-				{ label: "M2", value: 1.05 },
-				{ label: "M3", value: 1.18 },
-				{ label: "M4", value: 1.3 },
-				{ label: "M5", value: 1.42 },
-				{ label: "M6", value: 1.5 },
-			],
-		},
-	],
+	// Uptime (99.99%) is the signature tile — a radial gauge of it would just
+	// print the same number twice — so the chart carries the transaction volume,
+	// as bars rather than a line so it doesn't echo the uptime sparkline.
+	chart: {
+		kind: "bar",
+		title: "Monthly transaction volume",
+		caption: "Run-rate to ₹1.5 Cr+ / month",
+		unit: "₹ Cr",
+		prefix: "₹",
+		suffix: " Cr",
+		decimals: 2,
+		color: "blue",
+		// endpoint = 1.5 (real ₹1.5 Cr+/mo).
+		points: [
+			{ label: "M1", value: 0.9 },
+			{ label: "M2", value: 1.05 },
+			{ label: "M3", value: 1.18 },
+			{ label: "M4", value: 1.3 },
+			{ label: "M5", value: 1.42 },
+			{ label: "M6", value: 1.5 },
+		],
+	},
 	kpis: [
 		{ icon: "Ticket", value: "10K+", label: "Listings / month" },
 		{ icon: "ShieldCheck", value: "20K+", label: "Secure payments" },
 	],
 	spark: [99.9, 99.93, 99.95, 99.97, 99.98, 99.99], // → 99.99%
-	note: "Transaction curve is indicative; the 99.99% uptime and volume endpoints are production figures.",
+	note: "The monthly transaction ramp is indicative; the 99.99% uptime and volume endpoints are production figures.",
 };
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -218,31 +199,21 @@ const eventTicket: CaseChartData = {
  * ══════════════════════════════════════════════════════════════════════════ */
 const globalHiring: CaseChartData = {
 	slug: "global-hiring-hub",
-	charts: [
-		{
-			kind: "funnel",
-			title: "Cross-border hiring funnel",
-			caption: "Verified stage = 5,000+ real applications",
-			suffix: "",
-			stages: [
-				// received ≈ verified / 0.60 (≈60% pass document verification)
-				{ label: "Applications received", value: 8300, color: "blue" },
-				{ label: "Verified applications", value: 5000, color: "blue" },
-				// ~48% of verified reach clinic shortlist
-				{ label: "Shortlisted by clinics", value: 2400, color: "teal" },
-				// ~48% of shortlisted placed
-				{ label: "Placed in German clinics", value: 1150, color: "teal" },
-			],
-		},
-		{
-			kind: "radial",
-			title: "Faster employer review",
-			caption: "Reduction in time-to-review vs manual process",
-			percent: 60,
-			display: { value: 60, suffix: "%" },
-			color: "amber",
-		},
-	],
+	chart: {
+		kind: "funnel",
+		title: "Cross-border hiring funnel",
+		caption: "Verified stage = 5,000+ real applications",
+		suffix: "",
+		stages: [
+			// received ≈ verified / 0.60 (≈60% pass document verification)
+			{ label: "Applications received", value: 8300, color: "blue" },
+			{ label: "Verified applications", value: 5000, color: "blue" },
+			// ~48% of verified reach clinic shortlist
+			{ label: "Shortlisted by clinics", value: 2400, color: "teal" },
+			// ~48% of shortlisted placed
+			{ label: "Placed in German clinics", value: 1150, color: "teal" },
+		],
+	},
 	kpis: [
 		{ icon: "Building2", value: "100+", label: "German clinics" },
 		{ icon: "FileText", value: "1,500+", label: "Applications / month" },
@@ -258,36 +229,20 @@ const globalHiring: CaseChartData = {
  * ══════════════════════════════════════════════════════════════════════════ */
 const studentBranch: CaseChartData = {
 	slug: "student-branch-management",
-	charts: [
-		{
-			kind: "donut",
-			title: "Students across the network",
-			caption: "Indicative distribution across 30+ centers",
-			// Segments sum to 1,000 (real 1,000+ students/mo). Split by centre tier.
-			segments: [
-				{ label: "Flagship centers", value: 420, color: "blue" },
-				{ label: "Growth centers", value: 360, color: "teal" },
-				{ label: "Emerging centers", value: 220, color: "violet" },
-			],
-			center: { label: "students / mo", value: 1000, suffix: "+" },
-		},
-		{
-			kind: "area",
-			title: "Monthly student enrolment",
-			caption: "Ramp to 1,000+ students / month",
-			suffix: "",
-			color: "blue",
-			// endpoint = 1000 (real 1,000+/mo).
-			points: [
-				{ label: "H1", value: 520 },
-				{ label: "H2", value: 640 },
-				{ label: "H3", value: 750 },
-				{ label: "H4", value: 840 },
-				{ label: "H5", value: 930 },
-				{ label: "H6", value: 1000 },
-			],
-		},
-	],
+	// The enrolment ramp is the sparkline; the donut shows how those students
+	// distribute across the centre network instead.
+	chart: {
+		kind: "donut",
+		title: "Students across the network",
+		caption: "Indicative distribution across 30+ centers",
+		// Segments sum to 1,000 (real 1,000+ students/mo). Split by centre tier.
+		segments: [
+			{ label: "Flagship centers", value: 420, color: "blue" },
+			{ label: "Growth centers", value: 360, color: "teal" },
+			{ label: "Emerging centers", value: 220, color: "violet" },
+		],
+		center: { label: "students / mo", value: 1000, suffix: "+" },
+	},
 	// students/mo is the signature (shown in its own tile) — KPIs list the rest.
 	kpis: [{ icon: "Building2", value: "30+", label: "Active centers" }],
 	capabilities: [
@@ -306,30 +261,28 @@ const studentBranch: CaseChartData = {
  * ══════════════════════════════════════════════════════════════════════════ */
 const industrialInventory: CaseChartData = {
 	slug: "industrial-inventory-platform",
-	charts: [
-		{
-			kind: "bar",
-			title: "Field-service visits per month",
-			caption: "12 months summing to 5,000+ visits / year",
-			suffix: "",
-			color: "blue",
-			// Σ = 5000 exactly (real 5,000+/yr). Mild mid-year seasonality.
-			points: [
-				{ label: "Jan", value: 360 },
-				{ label: "Feb", value: 380 },
-				{ label: "Mar", value: 400 },
-				{ label: "Apr", value: 420 },
-				{ label: "May", value: 440 },
-				{ label: "Jun", value: 450 },
-				{ label: "Jul", value: 460 },
-				{ label: "Aug", value: 445 },
-				{ label: "Sep", value: 430 },
-				{ label: "Oct", value: 415 },
-				{ label: "Nov", value: 400 },
-				{ label: "Dec", value: 400 },
-			],
-		},
-	],
+	chart: {
+		kind: "bar",
+		title: "Field-service visits per month",
+		caption: "12 months summing to 5,000+ visits / year",
+		suffix: "",
+		color: "violet",
+		// Σ = 5000 exactly (real 5,000+/yr). Mild mid-year seasonality.
+		points: [
+			{ label: "Jan", value: 360 },
+			{ label: "Feb", value: 380 },
+			{ label: "Mar", value: 400 },
+			{ label: "Apr", value: 420 },
+			{ label: "May", value: 440 },
+			{ label: "Jun", value: 450 },
+			{ label: "Jul", value: 460 },
+			{ label: "Aug", value: 445 },
+			{ label: "Sep", value: 430 },
+			{ label: "Oct", value: 415 },
+			{ label: "Nov", value: 400 },
+			{ label: "Dec", value: 400 },
+		],
+	},
 	// visits/yr is the signature (shown in its own tile) — the rest are qualitative.
 	kpis: [],
 	capabilities: [
@@ -350,40 +303,21 @@ const industrialInventory: CaseChartData = {
  * ══════════════════════════════════════════════════════════════════════════ */
 const cryptoPayments: CaseChartData = {
 	slug: "crypto-mlm-platform",
-	charts: [
-		{
-			kind: "compare",
-			title: "Capital deployed vs paid out",
-			caption: "₹1.7 Cr ROI & commissions returned on ₹7.5 Cr capital (≈23%)",
-			prefix: "₹",
-			suffix: " Cr",
-			decimals: 1,
-			// Both values real (₹7.5 Cr invested, ₹1.7 Cr paid out).
-			items: [
-				{ label: "Capital deployed", value: 7.5, color: "blue" },
-				{ label: "ROI & commissions paid", value: 1.7, color: "amber" },
-			],
-		},
-		{
-			kind: "area",
-			title: "Crypto investment volume",
-			caption: "Cumulative capital to ₹7.5 Cr+",
-			unit: "₹ Cr",
-			prefix: "₹",
-			suffix: " Cr",
-			decimals: 1,
-			color: "blue",
-			// endpoint = 7.5 (real ₹7.5 Cr+).
-			points: [
-				{ label: "M1", value: 1.2 },
-				{ label: "M2", value: 2.4 },
-				{ label: "M3", value: 3.7 },
-				{ label: "M4", value: 5.0 },
-				{ label: "M5", value: 6.3 },
-				{ label: "M6", value: 7.5 },
-			],
-		},
-	],
+	// Investment volume is the sparkline; the chart weighs capital against what
+	// the platform has actually paid back out.
+	chart: {
+		kind: "compare",
+		title: "Capital deployed vs paid out",
+		caption: "₹1.7 Cr ROI & commissions returned on ₹7.5 Cr capital (≈23%)",
+		prefix: "₹",
+		suffix: " Cr",
+		decimals: 1,
+		// Both values real (₹7.5 Cr invested, ₹1.7 Cr paid out).
+		items: [
+			{ label: "Capital deployed", value: 7.5, color: "blue" },
+			{ label: "ROI & commissions paid", value: 1.7, color: "amber" },
+		],
+	},
 	kpis: [
 		{ icon: "Users", value: "3,000+", label: "Users onboarded" },
 		{ icon: "Repeat", value: "15K+", label: "Commission transactions" },

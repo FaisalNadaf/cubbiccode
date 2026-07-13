@@ -171,7 +171,7 @@ export function EnquiryForm() {
 						<button
 							type="button"
 							onClick={reset}
-							className="mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-steel-500 transition-colors hover:text-ink">
+							className="tap-target mt-7 inline-flex items-center gap-1.5 text-sm font-medium text-steel-500 transition-colors hover:text-ink">
 							<RotateCcw className="size-3.5" /> Send another enquiry
 						</button>
 					</motion.div>
@@ -234,6 +234,11 @@ export function EnquiryForm() {
 									What&apos;s this about?{" "}
 									<span className="text-corporate-600">*</span>
 								</label>
+								{/* 16px at base: iOS Safari zooms the whole page when a focused
+								    control's font-size is under 16px. The design's 15px is
+								    re-asserted at lg. Must stay an arbitrary value — `text-base`
+								    would also emit a line-height, which `lg:text-[15px]` cannot
+								    restore, so the desktop line-height would silently change. */}
 								<select
 									id="subject"
 									name="subject"
@@ -241,7 +246,7 @@ export function EnquiryForm() {
 									onChange={(e) => update("subject", e.target.value)}
 									onBlur={() => handleBlur("subject")}
 									className={cn(
-										"h-12 w-full rounded-xl border bg-canvas-soft px-4 text-[15px] text-ink outline-none transition focus:border-corporate-400 focus:bg-white focus:ring-2 focus:ring-corporate-500/20",
+										"h-12 w-full rounded-xl border bg-canvas-soft px-4 text-[16px] text-ink outline-none transition focus:border-corporate-400 focus:bg-white focus:ring-2 focus:ring-corporate-500/20 lg:text-[15px]",
 										touched.subject && errors.subject ?
 											"border-red-300 focus:border-red-400 focus:ring-red-500/20"
 										:	"border-steel-200",
@@ -282,7 +287,7 @@ export function EnquiryForm() {
 								onBlur={() => handleBlur("message")}
 								placeholder="A few lines about your goals, scope, timeline or budget…"
 								className={cn(
-									"w-full resize-none rounded-xl border bg-canvas-soft px-4 py-3 text-[15px] leading-relaxed text-ink outline-none transition placeholder:text-steel-400 focus:border-corporate-400 focus:bg-white focus:ring-2 focus:ring-corporate-500/20",
+									"w-full resize-none rounded-xl border bg-canvas-soft px-4 py-3 text-[16px] leading-relaxed text-ink outline-none transition placeholder:text-steel-400 focus:border-corporate-400 focus:bg-white focus:ring-2 focus:ring-corporate-500/20 lg:text-[15px]",
 									touched.message && errors.message ?
 										"border-red-300 focus:border-red-400 focus:ring-red-500/20"
 									:	"border-steel-200",
@@ -352,6 +357,11 @@ function Field({
 				className="mb-1.5 block text-[13px] font-medium text-steel-700">
 				{label} {required && <span className="text-corporate-600">*</span>}
 			</label>
+			{/* 16px at base: iOS Safari zooms the whole page when a focused control's
+			    font-size is under 16px. The design's 15px is re-asserted at lg. Must
+			    stay an arbitrary value — `text-base` would also emit a line-height,
+			    which `lg:text-[15px]` cannot restore, so the desktop line-height would
+			    silently change. */}
 			<input
 				id={name}
 				name={name}
@@ -361,7 +371,7 @@ function Field({
 				onChange={(e) => onChange(e.target.value)}
 				onBlur={onBlur}
 				className={cn(
-					"h-12 w-full rounded-xl border bg-canvas-soft px-4 text-[15px] text-ink outline-none transition placeholder:text-steel-400 focus:border-corporate-400 focus:bg-white focus:ring-2 focus:ring-corporate-500/20",
+					"h-12 w-full rounded-xl border bg-canvas-soft px-4 text-[16px] text-ink outline-none transition placeholder:text-steel-400 focus:border-corporate-400 focus:bg-white focus:ring-2 focus:ring-corporate-500/20 lg:text-[15px]",
 					error ?
 						"border-red-300 focus:border-red-400 focus:ring-red-500/20"
 					:	"border-steel-200",

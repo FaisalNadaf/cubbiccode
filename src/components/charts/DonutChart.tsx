@@ -56,13 +56,18 @@ export function DonutChart({
 				<ChartSkeleton height={max} rounded="rounded-full" />
 			) : (
 				<>
+					{/* `d` has a 150px floor, so a container narrower than that would be
+					    overflowed by the ring. `maxWidth` caps the box and the viewBox
+					    scales the ring into it; the box's height comes from the (square,
+					    in-flow) svg. */}
 					<div
 						className="relative"
-						style={{ width: d, height: d }}>
+						style={{ width: d, maxWidth: "100%" }}>
 						<svg
+							viewBox={`0 0 ${d} ${d}`}
 							width={d}
 							height={d}
-							className="block -rotate-90"
+							className="block h-auto max-w-full -rotate-90"
 							role="img"
 							aria-label={`${spec.title}: ${spec.center.value}${
 								spec.center.suffix ?? ""

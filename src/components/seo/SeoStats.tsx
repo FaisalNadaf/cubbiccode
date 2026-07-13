@@ -53,7 +53,7 @@ export function SeoStats() {
 								prefix={s.prefix}
 								suffix={s.suffix}
 								decimals={s.decimals ?? 0}
-								className="mt-4 block bg-gradient-to-br from-white via-corporate-100 to-corporate-300 bg-clip-text font-display text-4xl font-bold tracking-tightest tabular-nums text-transparent sm:text-5xl"
+								className="mt-4 block bg-gradient-to-br from-white via-corporate-100 to-corporate-300 bg-clip-text font-display text-3xl font-bold tracking-tightest tabular-nums text-transparent sm:text-5xl"
 							/>
 							<p className="mt-2 text-sm leading-relaxed text-steel-300">
 								{s.label}
@@ -72,7 +72,7 @@ export function SeoStats() {
 				<RevealGroup
 					stagger={0.12}
 					delay={0.15}
-					className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3 lg:gap-6">
+					className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
 					{SEO_CAPABILITIES.map((c) => (
 						<RevealItem
 							key={c.title}

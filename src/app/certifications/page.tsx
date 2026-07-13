@@ -11,7 +11,7 @@ import { CertificateGallery } from "@/components/certifications/CertificateGalle
 import { site } from "@/content/site";
 
 export const metadata = {
-	title: "Certifications  ISO 9001:2015 & Quality Standards | Cubiccode",
+	title: "Certifications ISO 9001:2015 & Quality Standards | Cubiccode",
 	description:
 		"Cubiccode Digital Media LLP is ISO 9001:2015 certified. A formally audited quality management system means consistent, reliable, high-quality delivery on every project, every time.",
 };

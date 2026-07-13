@@ -53,8 +53,18 @@ export function TiltCard({
 
 	// Defer tilt to after mount, and disable it under reduced motion, so SSR and
 	// the first client paint match exactly.
+	//
+	// Also off when the primary pointer is coarse. There is no cursor to tilt
+	// toward on a touchscreen, and the synthesised mouse events a tap fires would
+	// rotate the card and then leave it rotated (no reliable mouseleave). Reading
+	// matchMedia inside the effect keeps SSR and the first client render
+	// identical; a mouse/trackpad machine reports `pointer: fine`, so the desktop
+	// branch is unchanged.
 	useEffect(() => {
-		setActive(!reduce);
+		const coarse =
+			typeof window !== "undefined" &&
+			window.matchMedia("(pointer: coarse)").matches;
+		setActive(!reduce && !coarse);
 	}, [reduce]);
 
 	return (

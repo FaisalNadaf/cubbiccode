@@ -19,7 +19,12 @@ export function Marquee({
         className={cn(
           "flex w-max items-center",
           reverse ? "animate-marquee-reverse" : "animate-marquee",
-          pauseOnHover && "group-hover:[animation-play-state:paused]"
+          // Hover-capable pointers only. Touch browsers latch :hover on the
+          // tapped element until you tap elsewhere, so on a phone the first tap
+          // anywhere near the marquee froze it for good. Any device with a real
+          // pointer matches `hover: hover`, so desktop resolves to the same rule.
+          pauseOnHover &&
+            "[@media(hover:hover)]:group-hover:[animation-play-state:paused]"
         )}
         style={{ ["--marquee-duration" as string]: `${speed}s` }}
       >

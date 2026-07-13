@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useMemo, ReactNode, RefObject } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { prefersReducedMotion } from '@/lib/motion';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -49,6 +50,19 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     const el = containerRef.current;
     if (!el) return;
 
+    // GSAP animates via JS transforms, so the global reduced-motion rule in
+    // globals.css cannot reach it. Bailing out leaves the server-rendered copy
+    // upright and fully opaque, which is the correct resting state.
+    if (prefersReducedMotion()) return;
+
+    // Scrubbing a CSS `filter: blur()` across every word repaints the whole
+    // paragraph on each scroll frame. Mobile Safari cannot hold 60fps through
+    // that, and the words are perfectly legible fading in without it. A
+    // mouse/trackpad machine reports `pointer: fine`, so the desktop timeline is
+    // built exactly as before.
+    const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    const blur = enableBlur && !coarsePointer;
+
     const scroller = scrollContainerRef && scrollContainerRef.current ? scrollContainerRef.current : window;
 
     gsap.fromTo(
@@ -86,7 +100,7 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       }
     );
 
-    if (enableBlur) {
+    if (blur) {
       gsap.fromTo(
         wordElements,
         { filter: `blur(${blurStrength}px)` },

@@ -8,7 +8,6 @@
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { BadgeCheck, Clock, ShieldCheck, Users } from "lucide-react";
 import { industries, industryBySlug } from "@/content/industries";
 import { industryImage, industrySolutionImages } from "@/content/serviceImages";
 import { site } from "@/content/site";
@@ -38,29 +37,6 @@ export async function generateMetadata({
 	};
 }
 
-const trustPoints = [
-	{
-		icon: ShieldCheck,
-		title: site.certification,
-		text: "A formally certified quality process  consistent, reliable delivery on every project.",
-	},
-	{
-		icon: Users,
-		title: "500+ clients served",
-		text: "Nearly a decade of building for businesses across India and beyond.",
-	},
-	{
-		icon: Clock,
-		title: "On-time delivery",
-		text: "Clear timelines and disciplined execution  we ship when we say we will.",
-	},
-	{
-		icon: BadgeCheck,
-		title: "Affordable quality",
-		text: "Enterprise-grade engineering at prices that make sense for your sector.",
-	},
-];
-
 export default async function IndustryPage({
 	params,
 }: {
@@ -70,8 +46,6 @@ export default async function IndustryPage({
 	const ind = industryBySlug(slug);
 	if (!ind) notFound();
 
-	const others = industries.filter((i) => i.slug !== ind.slug);
-
 	return (
 		<>
 			<PageHero
@@ -80,7 +54,7 @@ export default async function IndustryPage({
 				subtitle={ind.subheadline}
 				breadcrumb={[
 					{ label: "Home", href: "/" },
-					{ label: "Industries", href: "/industries/manufacturing" },
+					{ label: "Industries" },
 					{ label: ind.title },
 				]}>
 				<div className="flex flex-wrap items-center gap-4">

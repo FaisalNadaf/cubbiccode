@@ -1,8 +1,6 @@
 /** @format */
 
 import Image from "next/image";
-import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import { SplitReveal } from "@/components/ui/SplitReveal";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/utils";
@@ -19,16 +17,25 @@ export function PageHero({
 	kicker,
 	title,
 	subtitle,
-	breadcrumb,
 	children,
 	image = "/images/about/parallax-1.jpg",
-	imageAlt = "Cubiccode",
+	/**
+	 * The banner sits behind four ink overlays with the headline and subtitle
+	 * already in the DOM, so it is decorative by default and is skipped by
+	 * assistive tech. Pass a description only when the photo itself is content.
+	 */
+	imageAlt = "",
 	align = "left",
 	className,
 }: {
 	kicker?: string;
 	title: string;
 	subtitle?: string;
+	/**
+	 * Accepted by ~15 pages but deliberately not rendered — the cinematic hero
+	 * has no breadcrumb row in the current design. Kept in the type so callers
+	 * keep type-checking; rendering it would change the desktop layout.
+	 */
 	breadcrumb?: { label: string; href?: string }[];
 	children?: React.ReactNode;
 	image?: string;
@@ -41,7 +48,18 @@ export function PageHero({
 	return (
 		<section
 			className={cn(
-				"relative flex h-[50vh] min-h-[440px] w-screen items-end overflow-hidden",
+				// `w-full`, not `w-screen`: 100vw includes the scrollbar gutter, so
+				// the section overhung the content box and only the global
+				// body{overflow-x:hidden} was hiding the resulting shift.
+				//
+				// A locked `h-[50vh]` plus `items-end` + `overflow-hidden` clipped the
+				// kicker and the top of the wrapped headline off a phone: the stack is
+				// ~500px tall at 320-390px, the box was 440px. Below lg the height is
+				// the content's, floored at the same 440px banner minimum; `lg:h-[50vh]`
+				// restores the exact desktop box (height 50vh, min-height 440px). As a
+				// bonus, no `vh` unit is left in play below lg, so the iOS URL-bar
+				// viewport jump can't resize the banner either.
+				"relative flex h-auto min-h-[440px] w-full items-end overflow-hidden lg:h-[50vh]",
 				className,
 			)}>
 			{/* Background image + cinematic overlays */}

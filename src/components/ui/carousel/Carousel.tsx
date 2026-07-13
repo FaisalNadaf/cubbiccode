@@ -20,7 +20,7 @@ import { CarouselCard } from "./CarouselCard";
  * centred card flanked by circular prev/next arrows that sit outside the card.
  *
  * Behaviour: spring slide transitions, drag/swipe with velocity-based paging,
- * 5s autoplay that pauses on hover / focus / drag / hidden tab, full keyboard
+ * 3.5s autoplay that pauses on hover / focus / drag / hidden tab, full keyboard
  * support (← → Home End) and a polite live region for screen readers.
  *
  * `theme` switches the whole surface between dark (default) and light.
@@ -122,7 +122,7 @@ function CarouselInner({
 						fill ? "mb-5 shrink-0 sm:mb-7 lg:mb-8" : "mb-8 sm:mb-10 lg:mb-12"
 					}
 					theme={theme}
-					thumbnails={slides.map((s) => ({ src: s.image, alt: s.title }))}
+					thumbnails={slides.map((s) => ({ src: s.image }))}
 				/>
 
 				{/* Middle: arrows flanking the card */}
@@ -134,7 +134,7 @@ function CarouselInner({
 					<CarouselArrow
 						dir="prev"
 						theme={theme}
-						className={fill ? "self-center" : undefined}
+						className={cn("hidden sm:flex", fill && "self-center")}
 					/>
 
 					<div
@@ -156,7 +156,23 @@ function CarouselInner({
 					<CarouselArrow
 						dir="next"
 						theme={theme}
-						className={fill ? "self-center" : undefined}
+						className={cn("hidden sm:flex", fill && "self-center")}
+					/>
+				</div>
+
+				{/* Below sm the flanking pair (2 × 44px + gaps) eats ~40% of a 320-375px
+				    row and squeezes the card to ~200px, so there the arrows drop to
+				    their own centred row under the card and it takes the full width.
+				    From sm up they are `display:flex` in the row above exactly as
+				    before and this row is `display:none`, so ≥1024px cannot move. */}
+				<div className="mt-5 flex shrink-0 items-center justify-center gap-5 sm:hidden">
+					<CarouselArrow
+						dir="prev"
+						theme={theme}
+					/>
+					<CarouselArrow
+						dir="next"
+						theme={theme}
 					/>
 				</div>
 

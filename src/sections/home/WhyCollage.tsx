@@ -52,7 +52,7 @@ export function WhyCollage() {
 						Awards &amp; Recognition
 						<span className="h-px w-8 bg-corporate-300" />
 					</span>
-					<h2 className="mt-5 font-display text-3xl font-bold   text-ink sm:text-4xl lg:text-[2.2rem]">
+					<h2 className="mt-5 font-display text-3xl font-bold text-ink sm:text-4xl lg:text-[2.2rem]">
 						A Decade of Delivering Reliable, Scalable & Secure Web Applications and Custom ERP Solutions
 					</h2>
 			

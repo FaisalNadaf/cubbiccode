@@ -3,7 +3,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
 	motion,
 	useMotionValue,
@@ -49,9 +49,33 @@ export function ProblemShowcase({
 	const sx = useSpring(mx, { stiffness: 90, damping: 18, mass: 0.4 });
 	const sy = useSpring(my, { stiffness: 90, damping: 18, mass: 0.4 });
 
+	// Cursor parallax is a fine-pointer affordance. On touch the only mousemove is
+	// the one a tap synthesises  it would shove the card off-centre with no
+	// mouseleave ever arriving to bring it back. Resolved in an effect so SSR and
+	// the first client render stay identical.
+	const parallaxOn = useRef(true);
+	useEffect(() => {
+		const coarse = window.matchMedia("(pointer: coarse)");
+		const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+		const sync = () => {
+			parallaxOn.current = !coarse.matches && !reduced.matches;
+			if (!parallaxOn.current) {
+				mx.set(0);
+				my.set(0);
+			}
+		};
+		sync();
+		coarse.addEventListener("change", sync);
+		reduced.addEventListener("change", sync);
+		return () => {
+			coarse.removeEventListener("change", sync);
+			reduced.removeEventListener("change", sync);
+		};
+	}, [mx, my]);
+
 	const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
 		const el = ref.current;
-		if (!el) return;
+		if (!el || !parallaxOn.current) return;
 		const r = el.getBoundingClientRect();
 		mx.set((e.clientX - r.left) / r.width - 0.5);
 		my.set((e.clientY - r.top) / r.height - 0.5);
@@ -229,11 +253,14 @@ function ImageCard({ src, className }: { src: string; className?: string }) {
 				className,
 			)}>
 			<div className="relative aspect-[5/4] w-full">
+				{/* `sizes` is px-only by necessity: a `vw` token makes next/image drop the
+				    small candidates from the generated srcset, which would change the
+				    source the browser picks at >=1024px. */}
 				<Image
 					src={src}
 					alt=""
 					fill
-					sizes="222px"
+					sizes="(min-width: 1024px) 222px, (min-width: 768px) 480px, (min-width: 480px) 352px, 192px"
 					className="object-cover"
 				/>
 			</div>

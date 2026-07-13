@@ -127,7 +127,7 @@ function MobilePanel({ variant }: { variant: "vision" | "mission" }) {
 			whileInView={{ y: 0, opacity: 1 }}
 			viewport={{ once: true, margin: "-60px" }}
 			transition={{ duration: 0.8, ease: SMOOTH_EASE }}
-			className={`relative overflow-hidden rounded-3xl p-7 ${frame}`}
+			className={`relative overflow-hidden rounded-3xl p-6 sm:p-7 ${frame}`}
 			style={{ background: gradient }}>
 			<Image
 				aria-hidden
@@ -163,8 +163,11 @@ function MobilePanel({ variant }: { variant: "vision" | "mission" }) {
 						strokeWidth={1.5}
 					/>
 				</span>
+				{/* 48px of Sora Black + uppercase overruns a 320px phone once the card's
+				    own padding is taken out; 640px up has the room. This panel is inside
+				    the section's `lg:hidden` branch, so it never paints on desktop. */}
 				<h3
-					className={`mt-5 font-display text-5xl font-black uppercase leading-[0.95] tracking-tightest ${
+					className={`mt-5 font-display text-4xl font-black uppercase leading-[0.95] tracking-tightest sm:text-5xl ${
 						isVision ? "text-ink" : "text-white"
 					}`}
 					style={

@@ -43,8 +43,12 @@ function split(p: string): [string, string] {
  * Founder message laid out as three interlocking angled panels. The side panels
  * (navy / light-blue) have an outer-top corner clipped so their bottoms flare
  * outward, while the white focal middle panel narrows toward the bottom and
- * overlaps its neighbours. Panels slide in from opposite edges. Below md the
+ * overlaps its neighbours. Panels slide in from opposite edges. Below lg the
  * clip-paths drop and panels stack as clean cards. Honours reduced motion.
+ *
+ * The interlock is gated at `lg`, not `md`: three columns plus the 64px corner
+ * cuts and the panels' 48–80px inner padding need ~1024px to survive. At 768px
+ * each column is ~240px wide, of which the padding alone claims 128px.
  */
 export function FoundingPanels() {
 	const reduce = useReducedMotion();
@@ -69,14 +73,14 @@ export function FoundingPanels() {
 			/>
 
 			<div className="relative w-full px-4 sm:px-6 lg:px-0">
-				<div className="grid items-stretch gap-0 md:grid-cols-[1fr_1fr_1fr] md:gap-0">
+				<div className="grid items-stretch gap-0 lg:grid-cols-[1fr_1fr_1fr] lg:gap-0">
 					{/* ── Panel 1  approach (navy, top-right corner clipped) ── */}
 					<motion.article
 						variants={from(-180, 0)}
 						initial="hidden"
 						whileInView="show"
 						viewport={viewport}
-						className="relative flex flex-col justify-center overflow-hidden rounded-sm bg-ink px-8 py-10 text-white shadow-xl shadow-ink/20 md:pb-14 md:pl-12 md:pr-20 md:pt-16 md:[clip-path:polygon(0_0,calc(100%_-_64px)_0,100%_100%,0_100%)]">
+						className="relative flex flex-col justify-center overflow-hidden rounded-sm bg-ink px-8 py-10 text-white shadow-xl shadow-ink/20 lg:pb-14 lg:pl-12 lg:pr-20 lg:pt-16 lg:[clip-path:polygon(0_0,calc(100%_-_64px)_0,100%_100%,0_100%)]">
 						<span
 							aria-hidden
 							className="pointer-events-none absolute -bottom-12 -right-12 h-44 w-44 rounded-full bg-corporate-500/20 blur-2xl"
@@ -108,7 +112,7 @@ export function FoundingPanels() {
 						initial="hidden"
 						whileInView="show"
 						viewport={viewport}
-						className="relative z-10 flex flex-col justify-center overflow-hidden rounded-sm border-2 border-corporate-400/40 bg-white px-8 py-10 [filter:drop-shadow(0_18px_40px_rgba(11,27,58,0.22))] md:-mx-[38px] md:border-0 md:px-16 md:pb-16 md:pt-14 md:[clip-path:polygon(0_0,100%_0,calc(100%_-_64px)_100%,64px_100%)] md:[filter:drop-shadow(3px_0_0_rgba(27,110,194,0.5))_drop-shadow(-3px_0_0_rgba(27,110,194,0.5))_drop-shadow(0_3px_0_rgba(27,110,194,0.5))_drop-shadow(0_-3px_0_rgba(27,110,194,0.5))_drop-shadow(0_18px_28px_rgba(11,27,58,0.24))_drop-shadow(0_44px_66px_rgba(11,27,58,0.34))]">
+						className="relative z-10 flex flex-col justify-center overflow-hidden rounded-sm border-2 border-corporate-400/40 bg-white px-8 py-10 [filter:drop-shadow(0_18px_40px_rgba(11,27,58,0.22))] lg:-mx-[38px] lg:border-0 lg:px-16 lg:pb-16 lg:pt-14 lg:[clip-path:polygon(0_0,100%_0,calc(100%_-_64px)_100%,64px_100%)] lg:[filter:drop-shadow(3px_0_0_rgba(27,110,194,0.5))_drop-shadow(-3px_0_0_rgba(27,110,194,0.5))_drop-shadow(0_3px_0_rgba(27,110,194,0.5))_drop-shadow(0_-3px_0_rgba(27,110,194,0.5))_drop-shadow(0_18px_28px_rgba(11,27,58,0.24))_drop-shadow(0_44px_66px_rgba(11,27,58,0.34))]">
 						<motion.span
 							variants={line}
 							className="kicker justify-center text-corporate-600">
@@ -134,7 +138,7 @@ export function FoundingPanels() {
 						initial="hidden"
 						whileInView="show"
 						viewport={viewport}
-						className="relative flex flex-col justify-center overflow-hidden rounded-sm border border-corporate-200 bg-corporate-50 px-8 py-10 shadow-xl shadow-corporate-500/10 md:pb-14 md:pl-20 md:pr-12 md:pt-16 md:[clip-path:polygon(64px_0,100%_0,100%_100%,0_100%)]">
+						className="relative flex flex-col justify-center overflow-hidden rounded-sm border border-corporate-200 bg-corporate-50 px-8 py-10 shadow-xl shadow-corporate-500/10 lg:pb-14 lg:pl-20 lg:pr-12 lg:pt-16 lg:[clip-path:polygon(64px_0,100%_0,100%_100%,0_100%)]">
 						<span
 							aria-hidden
 							className="pointer-events-none absolute -bottom-12 -left-12 h-44 w-44 rounded-full bg-corporate-500/15 blur-2xl"

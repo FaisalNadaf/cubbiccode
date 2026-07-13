@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useState, type PointerEvent } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useChartSize } from "./useChartSize";
 import { ChartSkeleton } from "./Skeleton";
@@ -59,6 +59,16 @@ export function AreaChart({
 
 	const grid = [0, 0.5, 1].map((f) => padT + innerH * f);
 	const last = coords[n - 1];
+
+	/** Resolve a pointer x to a data index. Wired to `pointerdown` as well as
+	 *  `pointermove` so a tap reaches the tooltip on touch, where there is no
+	 *  hover to move. A mouse always emits `pointermove` at the same coordinates
+	 *  first, so the extra `pointerdown` only re-sets the index it already holds. */
+	const pick = (e: PointerEvent<HTMLDivElement>) => {
+		const r = e.currentTarget.getBoundingClientRect();
+		const rel = (e.clientX - r.left) / (innerW || 1);
+		setActive(clamp(Math.round(rel * (n - 1)), 0, n - 1));
+	};
 
 	return (
 		<div
@@ -205,11 +215,11 @@ export function AreaChart({
 					<div
 						className="absolute cursor-crosshair"
 						style={{ left: padL, top: padT, width: innerW, height: innerH }}
-						onPointerMove={(e) => {
-							const r = e.currentTarget.getBoundingClientRect();
-							const rel = (e.clientX - r.left) / (innerW || 1);
-							setActive(clamp(Math.round(rel * (n - 1)), 0, n - 1));
-						}}
+						onPointerDown={pick}
+						onPointerMove={pick}
+						// A touch that turns into a page scroll is cancelled, not "left" —
+						// without this the crosshair sticks after the gesture.
+						onPointerCancel={() => setActive(null)}
 						onPointerLeave={() => setActive(null)}
 					/>
 				</>

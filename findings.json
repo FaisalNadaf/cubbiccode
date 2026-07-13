@@ -1,0 +1,992 @@
+[
+ {
+  "file": "src/components/ui/MagneticButton.tsx",
+  "line": 25,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "Magnetic pulls the element toward the cursor via framer-motion useSpring/useMotionValue on style x/y (lines 22-23, 45), but never checks useReducedMotion. The global prefers-reduced-motion rule in globals.css:174 only zeroes CSS animation-duration/transition-duration; framer-motion's rAF-driven motion values are NOT affected, so reduced-motion users still get full cursor-following movement. This is the only motion component in the UI folder that skips the guard (Parallax, TiltCard, GlowCard all call useReducedMotion). Because Button defaults magnetic=true, this affects every Button on the site.",
+  "fix": "Add const reduce = useReducedMotion(); when reduce is true, skip the springs/handlers and return <span className={cn('inline-block', className)}>{children}</span> (or a motion.div with no x/y style and no onMouseMove/onMouseLeave). Purely additive; no change for normal-motion users.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Icon.tsx",
+  "line": 1,
+  "category": "performance",
+  "severity": "medium",
+  "problem": "import { icons } from \"lucide-react\" pulls in the aggregate `icons` barrel object, which references the entire lucide icon set (~1500 components). Because `icons` is a single runtime object (not per-icon named exports), Next's optimizePackageImports:[\"lucide-react\"] (next.config, line 10) cannot tree-shake it — the whole icon library ships to the client even though the site references only a few dozen names.",
+  "fix": "Build a curated map of only the icons actually used (import each by name: import { Search, BarChart3, ... } from \"lucide-react\"; const map = { Search, BarChart3, ... }) and look up map[name], or use lucide's dynamicIconImports with next/dynamic for on-demand loading. Bundle-only change; no visual difference.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/MagneticButton.tsx",
+  "line": 28,
+  "category": "performance",
+  "severity": "low",
+  "problem": "onMove calls el.getBoundingClientRect() on every mousemove (line 28), forcing a synchronous layout read on each pointer frame for every magnetic element (all Buttons by default). The sibling tilt component (TiltCard.tsx:65) caches the rect once on mouseenter (rectRef) specifically to avoid this per-frame reflow; Magnetic does not.",
+  "fix": "Cache the rect in a ref on onMouseEnter (const rect = e.currentTarget.getBoundingClientRect()) and read the cached value inside onMove, mirroring TiltCard's rectRef pattern.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/MagneticButton.tsx",
+  "line": 46,
+  "category": "performance",
+  "severity": "low",
+  "problem": "The wrapper carries [will-change:transform] permanently (line 46), promoting every magnetic element to its own compositor layer at all times, even at rest. Since Button defaults magnetic=true, every button on the site holds a standing GPU layer. TiltCard applies will-change only while active (TiltCard.tsx:92); Parallax's permanent will-change is justified because it animates continuously on scroll, but Magnetic is idle until hover.",
+  "fix": "Drop will-change from the base class and apply it only during interaction (e.g. toggle a will-change-transform class on mouseenter/mouseleave), or rely on framer-motion's own layerization. No visual change.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Button.tsx",
+  "line": 22,
+  "category": "responsive",
+  "severity": "low",
+  "problem": "The sm size is h-10 (40px tall), below the 44px minimum recommended touch-target height. On touch/mobile, small Buttons are under-sized for reliable tapping. (md=48px and lg=56px are fine.)",
+  "fix": "Add a coarse-pointer-only minimum height that leaves mouse/desktop untouched, e.g. append \"[@media(pointer:coarse)]:h-11\" to the sm variant. This is provably a no-op on desktop (fine pointer at lg+). Do NOT simply bump h-10→h-11, which would change desktop layout.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Button.tsx",
+  "line": 72,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The rendered <button> (line 72) sets no default type, so it falls back to type=\"submit\". A non-href Button placed inside a <form> (e.g. the contact form) will submit the form on click unless the caller remembers to pass type=\"button\".",
+  "fix": "Default the type: <button type={props.type ?? \"button\"} className={classes} {...props}>. Harmless for existing callers.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Stat.tsx",
+  "line": 38,
+  "category": "animation",
+  "severity": "low",
+  "problem": "CountStat renders a narrow \"0\" placeholder (lines 48-50) then CountUp animates 0→value over 2.4s. As the digit count grows during the count-up, the span's rendered width changes frame to frame, nudging adjacent inline content (horizontal jitter / minor CLS) for the duration of the animation.",
+  "fix": "Stabilize width during the count, e.g. add font-variant-numeric: tabular-nums to the span, or reserve space by rendering the settled string invisibly behind the animated value. Reduced-motion path already renders the final value at rest, so it is unaffected.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Parallax.tsx",
+  "line": 71,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The component accepts and documents a `style` prop (line 37, typed MotionStyle) and applies it in the motion branch (line 82: ...style), but the reduced-motion branch (lines 71-76) renders the StaticTag with only ref/className and silently drops `style`. Reduced-motion users would lose any caller-passed inline styles. Not currently triggered (the one call site in FloatingShowcase.tsx:142 positions via className, not style), but it is a real divergence between the component's two render paths.",
+  "fix": "Spread style in the reduced-motion branch too: <StaticTag ref={ref} style={style} className={className}>. Restores parity between the two branches.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Footer.tsx",
+  "line": 168,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "The primary \"Get a Proposal\" button uses a plain <a href={site.proposalCta} target=\"_blank\" rel=\"noopener noreferrer\">, but site.proposalCta is the INTERNAL route \"/contact\" (verified in src/content/site.ts line 32). So the site-wide primary CTA opens the internal contact page in a brand-new browser tab AND does a full document reload instead of SPA navigation. This is inconsistent with the Navbar, which navigates the same route via next/link in-tab (Navbar.tsx line 323). Unexpected new-window on an internal link is a WCAG 3.2.5 concern and hurts perf (full reload).",
+  "fix": "Replace the <a target=\"_blank\" rel=\"noopener noreferrer\"> with a next/link <Link href={site.proposalCta} className=...> and drop target/rel, matching the Navbar behavior. Layout/visual is identical.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/CTASection.tsx",
+  "line": 76,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "Same root cause as the Footer CTA: <Button href={site.proposalCta} external ...> passes external, which in Button.tsx line 67 forces target=\"_blank\" rel=\"noopener noreferrer\". Since site.proposalCta is the internal \"/contact\" route, this opens an internal page in a new tab with a full reload. Deviates from the Navbar's in-tab SPA nav for the same action.",
+  "fix": "Remove the `external` prop on this Button (line 76) so it renders an in-tab next/link to /contact. No visual change.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/CTASection.tsx",
+  "line": 41,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "The section has no prefers-reduced-motion handling: two motion.div ambient blobs animate x/opacity on infinite loops (lines 40-44 and 45-49), and the background <video> (lines 24-37) autoPlays/loops with no pause control. This ignores users with reduced-motion set and, for the looping video with no pause/stop mechanism, is a WCAG 2.2.2 issue. The Footer in this same directory correctly gates its motion via useReducedMotion (Footer.tsx line 120), so this file is the inconsistent one.",
+  "fix": "Import useReducedMotion; when reduced, drop the infinite `animate` on both blobs (render static) and skip video autoplay (or omit autoPlay). This is purely additive inside the media query, so non-reduced-motion users see the exact same output.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Navbar.tsx",
+  "line": 336,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "Navbar never checks prefers-reduced-motion. It runs several infinite/entrance animations unconditionally: the ProposalCta pulsing glow (line 333-338, repeat Infinity), the animated gradient fill sweep (line 340-350, repeat Infinity), the two blurred blobs in the full-screen mobile menu (lines 670-681, repeat Infinity), and the whole header slide-in on every load (line 156-158). Unlike Footer.tsx (useReducedMotion at line 120), none of these are gated.",
+  "fix": "Read useReducedMotion() once in Navbar and, when true, disable the repeat:Infinity loops (static opacity/position) and the header mount transition. Additive under the media query; default users unaffected.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Navbar.tsx",
+  "line": 608,
+  "category": "animation",
+  "severity": "low",
+  "problem": "MobileToggle animates the hamburger bars using the layout property `top` (line 608: {top:7} vs {top:2}; line 625: {top:7} vs {top:12}), with inline style top set at lines 610/627. Animating `top` triggers layout+paint each frame instead of a compositor-only transform, causing avoidable jank on low-end phones.",
+  "fix": "Keep the bars at fixed top values and animate `y` (translateY) instead of `top` (e.g. animate={open ? {y:5,rotate:45} : {y:0}}). Mobile-only (lg:hidden), so no desktop impact.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Navbar.tsx",
+  "line": 211,
+  "category": "animation",
+  "severity": "low",
+  "problem": "The sliding nav pill spring-animates `width` (line 211) alongside x/opacity. Animating `width` is a non-compositor layout property, so every spring frame forces a reflow of the absolutely-positioned span. Better perf would animate transform (scaleX) with a fixed base width.",
+  "fix": "Give the pill a base width and animate scaleX/x instead of width. NOTE: this is a desktop-only element (nav is hidden lg:flex) and scaleX distorts the rounded-full corners, so it visibly changes the pill; treat as optional and verify pixel-parity before shipping.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Navbar.tsx",
+  "line": 662,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "The full-screen mobile menu (motion.div at line 662, fixed inset-0) has no dialog semantics or keyboard handling: no role=\"dialog\"/aria-modal, Escape does not close it, focus is not moved into the panel nor trapped, focus is not returned to the toggle on close, and background scroll is not locked while it is open. Keyboard and screen-reader users can be stranded in/behind the overlay.",
+  "fix": "Add role=\"dialog\" aria-modal=\"true\" to the overlay, a keydown handler closing on Escape, move focus to the close button on open and restore it on close, and set body overflow hidden while open. Mobile-only (lg:hidden); desktop unaffected.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Navbar.tsx",
+  "line": 326,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The desktop ProposalCta <Link> (lines 323-331) carries rel=\"noopener noreferrer\" (line 326) with a stray blank line 325 where a target=\"_blank\" was removed. rel=\"noopener noreferrer\" is meaningless without target=\"_blank\", so this is dead/leftover markup (and evidences the Footer/CTASection new-tab inconsistency reported separately).",
+  "fix": "Delete the orphan rel attribute (line 326) and the blank line 325 on this internal /contact Link.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/PageHero.tsx",
+  "line": 44,
+  "category": "responsive",
+  "severity": "low",
+  "problem": "The hero section uses w-screen (=100vw) on a normal-flow element. 100vw includes the vertical scrollbar width, so it is wider than the content box and would cause horizontal overflow / a ~scrollbar-width leftward shift of the centered container. It is currently only masked by the global body{overflow-x:hidden} (globals.css line 20), making this a latent bug rather than a visible one.",
+  "fix": "Change w-screen to w-full on line 44. The section already spans the full-width <main>, so this is a visual no-op at every breakpoint while removing the fragile 100vw dependency.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/PageHero.tsx",
+  "line": 51,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The full-bleed background <Image> (line 49-56) defaults imageAlt to the generic string \"Cubiccode\" (prop default line 25). This image sits behind heavy ink overlays with the real headline/subtitle in the DOM, so it is decorative; a non-empty generic alt just adds screen-reader noise (\"Cubiccode\" repeated per page).",
+  "fix": "Default imageAlt to \"\" (empty) so the decorative background is skipped by assistive tech, and let callers pass a meaningful alt only when the image itself conveys content.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/layout/Footer.tsx",
+  "line": 61,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "SweepLink's base class uses py-1 (line 61). In the dense footer nav columns (rendered at lines 245-254 with text-[13.5px] and space-y-1.5=6px gaps), this yields link hit targets of roughly 28-30px tall, below the 44px touch-target minimum, with little spacing between adjacent links on mobile.",
+  "fix": "At the mobile tiers only (e.g. base py-2 with sm:py-1, or wrap the list items), raise the footer nav link tap height to ~44px. Must be additive at base/sm so lg+ footer spacing stays byte-identical (do not change the shared py-1 unconditionally).",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/portfolio/page.tsx",
+  "line": 8,
+  "category": "code-cleanup",
+  "severity": "medium",
+  "problem": "The page is marked \"use client\" but uses no hooks, state, or event handlers of its own (it only renders PageHero, ZoomParallax and Button, which are already their own client components). Because a client component cannot export `metadata`, this page ships NO page-specific <title>/description and only inherits the generic layout default — unlike privacy, terms and seo-results, which each export metadata. This is an SEO gap on a key marketing page plus an unnecessary client boundary.",
+  "fix": "Delete the \"use client\" directive on line 8 (a server page can render the client children unchanged) and add `export const metadata = { title: \"Website Portfolio | Cubiccode\", description: \"...\" }` matching the sibling legal/seo pages.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/layout.tsx",
+  "line": 14,
+  "category": "performance",
+  "severity": "medium",
+  "problem": "The Geist Google font is instantiated with variable \"--font-sans\" and applied to <html> via geist.variable (line 92), but nothing consumes --font-sans: Tailwind's `font-sans` maps to var(--font-inter) (tailwind.config.ts line 58) and globals.css `@apply font-sans` follows that. A grep confirms --font-sans is referenced only at its declaration. So an entire extra web font is self-hosted and preloaded on every page while never rendering any text. It is also the only font declared without display:\"swap\", indicating leftover code.",
+  "fix": "Remove the `Geist` import (line 4), the `geist` const (line 14), and `geist.variable` from the html className (line 91).",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/seo-results/page.tsx",
+  "line": 10,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "SeoProcess, SeoStats and SeoAnalytics are imported (lines 10-12) but their only usages are commented out (lines 34-36). Three unused imports (eslint no-unused-vars) plus a dead commented-out JSX block.",
+  "fix": "Remove the three imports (lines 10-12) and the commented JSX block (lines 34-36); or re-enable the components if they are meant to render.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/layout.tsx",
+  "line": 71,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "twitter.card is set to \"summary_large_image\" (line 71) but no share image is provided anywhere — there is no openGraph.images or twitter.images. Shared links therefore render a large-image card with a blank/missing image.",
+  "fix": "Add openGraph.images and twitter.images pointing to a real OG asset (e.g. \"/og.png\", 1200x630), or downgrade twitter.card to \"summary\" if no image exists.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/template.tsx",
+  "line": 38,
+  "category": "flicker-hydration",
+  "severity": "low",
+  "problem": "The reduced-motion guard `if (reduce) return <>{children}</>` only takes effect after hydration. During SSR/first paint useReducedMotion() is null, so the data-route-fade wrapper is emitted for everyone with framer's initial={{opacity:0}} — confirmed by the `[data-route-fade]{opacity:1 !important}` noscript override in layout.tsx (that override would be pointless unless SSR emits opacity:0). A prefers-reduced-motion user who reloads a page after the preloader has already been dismissed this session (data-preloader-seen set, so the preloader no longer masks first paint) sees content hidden at opacity:0 until JS hydrates and removes the wrapper — a reduced-motion correctness gap / brief blank flash.",
+  "fix": "Keep the wrapper mounted under reduce but drive its opacity to 1 (e.g. render the motion.div always with initial/animate opacity gated by a mounted flag, or set initial opacity to 1 when reduce) instead of conditionally unwrapping only after hydration.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/terms/page.tsx",
+  "line": 173,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The `Clause` (lines 173-190) and `ListItem` (lines 193-200) helper components are defined byte-for-byte identically in both terms/page.tsx and privacy/page.tsx (privacy lines 207-234). Duplicated component definitions across the two legal pages.",
+  "fix": "Extract Clause and ListItem into a shared module (e.g. src/components/legal/Clause.tsx) and import them in both terms/page.tsx and privacy/page.tsx.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/CarouselCard.tsx",
+  "line": 116,
+  "category": "image-overlay",
+  "severity": "high",
+  "problem": "The card image gets a dark gradient overlay (`bg-gradient-to-t` with `from-black/45` dark / `from-black/15` light) applied to `slide.image`. Every slide image resolves to `/images/portfolio/**` (verified via showcase.ts and PortfolioShowcase.tsx -> portfolio.ts), which are COMPANY ORIGINAL client-work screenshots. Per the taxonomy, overlays on original photos are FORBIDDEN. The bottom-anchored black fade darkens the actual UI of the client's site screenshot.",
+  "fix": "Remove the overlay div at lines 116-122 entirely (both the dark `from-black/45` and light `from-black/15` branches). No stock/Unsplash images are ever passed to this component, so the overlay is never wanted here.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/CarouselCard.tsx",
+  "line": 108,
+  "category": "flicker-hydration",
+  "severity": "medium",
+  "problem": "Only the active slide is mounted at a time (CarouselViewport wraps a single slide in AnimatePresence, CarouselSlide.tsx:47-64), and the card `<Image>` has no `priority` and no preloading of adjacent slides. On the first pass through the 10 slides, each incoming image begins loading only when its slide mounts, so during the ~3.5s autoplay/nav transition the slide can finish animating in while the image is still blank, then the image pops in. The first slide also has no `priority`, so the initial visible image is lazy-loaded.",
+  "fix": "Preload neighbouring slide images (e.g. render off-screen `<Image>` for index+1/index-1, or a `<link rel=\"preload\">` / next-image prefetch strategy), and pass `priority` to the first slide's image (thread an `isFirst`/`priority` prop from CarouselViewport's render). Additive; no desktop layout change.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/motion.ts",
+  "line": 54,
+  "category": "animation",
+  "severity": "low",
+  "problem": "slideVariants animate `filter: blur(10px) -> blur(0)` on the full-size slide, and because AnimatePresence keeps both outgoing and incoming slides mounted during the transition, two card-sized blur filters animate simultaneously. On top of that, contentItem (line 86) animates `filter: blur(6px) -> 0` on 5 staggered children of the same card every time the slide mounts (replays on every autoplay advance). The header comment claims everything is 'GPU-friendly (transform/opacity/filter only)', but animated large-area `filter: blur()` is compositor-expensive and can drop below 60fps on mid/low-end mobile.",
+  "fix": "Drop `filter: blur()` from slideVariants (keep x/scale/opacity), or reduce the radius substantially (e.g. 10px -> 3-4px), which is visually near-identical but much cheaper. Optionally gate the content-blur replay so it does not re-run on autoplay-driven advances. Correct the 'GPU-friendly' comment re: blur.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/CarouselSlide.tsx",
+  "line": 62,
+  "category": "performance",
+  "severity": "low",
+  "problem": "The dragging slide has a permanent `will-change-transform` utility class. framer-motion already sets/unsets `will-change` on its animated elements during animation and drag, so this hardcoded class keeps a compositor layer promoted for the entire page lifetime even when idle - exactly the misuse `will-change` docs warn against (added memory/overhead per carousel instance).",
+  "fix": "Remove `will-change-transform` from the className on line 62 and let framer-motion manage it during the active animation/drag, or apply it only transiently while dragging.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/CarouselIndicators.tsx",
+  "line": 74,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The `thumbnails` prop is typed `{ src: string; alt: string }[]` (line 24) and Carousel.tsx:125 populates `alt: s.title`, but the thumbnail `<Image>` hardcodes `alt=\"\"` (line 74). The `alt` field is computed and passed on every render yet never rendered - dead data and a misleading API (the empty alt is itself correct, since the wrapping button already carries `aria-label={`Go to slide N`}`).",
+  "fix": "Drop `alt` from the `thumbnails` type (line 24) and stop mapping it in Carousel.tsx:125 (pass only `{ src }`). Keep the image `alt=\"\"` because the thumbnail is decorative and the button is already labelled.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/Carousel.tsx",
+  "line": 23,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "Stale/inconsistent autoplay-interval documentation and a dead default. The Carousel doc comment (line 23) says '5s autoplay', but the actual default is `interval = 3500` (line 34). Separately, CarouselProvider defaults `interval = 5000` (CarouselContext.tsx:53), which is unreachable because the only caller (Carousel) always forwards its own `interval`, and it disagrees with Carousel's 3500 default.",
+  "fix": "Update the line 23 comment to match 3.5s, and align CarouselProvider's default (CarouselContext.tsx:53) with Carousel's 3500 (or remove the redundant provider default) so the two do not diverge.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/carousel/CarouselCard.tsx",
+  "line": 67,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The slide title is hardcoded as `<h3>` with no way to configure the level. In PortfolioShowcase.tsx the preceding SectionHeading renders an `<h2>` so the hierarchy is fine, but ShowcaseCarousel.tsx renders this Carousel with no heading element at all, so the section's first heading is this `<h3>` with no owning `<h2>` - a skipped-level heading gap for screen-reader users navigating that section.",
+  "fix": "Either give ShowcaseCarousel.tsx a visually-hidden/real `<h2>` before the carousel, or make the card heading level configurable (e.g. an `as`/`headingLevel` prop threaded through CarouselViewport's render) so each consumer sets the correct level. Fix belongs in the consumer/prop wiring, not the card default alone.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/clientele/page.tsx",
+  "line": 77,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "The page renders no <h1>. Its former <h1> lived in the PageHero that is now commented out (lines 58-74). The only content rendered is <ClientGlobeShowcase>, whose highest heading is an <h2> (src/sections/clientele/ClientGlobeShowcase.tsx line 98, via GridSection->Heading). So the document outline for this route starts at <h2> with no <h1> — a broken heading hierarchy and a missing page landmark for screen readers.",
+  "fix": "Restore an <h1> for the page. Cheapest desktop-neutral option: promote the ClientGlobeShowcase Heading's <h2> to <h1> (its styling is all explicit classes, so it renders identically), or add a visually-hidden <h1 className=\"sr-only\">Our clientele</h1> at the top of the returned fragment. Alternatively re-enable the commented PageHero.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/clientele/page.tsx",
+  "line": 10,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "PageHero (line 10) and Button (line 11) are imported but only referenced inside the commented-out block (lines 58-74). In the active render (lines 56-79) neither is used, so both are unused imports — matching the baseline's unused-import ESLint warnings.",
+  "fix": "Remove the `import { PageHero }` (line 10) and `import { Button }` (line 11) statements along with the dead commented block.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/clientele/page.tsx",
+  "line": 58,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "A large commented-out PageHero JSX block (lines 58-74) is left in the source. Dead code that hides the real reason the page has no <h1> and keeps the PageHero/Button imports artificially 'used' in a grep.",
+  "fix": "Delete the commented-out PageHero block (lines 58-74).",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/data-analytics/page.tsx",
+  "line": 23,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "The page renders two <h1> elements. PageHero (line 23) emits an <h1> via SplitReveal as=\"h1\" (PageHero.tsx line 80-86 / SplitReveal.tsx line 33,68), and BrandSplash (rendered line 33) emits its own <h1> (BrandSplash.tsx line 176). Multiple <h1> per document breaks the heading outline. Compounding it, the headline text (splashHeadlineText) and subtitle are shown verbatim twice — once in PageHero, once in BrandSplash — so the same title/subtitle is duplicated on one screen. (Same pattern exists on the sibling group pages careerjump/gdg/digital-marketing, so any fix should be applied consistently.)",
+  "fix": "Demote one heading so exactly one <h1> remains. BrandSplash's headline sets font-display, font-bold, tracking-tightest, text-white and text-balance all as explicit classes (BrandSplash.tsx line 180), so changing its motion.h1 to motion.p (or h2) renders pixel-identically while fixing the outline. Keep PageHero's as the page <h1>.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/contact/page.tsx",
+  "line": 210,
+  "category": "typography",
+  "severity": "low",
+  "problem": "The 'Three offices, one standard of work' section heading is hand-rolled as <h2 class=\"... font-display text-3xl font-bold leading-[1.08] tracking-tightest ... sm:text-4xl lg:text-[2.9rem]\">. That is the site-standard SectionHeading size (SectionHeading.tsx line 38) but with font-bold (700) instead of SectionHeading's font-semibold (600). Every section heading rendered through the SectionHeading component (e.g. all of capabilities/[slug]/page.tsx) is 600, so this one heading is visibly heavier for the same role.",
+  "fix": "Render this heading through <SectionHeading kicker=... title=... intro=... /> (which also removes the redundant hand-rolled kicker/title/intro Reveals), or change font-bold to font-semibold on line 210.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/capabilities/[slug]/page.tsx",
+  "line": 279,
+  "category": "responsive",
+  "severity": "medium",
+  "problem": "CardStack is given fixed pixel sizing cardWidth={440} cardHeight={290} (lines 279-280). CardStack renders each card at a hard `width: cardWidth` (card-stack.tsx line 282) centered inside a full-bleed stage, and the enclosing section has overflow-hidden (line 250). On phones narrower than 440px the active portfolio card is wider than the viewport, so its left/right edges (and the fanned neighbours) are clipped — the client-work screenshots get cut off horizontally, with no responsive downscaling.",
+  "fix": "Feed a viewport-aware cardWidth/cardHeight on small screens (e.g. a small useEffect/matchMedia hook picking ~300x200 below sm, keeping 440x290 at lg+), or wrap the stack in a container that CSS-scales it down under sm:. Additive at the mobile tier only.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/capabilities/[slug]/page.tsx",
+  "line": 212,
+  "category": "responsive",
+  "severity": "low",
+  "problem": "The 'What you'll build' cards use RevealGroup className=\"mt-14 grid grid-cols-1 gap-6 lg:grid-cols-3\" — it jumps straight from 1 column to 3 columns at lg with no md: tier, so on tablet (768-1023px) each number+title+paragraph card is stretched full container width, one per row.",
+  "fix": "Add a md tier: `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`. Purely additive, no-op at lg+.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/DonutChart.tsx",
+  "line": 56,
+  "category": "flicker-hydration",
+  "severity": "medium",
+  "problem": "The loading skeleton reserves height=max (210px) — the ring only. But the resolved donut renders the 210px ring PLUS the legend <ul className=\"mt-6 space-y-2.5\"> below it (line 121), so the real component is ~314px tall (210 + 24px mt-6 + ~80px of legend rows for 3 segments). useChartSize seeds width in a useEffect (runs after first paint), so the browser paints the 210px skeleton for one frame, then re-renders ~104px taller, pushing everything below it down. That is a real CLS jump. Contrast AreaChart/BarChart, whose skeleton height equals the final SVG height (no shift).",
+  "fix": "Reserve the legend space in the placeholder so the skeleton height matches the resolved height, e.g. render the skeleton at a height that includes the estimated legend block (max + 24 + segments.length * ~30), or wrap skeleton+legend-placeholder so total reserved height is stable. This is additive to the placeholder only and does not change the resolved donut layout.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/BarChart.tsx",
+  "line": 154,
+  "category": "responsive",
+  "severity": "medium",
+  "problem": "Per-bar hover targets are `band`-wide divs driven by onPointerEnter/onPointerLeave. For the 12-bar industrial dataset inside the mobile card (inner width ~224px → band ≈ 18px), each hit target is ~18px wide — far below the 44px touch minimum. Worse, the whole tooltip pattern is hover-only: on touch, onPointerEnter fires only while the finger is held on the exact ~18px strip and onPointerLeave fires on release, so the value tooltip is effectively unreachable on mobile. AreaChart's crosshair (line 205, onPointerMove overlay) has the analogous problem: a drag over the plot is also a scroll gesture, and after pointercancel onPointerLeave may not fire, leaving the crosshair stuck.",
+  "fix": "Additively expose the values on touch: since x-axis labels are already thinned/absent on dense charts, render always-visible value labels (or an accessible <ul> of label:value pairs) at the base/sm tier, or gate the hover overlay behind a hover/pointer:fine media query so touch users get a static readable fallback. Desktop mouse hover is unchanged.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/AreaChart.tsx",
+  "line": 161,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "Data-bearing chart labels use text-steel-400 (#94A3B8) on the white/canvas-soft surface — a contrast ratio of ~2.5:1, which fails WCAG AA (4.5:1 for normal text, and even the 3:1 large-text floor) for text that conveys meaning. Same token/same issue at BarChart.tsx:115 (x-axis month labels), DonutChart.tsx:145 (segment percentages), and FunnelChart.tsx:36 (\"NN% continue\" conversion labels).",
+  "fix": "Darken these meaningful labels to at least text-steel-500 (#64748B ≈ 4.6:1) — but note this changes the desktop rendered color, so it conflicts with the no-visual-change constraint; it should only be applied if a11y is prioritized over pixel-identity, otherwise it stays as a documented tradeoff.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/AreaChart.tsx",
+  "line": 84,
+  "category": "animation",
+  "severity": "low",
+  "problem": "The scroll-in reveal animates the `width` attribute of a <motion.rect> used as a clipPath (initial width 0 → width). Animating an SVG geometry attribute is not compositor-accelerated: it forces a re-layout/repaint of the clipped chart region every frame for the 1.1s draw-in. Sparkline.tsx:69 uses the identical width-animated clip. Every other reveal in this folder (BarChart scaleY line 98, CompareChart/FunnelChart scaleX) correctly uses a GPU transform, so this is an internal inconsistency as well.",
+  "fix": "Achieve the same left→right wipe by animating a transform on the clip rect instead of its width: give the rect a full static width and animate `x` from -width to 0 (or scaleX from 0→1 with transform-origin left). Keep the wipe direction/duration/easing identical so the visual result is unchanged. Impact is minor (one-shot reveal), so low priority.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/theme.ts",
+  "line": 81,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "fmt() formats with toLocaleString(\"en-IN\") (Indian lakh/crore grouping, per the comment), but the count-up numbers rendered by CountStat (src/components/ui/Stat.tsx:28) use \"en-US\" grouping. Tooltips/legends (which call fmt) and the animated headline numbers (which use CountStat) therefore use different grouping rules. Any value ≥ 100000 would render as \"1,00,000\" in a tooltip but \"100,000\" in a count-up. It is latent today only because every value passed to fmt in caseStudyCharts.ts is < 1 lakh, so output is currently identical.",
+  "fix": "Pick one locale for both. Either switch fmt to \"en-US\" to match CountStat, or route CountStat through the same locale, so the two number renderers can never diverge if larger figures are added later.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/Sparkline.tsx",
+  "line": 37,
+  "category": "visual-polish",
+  "severity": "low",
+  "problem": "Sparkline uses no horizontal padding: x(i) maps the last point to exactly x=width, so the endpoint marker circle (line 87, cx=width, r=strokeWidth+1≈3) is centered on the SVG's right edge. With the SVG set to overflow-visible and the container w-full, the right half of the dot draws outside the plot into the tile's padding, and the marker looks half-clipped/off-plot. AreaChart deliberately insets its endpoint (padR=20). The mismatch makes the sparkline endpoint sit visually against the tile edge.",
+  "fix": "Add a small right inset for the endpoint (e.g. map x over `width - (strokeWidth + 2)` or add a couple px of horizontal padding to the point projection) so the end dot renders fully inside the plot area. May be intentional edge-to-edge styling, so verify against design before changing.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/charts/DonutChart.tsx",
+  "line": 83,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The donut track color is the hardcoded literal \"#EEF2F7\" (also RadialGauge.tsx:61), while the cartesian charts pull their track/grid grey from the AXIS token (AXIS.grid = #E1E7EF, used in AreaChart:103 and BarChart:80). So the site has two slightly different 'light track' greys for chart chrome, and one of them bypasses the theme token file entirely.",
+  "fix": "Add a `track` token to AXIS in theme.ts and reference it from both DonutChart and RadialGauge (and reconcile whether the track should be #EEF2F7 or AXIS.grid). Purely a consistency/maintainability cleanup; changing the actual shade would alter the desktop look, so tokenize to the existing value rather than replacing it.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoClientCard.tsx",
+  "line": 157,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "This is the ONLY seo card actually rendered on the live page, and it ignores prefers-reduced-motion for its two biggest motions. `reduce` is computed on line 143 but only applied to `whileHover` (line 162). The `layout` prop (157) and the mount `initial={{opacity:0,y:18,scale:0.98}}` / `animate` / `exit` (158-161) run unconditionally, so reduced-motion users still get slide+scale entrance on every card and full position/reflow animation on every filter change. The parent grid correctly guards itself with `layout={!reduce}` (SeoDashboard line 235), but the card overrides that intent by keeping its own unconditional `layout`.",
+  "fix": "Gate the motion on `reduce`: set `layout={!reduce}`, and when `reduce` use `initial={false}` (or `initial={{opacity:0}}`/`animate={{opacity:1}}` with no y/scale) and drop the scale in `exit`. The component already reads `reduce`, so this is a local change with no desktop visual impact for non-reduced-motion users.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoDashboard.tsx",
+  "line": 234,
+  "category": "performance",
+  "severity": "medium",
+  "problem": "The typed search query is used directly for filtering with no debounce. Every keystroke updates `query` -> recomputes `q` (line 111) -> recomputes `filtered` (useMemo, 112-121) -> re-renders the `motion.div` grid with `layout={!reduce}` (235) and `AnimatePresence mode=\"popLayout\"` (237), which restarts exit/enter/layout animations on the cards mid-type. Fast typing across the client set stacks and interrupts layout animations, causing visible churn/jank while the chip layoutId (`ind-pill`/`city-pill`) and card `layout` all recalc.",
+  "fix": "Debounce the value fed to `filtered` (e.g. a `useDeferredValue(q)` or a small setTimeout-backed debounced state) while keeping the controlled `input` value instant. Filtering animation then runs once per settle instead of per keystroke. Visually identical after settle.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/PlatformIcons.tsx",
+  "line": 30,
+  "category": "typography",
+  "severity": "low",
+  "problem": "This pill is rendered inline inside the intro paragraph (SeoDashboard lines 152-153, a `text-lg leading-relaxed` body). The pill is an `inline-flex` with four `size-7` (28px) icon tiles plus `py-1`, making it ~36px tall — far taller than the ~28px line box of the surrounding 18px text. Wherever the pill sits, that single line's box balloons, creating an uneven gap above/below that line. On mobile the paragraph wraps more, so the pill lands mid-paragraph and the rhythm break is more visible.",
+  "fix": "Reduce the inline pill's visual height so it fits the text line box: use smaller tiles (e.g. `size-5` icons at ~14px) and tighter padding, or render the four marks without the bordered tile background inline. Because the pill lives in a paragraph shared with desktop, any size change affects desktop too — verify the desktop line still reads cleanly, or scope the shrink to base/sm tiers only.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoClientCard.tsx",
+  "line": 230,
+  "category": "typography",
+  "severity": "low",
+  "problem": "Fractional sub-pixel font sizes that don't match the site's integer-px micro-label scale (text-[10px]/text-[11px] used elsewhere): capability badges use `text-[10.5px]` (line 230) and the ScoreDial 'score' label uses `text-[7.5px]` (line 110). Half-pixel type rounds inconsistently across browsers/zoom and 7.5px is at the edge of legibility.",
+  "fix": "Snap to the existing scale: use `text-[10px]` (or `text-[11px]`) for the capability badges and `text-[8px]`/`text-[9px]` for the score label to match the site's integer-px micro-labels. Visual delta is sub-pixel on desktop.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoDashboard.tsx",
+  "line": 187,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The two filter groups render their names ('Industry' line 187-189, 'City' 196-198) as plain `<div>`s that are visually adjacent to but not programmatically associated with their `Chips` button groups. A screen-reader user tabbing the chips hears '<label> <count>, pressed/not pressed' with no indication of which facet (industry vs city) the chip belongs to.",
+  "fix": "Give each label an id and wrap the corresponding `<Chips>` in a container with `role=\"group\"` + `aria-labelledby` pointing at that id (or `aria-label=\"Filter by industry\"` / `\"Filter by city\"`). No visual change.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoDashboard.tsx",
+  "line": 209,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The result count 'Showing {filtered.length} of {TOTAL_CLIENTS} businesses' (lines 209-215) updates as the user filters/types, but the container is not a live region, so screen-reader users get no announcement that the result set changed (and the empty state on line 259 similarly isn't announced).",
+  "fix": "Add `aria-live=\"polite\"` (and `aria-atomic=\"true\"`) to the `<p>` wrapping the count so the new 'Showing N of M' is announced after each filter change. No visual change.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoDashboard.tsx",
+  "line": 54,
+  "category": "responsive",
+  "severity": "low",
+  "problem": "Primary touch targets fall below the 44px minimum. The filter chips (Chips button, `px-3.5 py-1.5 text-[13px]`, line 54) render ~30px tall; the search clear button is `size-7` = 28px (line 176); the 'Clear filters' pill is `px-3 py-1.5` ~30px (line 218). On touch these are small, closely-packed hit targets.",
+  "fix": "Increase the interactive height on coarse pointers only (e.g. `min-h-[44px]` gated behind a `@media (pointer: coarse)` utility, or a base-tier padding bump reset at `sm:`/`lg:`). Note the chip padding is shared with desktop, so a naive base-tier `py` increase would change desktop chip height — scope it to pointer:coarse to keep lg+ pixel-identical.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoHero.tsx",
+  "line": 20,
+  "category": "code-cleanup",
+  "severity": "medium",
+  "problem": "Dead component. `SeoHero` is exported here but imported nowhere in the repo (the SEO page renders `<PageHero>` instead; grep for `SeoHero` outside components/seo/ returns zero hits). It transitively pulls in `SeoBackground` (dense mode) and its ~28 particle + 6 glyph animations that never ship. This whole 111-line file is unreferenced.",
+  "fix": "Delete src/components/seo/SeoHero.tsx (and re-check whether SeoBackground is still needed — see its finding). If it's kept intentionally for future use, add a comment noting it's currently unwired.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoResultCard.tsx",
+  "line": 45,
+  "category": "code-cleanup",
+  "severity": "medium",
+  "problem": "Dead component. `SeoResultCard` (and its inner `ChartCard`/`plotHeight`) is imported nowhere — the only other reference to it or to `@/lib/seoResults` is the file's own type import; no page or component renders it (grep across src outside components/seo/ returns zero). This 161-line file and its `seoResults` data plumbing are unused.",
+  "fix": "Delete src/components/seo/SeoResultCard.tsx (and audit whether src/lib/seoResults.ts is still needed). If retained for future use, mark it as unwired.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoBackground.tsx",
+  "line": 50,
+  "category": "animation",
+  "severity": "low",
+  "problem": "In dense mode this mounts ~37 concurrently-looping infinite animations: the blueprint grid animates `backgroundPosition` (line 50) which is a paint-only property (not compositor-friendly) on a large `inset-[-40%]` surface, plus 3 blurred blobs (55-73), 28 particles (76-99) and 6 glyphs (102-120), all `repeat: Infinity`. That is heavy sustained main-thread/paint work on lower-end mobile. (Currently not shipped: its only dense consumer is the dead SeoHero; SeoStats uses dense=false and is commented out at page.tsx line 35 — so this is latent, not live.)",
+  "fix": "If/when re-enabled: drop the `backgroundPosition` keyframe animation (or replace with a transform-based translate on a doubled tile), and cut particle count on small viewports. Also consider pausing the loops when the section is off-screen. No effect while it remains unrendered.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/SeoProcess.tsx",
+  "line": 54,
+  "category": "animation",
+  "severity": "low",
+  "problem": "The spine dot animates the CSS `left` property from '0%' to '100%' on an infinite 5s loop (line 54). `left` is a layout/paint property, so every frame triggers layout on the positioned dot rather than a compositor transform. (Only shown at xl via the `hidden xl:block` spine, and the whole section is currently commented out at page.tsx line 34, so this is latent.)",
+  "fix": "Animate a transform instead: keep the dot at `left-0` and animate `x` in measured pixels across the spine width (the spine is `mx-[8.33%]`, so width = containerWidth*0.8333), or use a percentage-based translate on a full-width track. Visually identical.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/seo/IndustryDonut.tsx",
+  "line": 154,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The donut's segment-highlight interaction is pointer-only: `onPointerEnter`/`onPointerLeave` on the legend `<li>` (lines 154-155) drives which arc is emphasized and what the center count shows, but the `<li>` is `cursor-default`, non-focusable, and has no keyboard/focus path, so keyboard users can't reach the highlight state. (Not blocking — every legend row is direct-labelled with name+count, and the component is currently unrendered because SeoAnalytics is commented out at page.tsx line 36.)",
+  "fix": "If re-enabled, either make the legend rows focusable buttons that toggle `active` on focus/blur, or leave the hover as pure progressive enhancement (acceptable given direct labels) and document that intent. No visual change at rest.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/card-stack.tsx",
+  "line": 282,
+  "category": "responsive",
+  "severity": "high",
+  "problem": "cardWidth/cardHeight are fixed pixel numbers (default 520; used at 440 in capabilities/[slug]/page.tsx) with no responsive handling. Cards are absolutely positioned at width:440px, and the fan lays neighbours out at x = off * cardSpacing where cardSpacing = 440*(1-0.48) ≈ 229px (±229, ±458px). On a <440px viewport the ACTIVE card alone is wider than the screen (clipped on both sides) and side cards fly fully off-screen. The stage has no overflow-hidden, so on phones this is broken/clipped mobile layout for a component that is actually shipped.",
+  "fix": "Make the card size responsive: derive cardWidth from a container measurement (ResizeObserver) or pass a smaller cardWidth at base/sm via a breakpoint, e.g. clamp cardWidth to min(440, viewportWidth - 32). Keep 440 at lg so desktop is untouched. Recompute cardSpacing from the responsive width.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/cobe-globe-weather.tsx",
+  "line": 139,
+  "category": "performance",
+  "severity": "medium",
+  "problem": "The globe runs an unconditional requestAnimationFrame loop that calls globe.update() every frame with mapSamples:16000. It never pauses when the globe is scrolled off-screen (no IntersectionObserver), so it burns GPU/CPU continuously even when not visible. In ClientGlobeShowcase the globe wrapper only fades via scroll opacity while the rAF keeps rendering behind it.",
+  "fix": "Gate the rAF on visibility: add an IntersectionObserver on the canvas and stop scheduling frames (cancelAnimationFrame) when intersectionRatio is 0, resume when it re-enters. Also pause on document.hidden (visibilitychange).",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/cobe-globe-weather.tsx",
+  "line": 134,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "No prefers-reduced-motion handling. The globe auto-spins every frame (phi += speed at line 134) and each emoji marker runs 'weather-float 3s ease-in-out infinite' (line 228) unconditionally. Reduced-motion users get perpetual autonomous motion.",
+  "fix": "Read window.matchMedia('(prefers-reduced-motion: reduce)').matches; when true, skip the phi increment (render a static globe) and drop the 'animation: weather-float ...' (set animation:'none' on the marker style / gate the keyframe via a media query).",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Cursor.tsx",
+  "line": 43,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "The custom cursor is positioned by animating layout properties: style={{ left: x, top: y }} on the dot (line 43) and style={{ left: ringX, top: ringY }} on the ring (line 48). left/top are written every mousemove frame (and the ring keeps writing while its spring settles), forcing layout on each frame instead of a compositor-only transform. Additionally the dot (line 45) and ring (line 50-51) animate width/height, which are layout props too, rather than scale.",
+  "fix": "Drive position with transform translate: use motion x/y (which set translate3d) instead of left/top, composed with the -50%/-50% centering (e.g. style transform template `translate(-50%,-50%) translate(${x}px,${y}px)` via a MotionTemplate). Animate scale (and keep a fixed base size) instead of width/height. This is a desktop-only element (lg:block, pointer:fine) so the perf win lands on desktop with no visual change.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/card-stack.tsx",
+  "line": 346,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "The dot navigation buttons are h-2 w-2 (8x8px) with no padding, far below the 44px minimum touch target. On touch devices these are very hard to tap accurately.",
+  "fix": "Keep the 8px visual dot but enlarge the hit area: add padding (e.g. p-3 -m-3) or a min-w-[44px] min-h-[44px] flex-centered wrapper on each button so the tappable area is >=44px while the rendered dot stays 8px.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/ZoomParallax.tsx",
+  "line": 123,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "jumpTo() (prev/next buttons and jumpTo) calls native window.scrollTo({ behavior: 'smooth' }). The site runs Lenis smooth scroll (see Preloader's Lenis notes), and Lenis does not intercept programmatic window.scrollTo. The native scroll and Lenis's internal target desync, so prev/next can jump, fight Lenis, or fail to land on the target slide.",
+  "fix": "Route the programmatic scroll through Lenis (window.lenis?.scrollTo(targetTop) if the instance is exposed) instead of window.scrollTo, or fall back to window.scrollTo({behavior:'auto'}) so the two scroll systems don't animate against each other.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/ZoomParallax.tsx",
+  "line": 261,
+  "category": "animation",
+  "severity": "medium",
+  "problem": "No prefers-reduced-motion path. The entire experience is scroll-driven scale/opacity plus a spring on scrollYProgress (line 82) and per-slide Ken-Burns zoom (bgScale/shotScale, lines 261-262). Reduced-motion users get momentum spring + continuous zoom that can trigger vestibular discomfort.",
+  "fix": "When prefers-reduced-motion is set, bypass the useSpring (use scrollYProgress directly) and pin bgScale/shotScale to 1 (no Ken-Burns), keeping the cross-fade only. This is additive and leaves the default desktop experience unchanged.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/hero-section-9.tsx",
+  "line": 1,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "Dead code. hero-section-9.tsx is imported only by hero-section-9.demo.tsx, and nothing imports the demo (grep across src confirms). Both files are unreachable and ship nothing.",
+  "fix": "Delete src/components/ui/hero-section-9.tsx and src/components/ui/hero-section-9.demo.tsx. This also clears the 3 @next/next/no-img-element lint warnings noted in the baseline.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/hero-section-9.tsx",
+  "line": 191,
+  "category": "performance",
+  "severity": "low",
+  "problem": "The three collage tiles use raw <img> (lines 191, 201, 210) instead of next/image: no lazy loading, no sizes, no width/height, no optimization. The demo feeds them Unsplash STOCK URLs, so they are also unoptimized remote images with no CLS reservation. (Applies only if these files are kept rather than deleted per the dead-code finding.)",
+  "fix": "If retained, swap to next/image with fill + sizes and explicit aspect containers; the STOCK Unsplash tiles should also carry the standard dark/gradient overlay used elsewhere for stock imagery. Otherwise delete with the dead-code fix.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/cobe-globe-weather.tsx",
+  "line": 218,
+  "category": "responsive",
+  "severity": "low",
+  "problem": "The emoji weather markers (lines 213-232) position via CSS anchor positioning (positionAnchor: --cobe-<id>, bottom: anchor(top), left: anchor(center)) and are shown via opacity: var(--cobe-visible-<id>, 0). Nothing in this file (or anywhere in the repo) ever sets those anchor-name targets or the --cobe-visible-* custom properties (grep finds them only here), and stock cobe does not emit them. Result: with the default opacity var (0) the 16 emojis render invisible; even if made visible, anchor()/position-anchor is unsupported in Firefox/Safari, so the layer breaks cross-browser.",
+  "fix": "Either wire cobe's onRender to project each marker to screen coordinates and set the anchor-name + --cobe-visible-* vars (and provide a JS-positioned fallback for non-Chromium), or remove the emoji marker layer if it is not meant to display.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/cobe-globe-weather.tsx",
+  "line": 161,
+  "category": "performance",
+  "severity": "low",
+  "problem": "The init effect's dependency array (line 161) includes baseColor, markerColor, glowColor. The caller (ClientGlobeShowcase.tsx:258-260) passes inline array literals ([0.85,0.89,0.96], ...), which get a new identity on every parent render. Any re-render of the parent therefore tears down and re-creates the globe via createGlobe(), resetting canvas opacity to 0 and re-running the 1.2s opacity fade — a visible flash plus an expensive re-init. (markers is safe because the caller useMemo's it.)",
+  "fix": "Make the effect resilient to unstable array identities: depend on stringified color values (JSON.stringify) instead of the array refs, or update the existing globe's config in a lightweight effect rather than recreating it. Alternatively memoize the color arrays at the call site.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/SplitReveal.tsx",
+  "line": 47,
+  "category": "flicker-hydration",
+  "severity": "low",
+  "problem": "gsap.from() (line 47, immediateRender defaults to true) sets words to yPercent:115/opacity:0 only after the effect runs on mount, while the server/first paint renders the full heading text visibly. This can produce a one-frame FOUC where the heading appears, then jumps to hidden, then animates in. Also SplitType splits into lines/words on mount before web fonts are guaranteed loaded, so if the display font swaps later the word widths/line breaks shift (CLS).",
+  "fix": "Hide the target before splitting to avoid the flash (e.g. gsap.set(el,{autoAlpha:0}) or a CSS 'split-pending' opacity:0 class removed after setup), and defer the split/animation until document.fonts.ready resolves so line breaks are computed against the final font.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/card-stack.tsx",
+  "line": 383,
+  "category": "performance",
+  "severity": "low",
+  "problem": "DefaultFanCard renders a raw <img> with loading=\"eager\" (lines 378-384) for every rendered card, not just the active one. With maxVisible up to 7, that eager-loads up to 7 full-size images at once, and using raw <img> (not next/image) means no optimization, no sizes, and no width/height CLS reservation.",
+  "fix": "Use next/image (fill + sizes) or at minimum set loading=\"lazy\" for non-active cards (only the active card, or active +/-1, needs eager). Reserve dimensions to avoid layout shift.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/card-stack.tsx",
+  "line": 206,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The stage div is tabIndex={0} with keyboard arrow-key navigation (onKeyDown, lines 206-207) but has no visible focus indicator — there is no focus-visible ring/outline on it, so keyboard users cannot see when the carousel is focused before using arrow keys.",
+  "fix": "Add a focus-visible style to the stage container (e.g. focus-visible:outline-2 focus-visible:outline-corporate-500 or a rounded ring). Consider adding role=\"group\" with an aria-label describing the carousel.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/card-stack.tsx",
+  "line": 8,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "A local cn() helper is redefined here (lines 8-10) while the rest of the codebase imports cn from @/lib/utils (used by every other file in this audit). Duplicated utility.",
+  "fix": "Remove the local cn and import { cn } from \"@/lib/utils\" for consistency, unless keeping this component dependency-free is intentional.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/components/ui/Preloader.tsx",
+  "line": 449,
+  "category": "animation",
+  "severity": "low",
+  "problem": "The wordmark glint (lines 439-456) animates backgroundPosition from '180% 0' to '-80% 0'. backgroundPosition is a paint property, not a compositor (transform/opacity) property, so the sweep repaints each frame instead of running on the GPU. It is a one-shot 1.1s effect on a small element, so impact is minor.",
+  "fix": "Achieve the sweep by translating a gradient overlay with transform (x) instead of animating backgroundPosition, so the glint is compositor-only.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/industries/[slug]/page.tsx",
+  "line": 41,
+  "category": "code-cleanup",
+  "severity": "medium",
+  "problem": "The `trustPoints` array (lines 41-62) is declared but never rendered anywhere in IndustryPage — the JSX (lines 75-165) renders PageHero, THE PROBLEM, SolutionsSequence, HowWeDoItBetter and TheResult, none of which reference it. It is dead code (~22 lines) and triggers eslint no-unused-vars. Its four entries are also the ONLY consumers of the lucide imports `BadgeCheck, Clock, ShieldCheck, Users` on line 11 (the visible icon at line 135 uses the custom `<Icon>` component, not these), so those four imports are dead too.",
+  "fix": "Delete the `trustPoints` array (lines 41-62) and remove `BadgeCheck, Clock, ShieldCheck, Users` from the lucide-react import on line 11. If a trust strip was intended to render, add a section that maps over `trustPoints`; otherwise remove it entirely.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/digital-marketing/page.tsx",
+  "line": 33,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "The page renders `<PageHero title={splashHeadlineText(brand)}>` (line 23), which emits an <h1> via SplitReveal as=\"h1\", immediately followed by `<BrandSplash>` (line 33), which renders `brand.headline` as its own <motion.h1> (BrandSplash.tsx line 176). Because splashHeadlineText() is just `brand.headline` flattened to text (groupCompanies.ts line 244), the IDENTICAL headline (\"Marketing that drives real growth, not just clicks.\") appears twice on the page, and the document has two competing <h1> elements — a broken heading hierarchy plus visible content duplication.",
+  "fix": "Demote BrandSplash's heading from <motion.h1> to <motion.h2> (BrandSplash.tsx line 176). It is styled entirely by className, so this is visually identical and leaves PageHero's as the page's single <h1>. Do NOT remove PageHero from this page to fix it — that would change the desktop layout.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/gdg/page.tsx",
+  "line": 33,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "Same defect as digital-marketing: PageHero (line 23, title=splashHeadlineText(brand)) emits an <h1> and the following BrandSplash (line 33) emits its own <motion.h1> with the identical `brand.headline` text (\"Where Belgaum's developers build together.\"). Two <h1> elements on one page and the same headline shown twice.",
+  "fix": "Demote BrandSplash's <motion.h1> to <motion.h2> (BrandSplash.tsx line 176) — visually identical, keeps a single page <h1>. This is one shared fix that resolves both group-company pages.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/industries/[slug]/page.tsx",
+  "line": 73,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "`const others = industries.filter((i) => i.slug !== ind.slug)` (line 73) is computed on every request but is never referenced in the returned JSX — dead code / eslint no-unused-vars. It looks like a leftover from a removed \"explore other industries\" section.",
+  "fix": "Remove line 73, or render the intended \"other industries\" block that consumes `others`.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/partner/page.tsx",
+  "line": 102,
+  "category": "visual-polish",
+  "severity": "low",
+  "problem": "Both content sections use `py-20 lg:py-28` (lines 102 and 138) instead of the site-standard `.section` utility (`py-20 md:py-28 lg:py-32`, globals.css line 53) that the founders and industries pages use. There is no `md:` step, so at the tablet tier (768-1023px) these sections stay at py-20 while every other page steps up to md:py-28 — the partner page is noticeably tighter on tablet, breaking the site's vertical rhythm.",
+  "fix": "Add the missing tablet step to both sections: `py-20 md:py-28 lg:py-28`. This is additive at the md tier only and does not touch desktop. (Fully matching the site would also need lg:py-28→lg:py-32, but that alters desktop so keep it out of scope — desktopRisk high for that part.)",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/journey/page.tsx",
+  "line": 39,
+  "category": "visual-polish",
+  "severity": "low",
+  "problem": "The closing stat band uses `py-20 ... lg:py-24` (line 39), skipping the `md:` step of the site-standard `.section` (`py-20 md:py-28 lg:py-32`). On tablet (768-1023px) it stays at py-20 while sibling sections across the site step up to md:py-28. Lower confidence because this is a special dark closing band, but the tablet padding is inconsistent with the rest of the site.",
+  "fix": "Add `md:py-28` for tablet consistency (additive, no desktop change): `py-20 md:py-28 lg:py-24`. Leave `lg:py-24` if the compact desktop band is intentional.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/founders/page.tsx",
+  "line": 151,
+  "category": "typography",
+  "severity": "low",
+  "problem": "The founders' signature uses `font-serif text-3xl italic leading-none` (line 151). At lg the card is wide enough (inner width ~800px at px-20) to keep \"Sarvesh Kakkeri & Shivani Jadhav\" on one line, but below lg the card inner width drops to ~260-500px and the string wraps to two lines; with `leading-none` (line-height:1) the two italic-serif lines collide as ascenders/descenders of adjacent lines overlap.",
+  "fix": "Change `leading-none` to `leading-tight` (or `leading-[1.15]`) on line 151. At lg the signature is a single line, so line-height has no visual effect there — this is purely a mobile/tablet wrapping fix.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/industries/[slug]/page.tsx",
+  "line": 83,
+  "category": "a11y",
+  "severity": "low",
+  "problem": "The middle breadcrumb is `{ label: \"Industries\", href: \"/industries/manufacturing\" }` (line 83), but no `/industries` index route exists (the folder contains only `[slug]/page.tsx`). On the manufacturing page this breadcrumb links to the current page (self-referential), and on every other industry page the \"Industries\" crumb jumps to the unrelated manufacturing page — a misleading navigation target.",
+  "fix": "Add a real `/industries` index page and point the breadcrumb there, or drop the `href` so \"Industries\" renders as a non-link label. Changing only the href/label has no layout impact.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/founders/page.tsx",
+  "line": 70,
+  "category": "image-overlay",
+  "severity": "low",
+  "problem": "The hero passes `image=\"/images/about/parallax-2.jpg\"` (line 70), a COMPANY ORIGINAL photo (/images/about/**), into PageHero, which unconditionally layers four dark ink overlays (PageHero.tsx lines 57-60). By the letter of the image taxonomy, an original photo should not carry a dark/gradient overlay. Recorded because the taxonomy calls this out.",
+  "fix": "Do NOT remove the overlay. The PageHero ink overlay is the intended, site-wide hero-banner treatment (identical on the About reference hero) and is required so the white headline, breadcrumb and CTAs stay legible over the photo. Removing it would redesign a shared component, break text contrast, and change the desktop hero — the fix violates the hard constraints and must not be applied.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/partner/page.tsx",
+  "line": 83,
+  "category": "image-overlay",
+  "severity": "low",
+  "problem": "The hero passes `image=\"/images/Moments/devfest2022_2.jpg\"` (line 83), a COMPANY ORIGINAL photo (/images/Moments/**), into PageHero, which unconditionally layers dark ink overlays (PageHero.tsx lines 57-60). By the letter of the image taxonomy this is an original photo that \"wrongly\" has an overlay. Recorded to surface the taxonomy conflict.",
+  "fix": "Do NOT remove the overlay — same reasoning as the founders hero. The overlay is the required, site-wide cinematic hero treatment that keeps the white headline/CTAs legible; removing it would redesign the shared PageHero and break desktop contrast. Leave as-is.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/case-studies/page.tsx",
+  "line": 125,
+  "category": "responsive",
+  "severity": "medium",
+  "problem": "The consolidated-results KPI grid is `grid-cols-2` at the base tier (holds from 0px up to lg) while each value renders at `text-4xl` (36px) bold tabular-nums (line 142). container-x is px-6, so on a 360-430px phone each card content box is only ~104-131px wide; the widest value '₹4,185M+' (~155-160px at 36px) overflows its card and is clipped by the section's `overflow-hidden` (line 98). Affects every common phone width below ~470px.",
+  "fix": "Make the smallest tier single-column: change line 125 to `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4`. This gives each number the full 312px content width below 640px and leaves >=640px (including desktop) exactly 2/4 columns as today. (Alternative: base-tier `text-3xl sm:text-5xl` on line 142.)",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careers/page.tsx",
+  "line": 208,
+  "category": "responsive",
+  "severity": "medium",
+  "problem": "The 'What it's like to work here' bento has 5 cards; the col-span classes are only applied at `lg:` (`i < 3 ? lg:col-span-2 : lg:col-span-3`). At the `sm:grid-cols-2` tier (640-1023px, tablet) there is no col-span, so 5 items lay out 2+2+1 and the 5th card is stranded alone at half width on the last row. The code comment on line 200-201 claims 'five items never strand a lonely card', but that only holds at lg (the 6-col bento), not on tablet.",
+  "fix": "Give the last card a full-width span below lg without touching desktop: on line 208 make the last item's class include `max-lg:col-span-2` (e.g. `${i < 3 ? 'lg:col-span-2' : 'lg:col-span-3'} ${i === WORK_HERE.length - 1 ? 'max-lg:col-span-2' : ''}`). col-span-2 clamps harmlessly in the 1-col base grid and fills the row at sm; `lg:col-span-3` still wins at >=1024px.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/case-studies/page.tsx",
+  "line": 40,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "The hero subtitle (rendered on the page) contains a stripped em-dash leaving a floating double space: 'production systems powering ₹4,185M+ in transactions  managing crores'. Verified via hexdump elsewhere that these are two literal ASCII spaces (0x20 0x20), not a rendering artifact.",
+  "fix": "Restore the intended separator between 'transactions' and 'managing' — replace the doubled space with ' — ' (em-dash) or a single space. One-character copy fix, no layout change.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careers/page.tsx",
+  "line": 50,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "The 'AI-first, always learning' bento card body (rendered) has a stripped em-dash / double space: 'We build with modern tools  React, Laravel, Cloud, and AI workflows.' Two literal ASCII spaces where a dash/separator belongs.",
+  "fix": "Replace the doubled space after 'tools' with ' — ' (em-dash) or a single space.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/achievements/page.tsx",
+  "line": 58,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "The SectionHeading `intro` (rendered as a paragraph via SectionHeading.tsx line 46-53) has a stripped em-dash / double space: '...and the TEDx stage  the milestones that mark the way we work.'",
+  "fix": "Replace the doubled space after 'stage' with ' — ' (em-dash) or a single space.",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/about/page.tsx",
+  "line": 18,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "The page `<title>` (browser tab + SERP) contains a stripped em-dash leaving a double space: 'About Us  Transforming Businesses Since 2016 | Cubiccode'. Confirmed by hexdump: two literal 0x20 bytes between 'Us' and 'Transforming'.",
+  "fix": "Restore the separator: 'About Us — Transforming Businesses Since 2016 | Cubiccode'.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/achievements/page.tsx",
+  "line": 15,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "Both metadata strings have the stripped-em-dash double space: title (line 15) 'Achievements  Awards & Recognition | Cubiccode', and description (line 17) '...trusted by the market  the awards and honours...'.",
+  "fix": "Restore ' — ' (or a single space) in the title after 'Achievements' and in the description after 'market'.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careers/page.tsx",
+  "line": 25,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "The page `<title>` has the stripped-em-dash double space: 'Join the Cubiccode Team  Careers'.",
+  "fix": "Restore the separator: 'Join the Cubiccode Team — Careers'.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/case-studies/page.tsx",
+  "line": 21,
+  "category": "typography",
+  "severity": "medium",
+  "problem": "The page `<title>` has the stripped-em-dash double space: 'Case Studies  Real Platforms at Scale | Cubiccode'.",
+  "fix": "Restore the separator: 'Case Studies — Real Platforms at Scale | Cubiccode'.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careers/page.tsx",
+  "line": 34,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "The APPLY_MAILTO subject line carries the stripped-em-dash double space into the user's actual email client: encodeURIComponent(\"Application  [position you're applying for]\") produces a subject reading 'Application  [position...]'.",
+  "fix": "Change the literal on line 34 to 'Application — [position you're applying for]' (or a single space).",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careerjump/page.tsx",
+  "line": 27,
+  "category": "a11y",
+  "severity": "medium",
+  "problem": "PageHero is given `imageAlt={splashWordmarkText(brand)}` (the CareerJump wordmark) but NO `image` prop (lines 23-32). PageHero.tsx line 24 defaults `image` to '/images/about/parallax-1.jpg' (a Cubiccode office photo). So the CareerJump brand page's hero banner displays the generic About office photo while its alt text describes CareerJump — the alt does not match the rendered image, and the brand page shows unrelated imagery.",
+  "fix": "Pass a CareerJump-specific hero `image` to PageHero. If the generic backdrop is intentional, at minimum set `imageAlt` to describe the actual photo so the alt matches the content (the alt-only fix is desktop-safe; supplying a brand image would change the desktop hero background).",
+  "desktopRisk": "low",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/about/page.tsx",
+  "line": 90,
+  "category": "image-overlay",
+  "severity": "low",
+  "problem": "The 'Who we are' story photo is /images/Moments/2016.jpeg — a COMPANY ORIGINAL photo, on which the taxonomy forbids overlays — yet line 88-91 layers a `bg-gradient-to-t from-ink/45 via-transparent to-transparent` scrim over it. It is a subtle bottom 'seat' gradient (fully transparent over the top ~60%, so the subject is untouched), but it technically darkens an authentic photo.",
+  "fix": "Per the overlay rule, remove the gradient div (lines 88-91). NOTE: this conflicts with the 'desktop must stay pixel-identical' constraint — removing it visibly lightens the photo's lower edge on desktop, so treat as informational; if kept, it is a defensible seating gradient rather than a stock-image scrim.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careers/page.tsx",
+  "line": 229,
+  "category": "image-overlay",
+  "severity": "low",
+  "problem": "The 5 bento cards render COMPANY ORIGINAL photos (/images/Moments/** and /images/about/parallax-2.jpg) but each gets a `bg-gradient-to-t from-ink/50 via-transparent to-transparent` overlay (lines 227-230), which the taxonomy forbids on original photos. As on the About page it is a subtle foot-of-photo seating gradient, not a full scrim.",
+  "fix": "Per the overlay rule, remove the gradient div (lines 227-230). NOTE: this changes the desktop appearance of all 5 cards (their lower edge lightens), conflicting with the no-desktop-change constraint — informational; the gradient is a defensible seat gradient if retained.",
+  "desktopRisk": "high",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/about/page.tsx",
+  "line": 104,
+  "category": "animation",
+  "severity": "low",
+  "problem": "The 'Who we are' story statement uses ScrollReveal with baseOpacity={0.1}, enableBlur, blurStrength={7}, baseRotation={2}. ScrollReveal.tsx (lines 54-106) sets these as the gsap 'from' state on mount and only reveals via scroll-scrub, with NO prefers-reduced-motion guard. A reduced-motion user with JS enabled sees the heading initialized at 10% opacity and 7px blur (and rotated 2deg) and must scroll to make it legible.",
+  "fix": "Add a prefers-reduced-motion path in ScrollReveal.tsx (matchMedia('(prefers-reduced-motion: reduce)') -> render words at opacity 1 / blur 0 / rotate 0 and skip the scrub). Additive; no effect on the default desktop animation.",
+  "desktopRisk": "none",
+  "_label": "?"
+ },
+ {
+  "file": "src/app/careers/page.tsx",
+  "line": 177,
+  "category": "code-cleanup",
+  "severity": "low",
+  "problem": "Two stray whitespace-only lines sit between sections: line 177 (tabs only, between the 'By the numbers' and 'What it's like to work here' sections) and line 257 (tabs only, between that and 'How to apply'). Dead trailing-whitespace lines, no render effect.",
+  "fix": "Delete the whitespace-only content on lines 177 and 257 (collapse to a single blank separator line).",
+  "desktopRisk": "none",
+  "_label": "?"
+ }
+]

@@ -1,5 +1,7 @@
 /** @format */
 
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 
@@ -202,11 +204,24 @@ export default function ColorBends({
 		const mesh = new THREE.Mesh(geometry, material);
 		scene.add(mesh);
 
-		const renderer = new THREE.WebGLRenderer({
-			antialias: false,
-			powerPreference: "high-performance",
-			alpha: true,
-		});
+		// iOS Lockdown Mode, Low Power Mode on old iPhones and a few locked-down
+		// Android browsers refuse a WebGL context outright, and the constructor
+		// throws. Unguarded, that takes the whole client tree down with it — this
+		// shader is pure decoration, so it has to fail quietly instead. A browser
+		// that grants a context never enters the catch, so nothing changes there.
+		let renderer: THREE.WebGLRenderer;
+		try {
+			renderer = new THREE.WebGLRenderer({
+				antialias: false,
+				powerPreference: "high-performance",
+				alpha: true,
+			});
+		} catch {
+			geometry.dispose();
+			material.dispose();
+			materialRef.current = null;
+			return;
+		}
 		rendererRef.current = renderer;
 
 		type RendererWithOutputColorSpace = THREE.WebGLRenderer & {
@@ -227,7 +242,16 @@ export default function ColorBends({
 				threeWithColorSpace.SRGBColorSpace;
 		}
 
-		renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+		// A full-bleed fragment shader is fill-rate bound, and cost scales with the
+		// square of the pixel ratio. Phones ship DPR 3 on a GPU a fraction of a
+		// desktop's, so a 2× buffer there is ~4× the work of a 1× one for a soft
+		// gradient nobody can resolve at arm's length. Mice always report
+		// `pointer: fine`, so the desktop buffer is bit-for-bit the same as before.
+		const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+		const maxPixelRatio = coarsePointer ? 1.5 : 2;
+		renderer.setPixelRatio(
+			Math.min(window.devicePixelRatio || 1, maxPixelRatio),
+		);
 		renderer.setClearColor(0x000000, transparent ? 0 : 1);
 		renderer.domElement.style.width = "100%";
 		renderer.domElement.style.height = "100%";
@@ -408,7 +432,11 @@ export default function ColorBends({
 			pointerTargetRef.current.set(x, y);
 		};
 
-		container.addEventListener("pointermove", handlePointerMove);
+		// Passive: the handler only writes a ref, and a non-passive `pointermove`
+		// over a full-bleed hero blocks the compositor from scrolling on touch.
+		container.addEventListener("pointermove", handlePointerMove, {
+			passive: true,
+		});
 		return () => {
 			container.removeEventListener("pointermove", handlePointerMove);
 		};

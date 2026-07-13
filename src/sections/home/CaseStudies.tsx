@@ -19,11 +19,11 @@ export function CaseStudies() {
 						light
 						kicker="Web app & ERP case studies"
 						title="Real platforms, running real businesses at scale"
-						intro="Our web applications don't just look good  they manage crores in assets, thousands of users and millions in transactions, every month."
+						intro="Our web applications don't just look good they manage crores in assets, thousands of users and millions in transactions, every month."
 					/>
 					<Link
 						href="/case-studies"
-						className="group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-200 hover:text-white">
+						className="tap-target group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-200 hover:text-white">
 						All case studies
 						<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 					</Link>
@@ -40,14 +40,14 @@ export function CaseStudies() {
 									<h3 className="mt-3 text-xl font-semibold text-white">
 										{c.name}
 									</h3>
-									<p className="mt-2 text-[13.5px] leading-relaxed text-steel-300">
+									<p className="mt-2 text-[14px] leading-relaxed text-steel-300 lg:text-[13.5px]">
 										{c.tagline}
 									</p>
 									<ul className="mt-5 space-y-2 border-t border-white/10 pt-4">
 										{c.stats.slice(0, 3).map((s) => (
 											<li
 												key={s.label}
-												className="flex items-center gap-2.5 text-[13px] text-steel-300">
+												className="flex items-center gap-2.5 text-[14px] text-steel-300 lg:text-[13px]">
 												<Icon
 													name={s.icon}
 													className="size-4 shrink-0 text-corporate-300"

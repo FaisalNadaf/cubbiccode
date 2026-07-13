@@ -30,8 +30,10 @@ import { capabilityImage } from "@/content/serviceImages";
  * capability. The background cools subtly as the sequence resolves.
  *
  * One `scrollYProgress` drives every value (transform / opacity / colour only).
- * Below 640px or under prefers-reduced-motion the pin is dropped for a stacked,
- * fully-revealed layout.
+ * Below 1024px or under prefers-reduced-motion the pin is dropped for a stacked,
+ * fully-revealed layout: the pinned scene's furniture is laid out in `vw`/`vh`
+ * around a 4:5 card that is 80vh tall, so anything narrower than `lg` has the
+ * title block, the feature panel and the CTA overlapping the card.
  *
  * Each card shows its capability's own artwork (see `capabilityImage`).
  */
@@ -60,12 +62,14 @@ const lead = (feature: string) => feature.split(/\s{2,}|\s[—–]\s/)[0].trim()
 export function CapabilitiesShowcase() {
 	const sectionRef = useRef<HTMLElement>(null);
 	const reduce = useReducedMotion();
-	const [isMobile, setIsMobile] = useState(false);
+	const [isCompact, setIsCompact] = useState(false);
 	const [active, setActive] = useState(0);
 
+	// Matches the `lg` breakpoint: the pinned scene's geometry only resolves at
+	// >= 1024px, so everything below it takes the stacked layout.
 	useEffect(() => {
-		const mq = window.matchMedia("(max-width: 640px)");
-		const sync = () => setIsMobile(mq.matches);
+		const mq = window.matchMedia("(max-width: 1023.98px)");
+		const sync = () => setIsCompact(mq.matches);
 		sync();
 		mq.addEventListener("change", sync);
 		return () => mq.removeEventListener("change", sync);
@@ -103,8 +107,8 @@ export function CapabilitiesShowcase() {
 		["#F7F8FA", "#EEF2F7"],
 	);
 
-	if (isMobile || reduce) {
-		return <CapabilitiesStatic animated={isMobile && !reduce} />;
+	if (isCompact || reduce) {
+		return <CapabilitiesStatic animated={isCompact && !reduce} />;
 	}
 
 	const cap = capabilities[active];
@@ -351,7 +355,7 @@ function CapabilitiesStatic({ animated }: { animated: boolean }) {
 								</ul>
 								<Link
 									href={`/capabilities/${cap.slug}`}
-									className="group mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700">
+									className="group tap-target-h mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700">
 									View capability
 									<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 								</Link>

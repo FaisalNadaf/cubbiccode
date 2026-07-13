@@ -18,7 +18,7 @@ import { CASE_CHARTS, AGGREGATE_STATS } from "@/lib/caseStudyCharts";
 import { SIGNATURE } from "@/lib/caseStudyMetrics";
 
 export const metadata = {
-	title: "Case Studies  Real Platforms at Scale | Cubiccode",
+	title: "Case Studies Real Platforms at Scale | Cubiccode",
 	description:
 		"Our web apps and custom ERPs power ₹4,185M+ in transactions, manage ₹250 Cr+ in assets and run real businesses at 99.99% uptime. Explore Cubiccode's production case studies.",
 };
@@ -37,7 +37,7 @@ export default function CaseStudiesPage() {
 			<PageHero
 				kicker="Case studies"
 				title="Real platforms, running real businesses at scale"
-				subtitle="These aren't concept demos. They're production systems powering ₹4,185M+ in transactions  managing crores in assets, thousands of users and millions in monthly volume, every single day."
+				subtitle="These aren't concept demos. They're production systems powering ₹4,185M+ in transactions managing crores in assets, thousands of users and millions in monthly volume, every single day."
 				image="/images/about/about-4.jpg"
 				imageAlt="Production platforms engineered by Cubiccode"
 				breadcrumb={[
@@ -74,8 +74,9 @@ export default function CaseStudiesPage() {
 						</Reveal>
 						<Reveal delay={0.18}>
 							<p className="mt-4 max-w-2xl text-lg leading-relaxed text-steel-600">
-								Every panel below is a live system. The numbers are real production
-								figures; the charts trace how each platform grew into them.
+								Every panel below is a live system. The numbers are real
+								production figures; the charts trace how each platform grew into
+								them.
 							</p>
 						</Reveal>
 					</div>
@@ -122,7 +123,7 @@ export default function CaseStudiesPage() {
 
 					<RevealGroup
 						stagger={0.1}
-						className="mt-16 grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4 lg:gap-x-8">
+						className="mt-16 grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
 						{AGGREGATE_STATS.map((s, i) => (
 							<RevealItem
 								key={s.label}

@@ -26,7 +26,7 @@ import {
  * the "Explore Objects" button. The background warms as the sequence resolves.
  *
  * One `scrollYProgress` drives every value (transform / opacity / colour only
- * GPU-composited). Below 640px or under prefers-reduced-motion the pin is
+ * GPU-composited). Below `lg` or under prefers-reduced-motion the pin is
  * dropped for a stacked, fully-revealed layout.
  *
  * Assets: cards fall back to a tinted gradient placeholder. Drop real artwork in
@@ -72,7 +72,10 @@ export function OriginObjects() {
 	const [active, setActive] = useState(0);
 
 	useEffect(() => {
-		const mq = window.matchMedia("(max-width: 640px)");
+		// The pinned scene's furniture (the nowrap serif caption, the side narrative
+		// columns) is positioned in vw against a wide stage; below lg it overlaps the
+		// card column, so the whole pin is swapped for the stacked layout there.
+		const mq = window.matchMedia("(max-width: 1023.98px)");
 		const sync = () => setIsMobile(mq.matches);
 		sync();
 		mq.addEventListener("change", sync);
@@ -294,7 +297,12 @@ function ObjectCard({
 						backgroundImage: `linear-gradient(155deg, ${card.from}, ${card.to})`,
 					}}>
 					{watermark && (
-						<span className="absolute inset-0 flex items-center justify-center font-serif text-[26vh] leading-none text-white/[0.08] select-none">
+						// 26vh is scaled for the 72vh pinned card; in the stacked layout
+						// below lg the card is a fraction of that, so the glyph is stepped
+						// down to stay inside it.
+						<span
+							aria-hidden
+							className="absolute inset-0 flex items-center justify-center font-serif text-[14vh] leading-none text-white/[0.08] select-none lg:text-[26vh]">
 							{card.roman}
 						</span>
 					)}

@@ -76,6 +76,48 @@ export const reducedSlideVariants: Variants = {
 	exit: { opacity: 0, transition: { duration: 0.2 } },
 };
 
+/**
+ * Coarse-pointer-only variants. AnimatePresence keeps the outgoing slide
+ * mounted, stacked over the incoming one, for the whole transition; on touch a
+ * tap landing during those ~600ms hits the *previous* slide's CTA and opens the
+ * wrong site (autoplay advances under the finger). `pointerEvents: "none"` on
+ * exit closes that, but it is NOT applied on a fine pointer: there it would also
+ * let a click/hover fall through the outgoing slide onto the incoming card,
+ * changing desktop behaviour. These sets are selected in CarouselSlide.tsx
+ * behind a `(pointer: coarse)` match, so the desktop path is untouched.
+ */
+export const touchSlideVariants: Variants = {
+	enter: (dir: number) => ({
+		x: dir >= 0 ? "55%" : "-55%",
+		scale: 0.95,
+		opacity: 0,
+		filter: "blur(10px)",
+		pointerEvents: "auto",
+	}),
+	center: {
+		x: "0%",
+		scale: 1,
+		opacity: 1,
+		filter: "blur(0px)",
+		pointerEvents: "auto",
+		transition: slideTransition,
+	},
+	exit: (dir: number) => ({
+		x: dir >= 0 ? "-45%" : "45%",
+		scale: 0.95,
+		opacity: 0,
+		filter: "blur(10px)",
+		pointerEvents: "none",
+		transition: slideTransition,
+	}),
+};
+
+export const reducedTouchSlideVariants: Variants = {
+	enter: { opacity: 0, pointerEvents: "auto" },
+	center: { opacity: 1, pointerEvents: "auto", transition: { duration: 0.2 } },
+	exit: { opacity: 0, pointerEvents: "none", transition: { duration: 0.2 } },
+};
+
 // Staggered content inside a slide (heading → description → button → image).
 export const contentContainer: Variants = {
 	hidden: {},

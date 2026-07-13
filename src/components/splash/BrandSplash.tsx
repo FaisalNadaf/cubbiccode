@@ -73,7 +73,11 @@ export function BrandSplash({ brand }: { brand: GroupCompany }) {
 		<section
 			onMouseMove={handleMouseMove}
 			onMouseLeave={resetMouse}
-			className="relative flex min-h-[100svh] w-full flex-col overflow-hidden text-white"
+			// svh is unsupported before Chrome 108 / Safari 15.4 / Firefox 101, where
+			// the whole declaration is dropped and the field collapses to content
+			// height. min-h-screen is the fallback; every browser that supports svh
+			// takes the svh line, and on desktop 100svh === 100vh either way.
+			className="relative flex min-h-screen w-full flex-col overflow-hidden text-white supports-[min-height:100svh]:!min-h-[100svh]"
 			style={{ backgroundColor: "#0a1730", backgroundImage: theme.background }}>
 			{/* ── Field texture: blueprint grid + film grain ──────────────────────── */}
 			<div
@@ -128,10 +132,13 @@ export function BrandSplash({ brand }: { brand: GroupCompany }) {
 			</div>
 
 			{/* ── Top bar: back to Cubiccode ──────────────────────────────────────── */}
-			<div className="container-x relative z-20 flex items-center justify-between pt-6">
+			{/* The horizontal insets are pinned below lg because container-x's own
+			    gutter grows at lg/xl; re-deriving it from 1.5rem is only correct
+			    while container-x is still px-6. Vertically env() is 0 on desktop. */}
+			<div className="container-x relative z-20 flex items-center justify-between pt-[calc(1.5rem_+_env(safe-area-inset-top))] [@media(max-width:1023.98px)]:pl-[calc(1.5rem_+_env(safe-area-inset-left))] [@media(max-width:1023.98px)]:pr-[calc(1.5rem_+_env(safe-area-inset-right))]">
 				<Link
 					href="/"
-					className="group inline-flex items-center gap-2 rounded-full bg-white py-2.5 pl-4 pr-5 text-[15px] font-bold text-ink shadow-lift ring-1 ring-black/5 transition-colors duration-300 hover:bg-corporate-600 hover:text-white">
+					className="tap-target-h group inline-flex items-center gap-2 rounded-full bg-white py-2.5 pl-4 pr-5 text-[15px] font-bold text-ink shadow-lift ring-1 ring-black/5 transition-colors duration-300 hover:bg-corporate-600 hover:text-white">
 					<ArrowLeft className="size-5 transition-transform duration-300 group-hover:-translate-x-1" />
 					Back to Cubiccode
 				</Link>
@@ -232,7 +239,12 @@ export function BrandSplash({ brand }: { brand: GroupCompany }) {
 					initial={{ opacity: 0, y: 14 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.6, ease: EASE, delay: 0.5 }}
-					className="mt-12 flex items-center gap-6 sm:gap-10">
+					// Three stats whose min-content width is ~338px cannot fit the 272px
+					// of a 320px viewport, so the row was overflowing the field's
+					// overflow-hidden and getting clipped. lg:flex-nowrap restores the
+					// default, and at lg the row is already content-width, so
+					// justify-center has no free space to distribute.
+					className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-10 lg:flex-nowrap lg:justify-start">
 					{brand.stats.map((s, i) => (
 						<div
 							key={s.label}
@@ -252,7 +264,7 @@ export function BrandSplash({ brand }: { brand: GroupCompany }) {
 			</div>
 
 			{/* ── Bottom rail ─────────────────────────────────────────────────────── */}
-			<div className="container-x relative z-20 flex items-center justify-between pb-6 text-[10px] font-semibold uppercase tracking-kicker text-white/45 sm:text-[11px]">
+			<div className="container-x relative z-20 flex items-center justify-between pb-[calc(1.5rem_+_env(safe-area-inset-bottom))] text-[10px] font-semibold uppercase tracking-kicker text-white/45 sm:text-[11px] [@media(max-width:1023.98px)]:pl-[calc(1.5rem_+_env(safe-area-inset-left))] [@media(max-width:1023.98px)]:pr-[calc(1.5rem_+_env(safe-area-inset-right))]">
 				<span className="pointer-events-none inline-flex items-center gap-2">
 					Click anywhere to visit <ArrowRight className="size-3.5" />
 				</span>

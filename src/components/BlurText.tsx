@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Transition, type Easing } from 'motion/react';
+import { motion, useReducedMotion, type Transition, type Easing } from 'motion/react';
 import { useEffect, useRef, useState, useMemo } from 'react';
 
 type BlurTextProps = {
@@ -48,6 +48,10 @@ const BlurText: React.FC<BlurTextProps> = ({
   const elements = animateBy === 'words' ? text.split(' ') : text.split('');
   const [inView, setInView] = useState(false);
   const ref = useRef<HTMLParagraphElement>(null);
+  // This is JS-driven motion, so the global `prefers-reduced-motion` rule in
+  // globals.css (which only neutralises CSS animations/transitions) does not
+  // reach it. Without this the copy still flies in and un-blurs.
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     if (!ref.current) return;
@@ -82,8 +86,12 @@ const BlurText: React.FC<BlurTextProps> = ({
     [direction]
   );
 
-  const fromSnapshot = animationFrom ?? defaultFrom;
   const toSnapshots = animationTo ?? defaultTo;
+  // Under reduced motion the words start already settled, so nothing moves,
+  // blurs or fades — but the tween still "runs" (duration 0), which keeps
+  // onAnimationComplete firing for callers that sequence off it.
+  const restSnapshot = toSnapshots[toSnapshots.length - 1] ?? {};
+  const fromSnapshot = reduce ? restSnapshot : (animationFrom ?? defaultFrom);
 
   const stepCount = toSnapshots.length + 1;
   const totalDuration = stepDuration * (stepCount - 1);
@@ -94,12 +102,14 @@ const BlurText: React.FC<BlurTextProps> = ({
       {elements.map((segment, index) => {
         const animateKeyframes = buildKeyframes(fromSnapshot, toSnapshots);
 
-        const spanTransition: Transition = {
-          duration: totalDuration,
-          times,
-          delay: (index * delay) / 1000,
-          ease: easing
-        };
+        const spanTransition: Transition = reduce
+          ? { duration: 0, delay: 0 }
+          : {
+              duration: totalDuration,
+              times,
+              delay: (index * delay) / 1000,
+              ease: easing
+            };
 
         return (
           <motion.span
@@ -110,7 +120,7 @@ const BlurText: React.FC<BlurTextProps> = ({
             onAnimationComplete={index === elements.length - 1 ? onAnimationComplete : undefined}
             style={{
               display: 'inline-block',
-              willChange: 'transform, filter, opacity'
+              willChange: reduce ? 'auto' : 'transform, filter, opacity'
             }}
           >
             {segment === ' ' ? '\u00A0' : segment}

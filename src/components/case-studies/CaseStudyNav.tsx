@@ -51,13 +51,22 @@ export function CaseStudyNav() {
 						production
 					</span>
 				</div>
-				<nav className="-mx-6 flex snap-x snap-mandatory gap-2 overflow-x-auto px-6 [scrollbar-width:none] sm:mx-0 sm:px-0">
+				{/* `[scrollbar-width:none]` only silences Firefox. globals.css paints a
+				    10px `::-webkit-scrollbar` on *every* scroll container, so on
+				    WebKit/Blink this strip loses 10px of its 56px bar to a track it
+				    never needs — hidden below lg, where the chips are the only thing
+				    that actually overflows. `overscroll-x-contain` stops a swipe past
+				    the last chip from triggering the browser's back gesture. */}
+				<nav className="-mx-6 flex snap-x snap-mandatory gap-2 overflow-x-auto px-6 [scrollbar-width:none] max-lg:overscroll-x-contain max-lg:[&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0">
 					{caseStudies.map((c, i) => (
 						<a
 							key={c.slug}
 							href={`#${entryId(i)}`}
 							className={cn(
-								"snap-start whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold tabular-nums transition-colors",
+								// `.tap-target` grows the hit area to 44px on coarse pointers via
+								// an ::after pseudo — no layout change, so the chip is identical
+								// under a mouse.
+								"tap-target snap-start whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-semibold tabular-nums transition-colors",
 								active === i ?
 									"bg-ink text-white"
 								:	"border border-steel-200 text-steel-500 hover:border-corporate-300 hover:text-ink",

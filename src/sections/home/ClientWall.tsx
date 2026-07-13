@@ -48,7 +48,7 @@ export function ClientWall() {
 					align="center"
 					kicker="Trusted by"
 					title="The brands that trust us to build."
-					intro="From local champions to household names  we're honoured to serve 500+ businesses across almost every state in the country."
+					intro="From local champions to household names we're honoured to serve 500+ businesses across almost every state in the country."
 				/>
 			</div>
 
@@ -78,7 +78,7 @@ export function ClientWall() {
 				<Reveal>
 					<Link
 						href="/clientele"
-						className="group inline-flex items-center gap-3 rounded-full border border-steel-200 bg-canvas-soft px-5 py-2.5 text-sm text-steel-600 transition-colors duration-300 hover:border-corporate-300 hover:bg-white hover:text-ink">
+						className="group tap-target-h inline-flex items-center gap-3 rounded-full border border-steel-200 bg-canvas-soft px-5 py-2.5 text-sm text-steel-600 transition-colors duration-300 hover:border-corporate-300 hover:bg-white hover:text-ink">
 						<span className="font-display text-xl font-bold text-ink">
 							500+
 						</span>

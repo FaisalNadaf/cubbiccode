@@ -34,6 +34,20 @@ const FLOW_DASH = 14; // length of the travelling pulse (px)
 const round = (value: number) => Number(value.toFixed(3));
 
 export function TechEcosystem() {
+	// The hub is `display:none` below lg, but its infinite framer-motion loops (the
+	// travelling wire pulses, the ringing centre) are rAF-driven and keep burning
+	// battery on phones regardless. Starts true so the SSR/hydration tree — and
+	// every viewport that actually shows it — is unchanged.
+	const [hubMounted, setHubMounted] = useState(true);
+
+	useEffect(() => {
+		const mq = window.matchMedia("(min-width: 1024px)");
+		const sync = () => setHubMounted(mq.matches);
+		sync();
+		mq.addEventListener("change", sync);
+		return () => mq.removeEventListener("change", sync);
+	}, []);
+
 	return (
 		<section className="relative overflow-hidden bg-canvas py-20 lg:pt-24 lg:pb-40">
 			{/* dotted texture + ambient corporate glow */}
@@ -56,12 +70,12 @@ export function TechEcosystem() {
 					align="center"
 					kicker="Technologies we work with"
 					title="One stack, wired end to end."
-					intro="Frontend to backend, cloud to AI, automation to analytics  hover any layer to see the exact tools we build with."
+					intro="Frontend to backend, cloud to AI, automation to analytics hover any layer to see the exact tools we build with."
 				/>
 
 				{/* Desktop: interactive radial hub */}
 				<div className="relative mt-28 hidden lg:block">
-					<RadialHub />
+					{hubMounted && <RadialHub />}
 				</div>
 
 				{/* Mobile / tablet: icon grid */}
@@ -88,9 +102,13 @@ export function TechEcosystem() {
 											className="grid size-7 place-items-center rounded-lg bg-steel-50 ring-1 ring-inset ring-steel-200"
 											title={it}>
 											<IconComp
+												aria-hidden
 												className="size-4"
 												style={{ color: getTechIconColor(it) }}
 											/>
+											{/* `title` is a hover affordance; touch/AT get the real name.
+											    sr-only is position:absolute, so it adds no grid track. */}
+											<span className="sr-only">{it}</span>
 										</span>
 									);
 								})}

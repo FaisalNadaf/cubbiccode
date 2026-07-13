@@ -21,7 +21,7 @@ export function CarouselIndicators({
 	theme = "dark",
 }: {
 	className?: string;
-	thumbnails?: { src: string; alt: string }[];
+	thumbnails?: { src: string }[];
 	theme?: CarouselTheme;
 }) {
 	const { count, index, goTo } = useCarousel();

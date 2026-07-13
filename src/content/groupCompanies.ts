@@ -88,7 +88,7 @@ export const groupCompanies: GroupCompany[] = [
 			{ text: "  faster." },
 		],
 		subtitle:
-			"CareerJump connects ambitious talent with the right opportunities  resume building, interview prep and direct hiring pipelines that turn potential into placements.",
+			"CareerJump connects ambitious talent with the right opportunities resume building, interview prep and direct hiring pipelines that turn potential into placements.",
 		cta: { label: "Visit CareerJump", href: "https://careerjump.co.in/" },
 		stats: [
 			{ value: "10K+", label: "Careers Launched" },
@@ -107,9 +107,9 @@ export const groupCompanies: GroupCompany[] = [
 		],
 		theme: blueTheme,
 		meta: {
-			title: "CareerJump  Career Acceleration",
+			title: "CareerJump Career Acceleration",
 			description:
-				"CareerJump connects ambitious talent with the right opportunities  resume building, interview prep and direct hiring pipelines. Part of the Cubiccode group.",
+				"CareerJump connects ambitious talent with the right opportunities resume building, interview prep and direct hiring pipelines. Part of the Cubiccode group.",
 		},
 	},
 
@@ -125,7 +125,7 @@ export const groupCompanies: GroupCompany[] = [
 			{ text: " that move business." },
 		],
 		subtitle:
-			"A hands-on program in Belagavi  Python, SQL, Power BI, machine learning and Generative AI. Build a job-ready analytics portfolio with real datasets and mentor-led projects.",
+			"A hands-on program in Belagavi Python, SQL, Power BI, machine learning and Generative AI. Build a job-ready analytics portfolio with real datasets and mentor-led projects.",
 		cta: {
 			label: "Visit Data Analytics",
 			href: "https://dataanalyticsbelgaum.com/",
@@ -147,9 +147,9 @@ export const groupCompanies: GroupCompany[] = [
 		],
 		theme: blueTheme,
 		meta: {
-			title: "Advanced Data Analytics  With Generative AI",
+			title: "Advanced Data Analytics With Generative AI",
 			description:
-				"Hands-on Data Analytics training in Belagavi  Python, SQL, Power BI, machine learning and Generative AI with real datasets. Part of the Cubiccode group.",
+				"Hands-on Data Analytics training in Belagavi Python, SQL, Power BI, machine learning and Generative AI with real datasets. Part of the Cubiccode group.",
 		},
 	},
 
@@ -168,7 +168,7 @@ export const groupCompanies: GroupCompany[] = [
 			{ text: ", not just clicks." },
 		],
 		subtitle:
-			"Master SEO, paid ads, social media and content  a practical digital marketing program in Belagavi with live campaigns, real budgets and measurable ROI.",
+			"Master SEO, paid ads, social media and content a practical digital marketing program in Belagavi with live campaigns, real budgets and measurable ROI.",
 		cta: {
 			label: "Visit Digital Marketing",
 			href: "https://digitalmarketingbelgaum.com/",
@@ -190,9 +190,9 @@ export const groupCompanies: GroupCompany[] = [
 		],
 		theme: blueTheme,
 		meta: {
-			title: "Advanced Digital Marketing  Performance-Driven",
+			title: "Advanced Digital Marketing Performance-Driven",
 			description:
-				"Practical Digital Marketing training in Belagavi  SEO, Google & Meta ads, social and content with live campaigns and measurable ROI. Part of the Cubiccode group.",
+				"Practical Digital Marketing training in Belagavi SEO, Google & Meta ads, social and content with live campaigns and measurable ROI. Part of the Cubiccode group.",
 		},
 	},
 
@@ -208,7 +208,7 @@ export const groupCompanies: GroupCompany[] = [
 			{ text: "." },
 		],
 		subtitle:
-			"A community of developers, designers and students exploring Google technologies  meetups, hands-on workshops, study jams and DevFest. Learn, build and belong.",
+			"A community of developers, designers and students exploring Google technologies meetups, hands-on workshops, study jams and DevFest. Learn, build and belong.",
 		cta: {
 			label: "Join GDG Belgaum",
 			href: "https://gdg.community.dev/gdg-belgaum/",
@@ -230,7 +230,7 @@ export const groupCompanies: GroupCompany[] = [
 		],
 		theme: blueTheme,
 		meta: {
-			title: "GDG Belgaum  Google Developer Group",
+			title: "GDG Belgaum Google Developer Group",
 			description:
 				"GDG Belgaum is a community of developers exploring Google technologies through meetups, workshops, study jams and DevFest. Supported by Cubiccode.",
 		},

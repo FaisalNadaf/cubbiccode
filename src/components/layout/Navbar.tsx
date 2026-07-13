@@ -2,7 +2,13 @@
 
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import {
+	useCallback,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -20,6 +26,7 @@ import { Logo } from "@/components/ui/Logo";
 import { Icon } from "@/components/ui/Icon";
 import { Magnetic } from "@/components/ui/MagneticButton";
 import { cn } from "@/lib/utils";
+import { usePrefersReducedMotion } from "@/lib/motion";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 const SPRING = {
@@ -46,6 +53,7 @@ function isActiveGroup(g: NavGroup, path: string): boolean {
 }
 
 export function Navbar() {
+	const reduce = usePrefersReducedMotion();
 	const pathname = usePathname();
 	const { scrollY } = useScroll();
 	const [scrolled, setScrolled] = useState(false);
@@ -125,6 +133,46 @@ export function Navbar() {
 		setMobileOpen(false);
 	}, [pathname]);
 
+	// Stable identity: MobileMenu keys its focus-trap effect off this, and the bar
+	// re-renders on every scroll tick.
+	const closeMobile = useCallback(() => setMobileOpen(false), []);
+
+	// Freeze the page behind the drawer. `overflow: hidden` alone does not hold it:
+	// Lenis scrolls the document programmatically and never consults overflow, so it
+	// has to be stopped as well. `window.lenis` is assigned by the SmoothScroll
+	// provider's effect and is absent entirely under reduced motion, hence the
+	// guarded lookup — by the time the drawer can be opened the provider has mounted.
+	useEffect(() => {
+		if (!mobileOpen) return;
+		const html = document.documentElement;
+		const body = document.body;
+		const prevHtml = html.style.overflow;
+		const prevBody = body.style.overflow;
+		html.style.overflow = "hidden";
+		body.style.overflow = "hidden";
+		const lenis = (
+			window as unknown as { lenis?: { stop: () => void; start: () => void } }
+		).lenis;
+		lenis?.stop();
+		return () => {
+			html.style.overflow = prevHtml;
+			body.style.overflow = prevBody;
+			lenis?.start();
+		};
+	}, [mobileOpen]);
+
+	// The drawer and its toggle are both `lg:hidden`, so widening past the desktop
+	// breakpoint while it is open would strand `mobileOpen` as true — and with it an
+	// invisible scroll lock on a page whose menu is no longer reachable.
+	useEffect(() => {
+		const mq = window.matchMedia("(min-width: 1024px)");
+		const onChange = (e: MediaQueryListEvent) => {
+			if (e.matches) setMobileOpen(false);
+		};
+		mq.addEventListener("change", onChange);
+		return () => mq.removeEventListener("change", onChange);
+	}, []);
+
 	function cancelClose() {
 		if (closeTimer.current) {
 			clearTimeout(closeTimer.current);
@@ -153,9 +201,13 @@ export function Navbar() {
 
 	return (
 		<motion.header
-			initial={{ y: -90, opacity: 0, scale: 0.97 }}
+			initial={reduce ? false : { y: -90, opacity: 0, scale: 0.97 }}
 			animate={{ y: 0, opacity: 1, scale: 1 }}
-			transition={{ duration: 0.9, ease: EASE, delay: 0.05 }}
+			transition={
+				reduce ?
+					{ duration: 0 }
+				:	{ duration: 0.9, ease: EASE, delay: 0.05 }
+			}
 			className="fixed inset-x-0 top-0 z-[70]">
 			{/* ===== Full-width bar, flush to the top edge ===== */}
 			<div
@@ -232,6 +284,7 @@ export function Navbar() {
 								return panel ?
 										<button
 											key={group.label}
+											type="button"
 											ref={(el) => {
 												itemRefs.current[i] = el;
 											}}
@@ -298,7 +351,7 @@ export function Navbar() {
 			{/* ===== Mobile menu ===== */}
 			<MobileMenu
 				open={mobileOpen}
-				onClose={() => setMobileOpen(false)}
+				onClose={closeMobile}
 				pathname={pathname}
 			/>
 		</motion.header>
@@ -316,13 +369,18 @@ function ProposalCta({
 	className?: string;
 	full?: boolean;
 }) {
+	// framer drives these two loops through rAF, so the global
+	// `prefers-reduced-motion` block in globals.css (which only neutralises CSS
+	// animations/transitions) never reaches them — they need an explicit guard.
+	const reduce = usePrefersReducedMotion();
+
 	return (
 		<Magnetic
 			strength={0.3}
 			className={full ? "w-full" : undefined}>
 			<Link
 				href={site.proposalCta}
-				
+
 				rel="noopener noreferrer"
 				className={cn(
 					"group relative inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5",
@@ -333,8 +391,16 @@ function ProposalCta({
 				<motion.span
 					aria-hidden
 					className="pointer-events-none absolute -inset-0.5 -z-20 rounded-full bg-corporate-500/45 blur-md"
-					animate={{ opacity: [0.3, 0.6, 0.3], scale: [0.97, 1.04, 0.97] }}
-					transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }}
+					animate={
+						reduce ?
+							{ opacity: 0.45, scale: 1 }
+						:	{ opacity: [0.3, 0.6, 0.3], scale: [0.97, 1.04, 0.97] }
+					}
+					transition={
+						reduce ?
+							{ duration: 0 }
+						:	{ duration: 2.6, repeat: Infinity, ease: "easeInOut" }
+					}
 				/>
 				{/* animated gradient fill */}
 				<motion.span
@@ -345,8 +411,16 @@ function ProposalCta({
 							"linear-gradient(110deg,#0F4C81,#1B6EC2,#3F86D0,#1B6EC2,#0F4C81)",
 						backgroundSize: "200% 100%",
 					}}
-					animate={{ backgroundPosition: ["0% 50%", "200% 50%"] }}
-					transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+					animate={
+						reduce ?
+							{ backgroundPosition: "0% 50%" }
+						:	{ backgroundPosition: ["0% 50%", "200% 50%"] }
+					}
+					transition={
+						reduce ?
+							{ duration: 0 }
+						:	{ duration: 6, repeat: Infinity, ease: "linear" }
+					}
 				/>
 				{/* sheen sweep on hover */}
 				<span className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full">
@@ -590,9 +664,11 @@ function MobileToggle({
 	const onDark = dark || open;
 	return (
 		<button
+			type="button"
 			onClick={onClick}
 			aria-label={open ? "Close menu" : "Open menu"}
 			aria-expanded={open}
+			aria-controls="mobile-menu"
 			className={cn(
 				"relative z-[90] inline-flex size-11 items-center justify-center rounded-full border shadow-soft backdrop-blur transition-colors lg:hidden",
 				onDark ?
@@ -654,39 +730,124 @@ function MobileMenu({
 	onClose: () => void;
 	pathname: string;
 }) {
+	const reduce = usePrefersReducedMotion();
 	const [expanded, setExpanded] = useState<string | null>(null);
+	const panelRef = useRef<HTMLDivElement>(null);
+	const returnFocusRef = useRef<HTMLElement | null>(null);
+
+	// Modal semantics: move focus in, cycle Tab inside the drawer, close on Escape,
+	// hand focus back to whatever opened it. The whole subtree is `lg:hidden` and the
+	// effect only arms while `open`, so none of it can run against the desktop bar.
+	useEffect(() => {
+		if (!open) {
+			returnFocusRef.current?.focus();
+			returnFocusRef.current = null;
+			return;
+		}
+		const node = panelRef.current;
+		if (!node) return;
+
+		returnFocusRef.current = document.activeElement as HTMLElement | null;
+
+		const SELECTOR =
+			'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+		const focusables = () =>
+			Array.from(node.querySelectorAll<HTMLElement>(SELECTOR)).filter(
+				(el) => el.offsetWidth > 0 || el.offsetHeight > 0,
+			);
+
+		focusables()[0]?.focus();
+
+		const onKeyDown = (e: KeyboardEvent) => {
+			if (e.key === "Escape") {
+				e.preventDefault();
+				onClose();
+				return;
+			}
+			if (e.key !== "Tab") return;
+			const items = focusables();
+			if (items.length === 0) return;
+			const first = items[0];
+			const last = items[items.length - 1];
+			const active = document.activeElement;
+			if (e.shiftKey) {
+				if (active === first || !node.contains(active)) {
+					e.preventDefault();
+					last.focus();
+				}
+			} else if (active === last) {
+				e.preventDefault();
+				first.focus();
+			}
+		};
+
+		document.addEventListener("keydown", onKeyDown);
+		return () => document.removeEventListener("keydown", onKeyDown);
+	}, [open, onClose]);
 
 	return (
-		<AnimatePresence>
+		<AnimatePresence onExitComplete={() => setExpanded(null)}>
 			{open && (
 				<motion.div
+					id="mobile-menu"
+					role="dialog"
+					aria-modal="true"
+					aria-label="Site menu"
+					ref={panelRef}
+					// Lenis grabs wheel/touch on the document and would scroll the page
+					// behind the drawer instead of the drawer itself; `data-lenis-prevent`
+					// hands the gesture back to native scrolling inside this container.
+					data-lenis-prevent
 					initial={{ clipPath: "circle(0% at calc(100% - 36px) 36px)" }}
 					animate={{ clipPath: "circle(145% at calc(100% - 36px) 36px)" }}
 					exit={{ clipPath: "circle(0% at calc(100% - 36px) 36px)" }}
-					transition={{ duration: 0.6, ease: EASE }}
-					className="fixed inset-0 z-[85] overflow-y-auto bg-ink lg:hidden">
+					transition={
+						reduce ? { duration: 0 } : { duration: 0.6, ease: EASE }
+					}
+					className="fixed inset-0 z-[85] overflow-y-auto overscroll-contain bg-ink lg:hidden">
 					{/* animated background */}
 					<div className="pointer-events-none absolute inset-0 bg-blueprint [background-size:40px_40px] opacity-[0.14]" />
 					<motion.div
 						aria-hidden
 						className="pointer-events-none absolute -right-24 top-0 size-[460px] rounded-full bg-corporate-600/25 blur-3xl"
-						animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
-						transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+						animate={
+							reduce ? undefined : (
+								{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }
+							)
+						}
+						transition={
+							reduce ?
+								{ duration: 0 }
+							:	{ duration: 8, repeat: Infinity, ease: "easeInOut" }
+						}
 					/>
 					<motion.div
 						aria-hidden
 						className="pointer-events-none absolute -left-20 bottom-10 size-[380px] rounded-full bg-corporate-500/15 blur-3xl"
-						animate={{ scale: [1, 1.2, 1] }}
-						transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+						animate={reduce ? undefined : { scale: [1, 1.2, 1] }}
+						transition={
+							reduce ?
+								{ duration: 0 }
+							:	{ duration: 10, repeat: Infinity, ease: "easeInOut" }
+						}
 					/>
 
-					<div className="container-x relative flex min-h-full flex-col pb-10 pt-6">
+					{/* env() keeps the top row clear of the notch and the CTA clear of the
+					    home indicator on iOS; both insets are 0 on every other device. */}
+					<div className="container-x relative flex min-h-full flex-col pb-[calc(2.5rem_+_env(safe-area-inset-bottom))] pt-[calc(1.5rem_+_env(safe-area-inset-top))]">
 						<div className="flex items-center justify-between">
 							<Logo className="[&_img]:brightness-0 [&_img]:invert" />
+							{/* The header's MobileToggle is z-[90] and paints over this button,
+							    ~5px above it at the same x, so their 44px hit areas overlapped and
+							    a tap could land on either. `pointer-events-none` cedes every tap to
+							    the toggle on top (both call the same close), leaving exactly one
+							    touch target; the button stays focusable and Enter/Space still fire
+							    it, which is what keeps a close control inside the focus trap. */}
 							<button
+								type="button"
 								onClick={onClose}
 								aria-label="Close menu"
-								className="inline-flex size-11 items-center justify-center rounded-full border border-white/20 text-white">
+								className="pointer-events-none inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white">
 								<span className="relative block size-5">
 									<span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 rotate-45 rounded-full bg-white" />
 									<span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -rotate-45 rounded-full bg-white" />
@@ -733,12 +894,14 @@ function MobileMenu({
 										variants={mobileItem}
 										className="border-b border-white/10">
 										<button
+											type="button"
 											onClick={() => setExpanded(isOpen ? null : group.label)}
-											className="flex w-full items-center justify-between py-4 text-left font-display text-2xl font-semibold text-white">
+											aria-expanded={isOpen}
+											className="flex w-full items-center justify-between gap-3 py-4 text-left font-display text-2xl font-semibold text-white">
 											{group.label}
 											<ChevronDown
 												className={cn(
-													"size-5 text-corporate-300 transition-transform duration-300",
+													"size-5 shrink-0 text-corporate-300 transition-transform duration-300",
 													isOpen && "rotate-180",
 												)}
 											/>
@@ -756,7 +919,7 @@ function MobileMenu({
 															.flatMap((c) => c.links)
 															.map((link) => {
 																const linkClass =
-																	"flex items-center gap-3 rounded-xl px-2 py-2.5 text-steel-300 transition-colors hover:bg-white/5 hover:text-white";
+																	"tap-target-h flex items-center gap-3 rounded-xl px-2 py-2.5 text-steel-300 transition-colors hover:bg-white/5 hover:text-white";
 																const linkInner = (
 																	<>
 																		{link.icon && (

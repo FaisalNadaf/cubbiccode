@@ -2,6 +2,7 @@
 
 "use client";
 
+import { useEffect, useState } from "react";
 import {
 	AnimatePresence,
 	motion,
@@ -13,9 +14,27 @@ import { useCarousel } from "./CarouselContext";
 import {
 	slideVariants,
 	reducedSlideVariants,
+	touchSlideVariants,
+	reducedTouchSlideVariants,
 	swipePower,
 	SWIPE_CONFIDENCE,
 } from "./motion";
+
+/**
+ * Matches `(pointer: coarse)`. Starts false so the server render and the fine-
+ * pointer (desktop) path are identical to the pre-existing behaviour.
+ */
+function useCoarsePointer() {
+	const [coarse, setCoarse] = useState(false);
+	useEffect(() => {
+		const mq = window.matchMedia("(pointer: coarse)");
+		const sync = () => setCoarse(mq.matches);
+		sync();
+		mq.addEventListener("change", sync);
+		return () => mq.removeEventListener("change", sync);
+	}, []);
+	return coarse;
+}
 
 /**
  * CarouselViewport  renders exactly one slide (the wrapped `index`) inside an
@@ -32,7 +51,13 @@ export function CarouselViewport({
 }) {
 	const { page, index, direction, next, prev, setDragging } = useCarousel();
 	const reduce = useReducedMotion();
-	const variants = reduce ? reducedSlideVariants : slideVariants;
+	const coarse = useCoarsePointer();
+	const variants =
+		coarse ?
+			reduce ? reducedTouchSlideVariants
+			:	touchSlideVariants
+		: reduce ? reducedSlideVariants
+		: slideVariants;
 
 	const handleDragEnd = (_e: unknown, info: PanInfo) => {
 		setDragging(false);
@@ -59,7 +84,7 @@ export function CarouselViewport({
 					dragElastic={0.6}
 					onDragStart={() => setDragging(true)}
 					onDragEnd={handleDragEnd}
-					className="absolute inset-0 cursor-grab touch-pan-y will-change-transform active:cursor-grabbing">
+					className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing">
 					{render(index)}
 				</motion.div>
 			</AnimatePresence>

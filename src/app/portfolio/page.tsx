@@ -5,13 +5,17 @@
  * @format
  */
 
-"use client";
-
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/Button";
 import { ZoomParallax } from "@/components/ui/ZoomParallax";
 import { featuredProjects } from "@/content/portfolio";
 import { site } from "@/content/site";
+
+export const metadata = {
+	title: "Website Portfolio | Cubiccode",
+	description:
+		"A living showcase of 42+ live websites Cubiccode has designed, engineered and shipped for manufacturers, hospitals, schools, retailers and startups across India.",
+};
 
 export default function PortfolioPage() {
 	return (
@@ -19,7 +23,7 @@ export default function PortfolioPage() {
 			<PageHero
 				kicker="Website portfolio"
 				title="Crafted with love. Built with passion."
-				subtitle="A living showcase of 42+ live websites we've designed, engineered and shipped  for manufacturers, hospitals, schools, retailers and startups across India and beyond. Every one is in production. Visit them yourself."
+				subtitle="A living showcase of 42+ live websites we've designed, engineered and shipped for manufacturers, hospitals, schools, retailers and startups across India and beyond. Every one is in production. Visit them yourself."
 				image="/images/about/parallax-2.jpg"
 				imageAlt="A showcase of websites Cubiccode has designed and shipped"
 				breadcrumb={[{ label: "Home", href: "/" }, { label: "Portfolio" }]}>

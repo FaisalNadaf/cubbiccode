@@ -57,8 +57,11 @@ function SweepLink({
 	external?: boolean;
 	className?: string;
 }) {
+	// `.tap-target` grows the hit box to 44px via an ::after that only exists inside
+	// `@media (pointer: coarse)`; the sweep underline below is a real <span>, so the
+	// ::after slot is free. Fine-pointer rendering is byte-identical.
 	const cls = cn(
-		"group relative inline-flex items-center gap-1 rounded-sm py-1 text-steel-300 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400",
+		"tap-target group relative inline-flex items-center gap-1 rounded-sm py-1 text-steel-300 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400",
 		className,
 	);
 	const sweep = (
@@ -244,10 +247,14 @@ export function Footer() {
 									<ul className="mt-4 space-y-1.5">
 										{col.links.map((link) => (
 											<li key={link.label}>
+												{/* tap-target-h (coarse-pointer-only min-height) instead of
+												    the ::after hit box here: at ~28px per row with a 6px gap
+												    a 44px pseudo-element would overlap its neighbours and
+												    steal their taps. */}
 												<SweepLink
 													href={link.href}
 													external={link.external}
-													className="text-[13.5px] leading-relaxed">
+													className="tap-target-h text-[14px] leading-relaxed lg:text-[13.5px]">
 													{link.label}
 												</SweepLink>
 											</li>
@@ -288,7 +295,7 @@ export function Footer() {
 										href={office.map}
 										target="_blank"
 										rel="noopener noreferrer"
-										className="rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
+										className="rounded-sm text-[14px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400 lg:text-[13px]">
 										{office.lines.join(" ")}
 									</a>
 								</address>
@@ -310,7 +317,7 @@ export function Footer() {
 									<li key={p}>
 										<a
 											href={`tel:${p.replace(/\s/g, "")}`}
-											className="flex items-center gap-2 rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
+											className="tap-target-h flex items-center gap-2 rounded-sm text-[14px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400 lg:text-[13px]">
 											<Phone className="size-3.5 shrink-0 text-corporate-300/80" />
 											{p}
 										</a>
@@ -320,7 +327,7 @@ export function Footer() {
 									<li key={e}>
 										<a
 											href={`mailto:${e}`}
-											className="flex items-center gap-2 rounded-sm text-[13px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400">
+											className="tap-target-h flex items-center gap-2 rounded-sm text-[14px] leading-relaxed text-steel-400 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-400 lg:text-[13px]">
 											<Mail className="size-3.5 shrink-0 text-corporate-300/80" />
 											<span className="break-all">{e}</span>
 										</a>
@@ -340,7 +347,14 @@ export function Footer() {
 						All Rights Reserved · Designed with{" "}
 						<span className="text-corporate-300">❤</span> in INDIA 🇮🇳
 					</p>
-					<div className="flex items-center gap-5">
+					{/* Terms + Privacy + cubiccode.org + the 44px scroll-top button add up to
+					    ~282px, which overruns the 272px content box at 320px. Wrapping is
+					    scoped below lg rather than applied at base on purpose: allowing this
+					    row to wrap drops its min-content width from the sum of its children
+					    to the widest single child, which would let the outer space-between
+					    row shrink and wrap it at 1024-1100px. Desktop therefore keeps its
+					    single unwrapped line. */}
+					<div className="flex items-center gap-5 [@media(max-width:1023.98px)]:flex-wrap [@media(max-width:1023.98px)]:justify-center">
 						<SweepLink
 							href="/terms"
 							className="text-[12.5px]">

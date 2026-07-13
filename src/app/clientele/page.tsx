@@ -7,8 +7,6 @@
 
 import fs from "fs";
 import path from "path";
-import { PageHero } from "@/components/layout/PageHero";
-import { Button } from "@/components/ui/Button";
 import {
 	ClientGlobeShowcase,
 	type Logo,
@@ -16,9 +14,9 @@ import {
 import { featuredClients } from "@/content/clients";
 
 export const metadata = {
-	title: "Our Clientele  500+ Brands Trust Cubiccode",
+	title: "Our Clientele 500+ Brands Trust Cubiccode",
 	description:
-		"From Tata Sky, Reliance and Cognizant to fast-growing startups  Cubiccode serves 500+ businesses across India. A look at a few of the brands we've loved working with.",
+		"From Tata Sky, Reliance and Cognizant to fast-growing startups Cubiccode serves 500+ businesses across India. A look at a few of the brands we've loved working with.",
 };
 
 /**
@@ -55,23 +53,9 @@ export default function ClientelePage() {
 
 	return (
 		<>
-			{/* <PageHero
-        kicker="Our clientele"
-        title="Few of the top companies we've loved working with"
-        subtitle="For nearly a decade we've partnered with over 500+ businesses across India  from household names like Tata Sky, Reliance and Cognizant to ambitious startups building their first product. Here's a glimpse of the companies that trust us."
-        image="/images/Moments/EPCSCL06-GroupPicture.JPG"
-        imageAlt="The Cubiccode team with clients and partners"
-        breadcrumb={[{ label: "Home", href: "/" }, { label: "Clientele" }]}
-      >
-        <div className="flex flex-wrap items-center gap-4">
-          <Button href="/portfolio" arrow>
-            See our work
-          </Button>
-          <Button href="/case-studies" variant="outline">
-            View case studies
-          </Button>
-        </div>
-      </PageHero> */}
+			{/* The page landmark heading; ClientGlobeShowcase's own headings start at
+			    <h2>, so this restores a single top-level <h1> for the route. */}
+			<h1 className="sr-only">Our clientele</h1>
 
 			{/* Globe of client logos that scroll-morphs into the MagicBento grid */}
 			<ClientGlobeShowcase logos={logos} />

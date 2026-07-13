@@ -14,74 +14,9 @@ import {
 	type MotionValue,
 	type Variants,
 } from "framer-motion";
-import {
-	Trophy,
-	Award,
-	Medal,
-	Star,
-	GraduationCap,
-	Mic,
-	type LucideIcon,
-} from "lucide-react";
+import { Icon } from "@/components/ui/Icon";
+import { recognitions, type Recognition } from "@/content/company";
 import { cn } from "@/lib/utils";
-
-type Recognition = {
-	title: string;
-	org: string;
-	year?: string;
-	kind: string;
-	icon: LucideIcon;
-	image: string;
-};
-
-const recognitions: Recognition[] = [
-	{
-		title: "10 Best Web Development Start-ups in India",
-		org: "Named among the country’s standout web development studios of the year by Silicon India.",
-		year: "2019",
-		kind: "Recognition",
-		icon: Trophy,
-		image: "/images/Moments/india-excellence-award-certificate1.jpg",
-	},
-	{
-		title: "Most Outstanding Web Development Company in Karnataka",
-		org: "Awarded at the AI Global Excellence Awards for consistent, high-impact delivery.",
-		year: "2019",
-		kind: "Award",
-		icon: Award,
-		image: "/images/Moments/brandcounselling1.jpg",
-	},
-	{
-		title: "Silver  Web Application Development Company of the Year",
-		org: "Honoured at the 16th India Digital Awards for enterprise-grade web application work.",
-		year: "2025",
-		kind: "Award",
-		icon: Medal,
-		image: "/images/Moments/WhatsAppImage2025-11-01at6.28.58PM.jpeg",
-	},
-	{
-		title: "Best Website Designing & Development Company in Belgaum",
-		org: "Regional recognition across Karnataka for design and engineering excellence.",
-		kind: "Recognition",
-		icon: Star,
-		image: "/images/Moments/business-excellence-certificate1.jpg",
-	},
-	{
-		title: "Best Youngest Digital Marketing Teacher in India",
-		org: "Presented to co-founder Sarvesh Kakkeri at the Indian Education Awards, supported by Zee Business.",
-		year: "2019",
-		kind: "Award",
-		icon: GraduationCap,
-		image: "/images/Moments/EducationalE.jpg",
-	},
-	{
-		title: "On the TEDx Stage",
-		org: "Co-founder Sarvesh Kakkeri has delivered TEDx talks, including “A New Age Teacher”.",
-		kind: "Talk",
-		icon: Mic,
-		image: "/images/Moments/2020.jpg",
-	},
-];
 
 // Diagonal split  the slant pivots around centre (top + bottom = 100%) so left
 // and right slides share an identical width profile (56% top, 44% bottom).
@@ -208,7 +143,6 @@ function DesktopSlide({
 	const { input, output, seg, c, fade } = opacityStops(i, total);
 	const imageOnLeft = i % 2 === 0;
 	const clip = imageOnLeft ? imageClipLeft : imageClipRight;
-	const Ico = r.icon;
 
 	const imageFrom = imageOnLeft ? -160 : 160; // photo enters from its outer edge
 	const contentFrom = imageOnLeft ? 150 : -150; // content from the opposite side
@@ -282,11 +216,16 @@ function DesktopSlide({
 								"absolute inset-y-0 w-[48%] [will-change:transform]",
 								imageOnLeft ? "left-0" : "right-0",
 							)}>
+							{/* This slide only ever exists at lg+ (`hidden lg:block`), where the
+							    old media condition already resolved to 48vw — so the desktop
+							    candidate is unchanged. The `100vw` arm only ever applied below
+							    lg, where it made `priority` preload a full-width copy of an
+							    award that never paints on a phone. */}
 							<Image
 								src={r.image}
 								alt={r.title}
 								fill
-								sizes="(min-width: 1024px) 48vw, 100vw"
+								sizes="48vw"
 								priority={i === 0}
 								className="object-contain p-8 drop-shadow-[0_34px_60px_rgba(11,27,58,0.22)] lg:p-12"
 							/>
@@ -325,7 +264,10 @@ function DesktopSlide({
 					)}>
 					<div className="flex items-center gap-3.5">
 						<span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-corporate-600 text-white shadow-[0_12px_30px_-10px_rgba(27,110,194,0.6)]">
-							<Ico className="size-5" />
+							<Icon
+								name={r.icon}
+								className="size-5"
+							/>
 						</span>
 						<span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-kicker text-corporate-600">
 							{r.kind}
@@ -345,8 +287,12 @@ function DesktopSlide({
 						{r.title}
 					</h3>
 
-					<p className="mt-5 max-w-prose text-base leading-relaxed text-steel-500 sm:text-lg">
+					<p className="mt-4 text-base font-semibold text-corporate-700">
 						{r.org}
+					</p>
+
+					<p className="mt-2 max-w-prose text-base leading-relaxed text-steel-500 sm:text-lg">
+						{r.blurb}
 					</p>
 
 					<div className="mt-9 flex items-center gap-4">
@@ -375,7 +321,6 @@ function MobileRows({ reduce }: { reduce: boolean }) {
 	return (
 		<div className="flex flex-col lg:hidden">
 			{recognitions.map((r, i) => {
-				const Ico = r.icon;
 				return (
 					<section
 						key={r.title}
@@ -412,7 +357,6 @@ function MobileRows({ reduce }: { reduce: boolean }) {
 								className="border-b border-steel-200 bg-canvas px-6 py-9 sm:px-10">
 								<RecognitionBody
 									index={i}
-									icon={Ico}
 									recognition={r}
 								/>
 							</motion.div>
@@ -430,7 +374,6 @@ function DesktopStatic() {
 	return (
 		<div className="hidden flex-col lg:flex">
 			{recognitions.map((r, i) => {
-				const Ico = r.icon;
 				const imageOnLeft = i % 2 === 0;
 				const clip = imageOnLeft ? imageClipLeft : imageClipRight;
 				return (
@@ -469,7 +412,6 @@ function DesktopStatic() {
 							)}>
 							<RecognitionBody
 								index={i}
-								icon={Ico}
 								recognition={r}
 							/>
 						</div>
@@ -483,14 +425,12 @@ function DesktopStatic() {
 /** Number, icon, kind/year meta, title and body for a single recognition. */
 function RecognitionBody({
 	index,
-	icon: Ico,
 	recognition,
 }: {
 	index: number;
-	icon: LucideIcon;
 	recognition: Recognition;
 }) {
-	const { title, org, year, kind } = recognition;
+	const { title, org, blurb, year, kind, icon } = recognition;
 	return (
 		<>
 			<span className="font-display text-6xl font-bold leading-none text-corporate-600/15 sm:text-7xl">
@@ -499,7 +439,10 @@ function RecognitionBody({
 
 			<div className="mt-4 flex items-center gap-3">
 				<span className="inline-flex size-11 shrink-0 items-center justify-center rounded-2xl bg-corporate-600 text-white">
-					<Ico className="size-5" />
+					<Icon
+						name={icon}
+						className="size-5"
+					/>
 				</span>
 				<span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-kicker text-corporate-600">
 					{kind}
@@ -519,8 +462,10 @@ function RecognitionBody({
 				{title}
 			</h3>
 
-			<p className="mt-4 max-w-prose text-base leading-relaxed text-steel-500">
-				{org}
+			<p className="mt-3 text-base font-semibold text-corporate-700">{org}</p>
+
+			<p className="mt-2 max-w-prose text-base leading-relaxed text-steel-500">
+				{blurb}
 			</p>
 		</>
 	);

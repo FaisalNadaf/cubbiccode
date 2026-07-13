@@ -87,9 +87,16 @@ export function GlobeWeather({
 			passive: true,
 		});
 		window.addEventListener("pointerup", handlePointerUp, { passive: true });
+		// On touch, the browser takes the gesture over the moment it decides you are
+		// scrolling and fires `pointercancel` — never `pointerup`. Without this the
+		// drag is never closed out: `isPausedRef` stays true, so the globe's
+		// auto-spin dies for good, and every later `pointermove` keeps dragging it.
+		// A mouse never fires `pointercancel`, so no fine-pointer path changes.
+		window.addEventListener("pointercancel", handlePointerUp, { passive: true });
 		return () => {
 			window.removeEventListener("pointermove", handlePointerMove);
 			window.removeEventListener("pointerup", handlePointerUp);
+			window.removeEventListener("pointercancel", handlePointerUp);
 		};
 	}, [handlePointerUp]);
 
@@ -167,6 +174,16 @@ export function GlobeWeather({
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
         }
+        /* Drag-to-spin claims the pointer outright. That is right for a mouse and
+           a trap on touch: the globe is a ~620px target parked in the middle of a
+           250vh pinned scene, so a finger landing on it could never scroll the
+           page past it. Coarse pointers keep vertical panning for the browser and
+           spin the globe on horizontal drag; fine pointers are unchanged, and
+           touch-action has no effect on a mouse in any case. */
+        .cobe-globe-canvas { touch-action: none; }
+        @media (pointer: coarse) {
+          .cobe-globe-canvas { touch-action: pan-y; }
+        }
       `}</style>
 			<svg
 				width="0"
@@ -199,6 +216,7 @@ export function GlobeWeather({
 			</svg>
 			<canvas
 				ref={canvasRef}
+				className="cobe-globe-canvas"
 				onPointerDown={handlePointerDown}
 				style={{
 					width: "100%",
@@ -207,7 +225,6 @@ export function GlobeWeather({
 					opacity: 0,
 					transition: "opacity 1.2s ease",
 					borderRadius: "50%",
-					touchAction: "none",
 				}}
 			/>
 			{markers.map((m) => (

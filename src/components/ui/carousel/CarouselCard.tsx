@@ -51,8 +51,10 @@ export function CarouselCard({
 				initial="hidden"
 				animate="show"
 				className="relative z-10 flex h-full w-full flex-col justify-center gap-5 p-5 sm:px-10 lg:flex-row lg:items-center lg:gap-12 lg:px-14">
-				{/* Text column */}
-				<div className="flex flex-1 flex-col items-start gap-4">
+				{/* Text column. Below lg the card is a *column*, where `flex-1` makes
+				    this box absorb all the free height and shove the image onto the
+				    bottom edge; it only needs to grow in the lg row layout. */}
+				<div className="flex flex-initial flex-col items-start gap-4 lg:flex-1">
 					<motion.span
 						variants={item}
 						className={cn(
@@ -90,7 +92,9 @@ export function CarouselCard({
 						draggable={false}
 						onClick={(e) => e.stopPropagation()}
 						className={cn(
-							"group/cta mt-2 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform duration-300 hover:scale-[1.03] active:scale-95",
+							// 40px tall by default; the coarse-pointer minimum lifts it to
+							// the 44px WCAG target on touch only, so desktop cannot move.
+							"group/cta mt-2 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold shadow-sm transition-transform duration-300 hover:scale-[1.03] active:scale-95 [@media(pointer:coarse)]:min-h-11",
 							light ? "bg-ink text-white" : "bg-white text-ink",
 						)}>
 						{slide.cta.label}
@@ -98,11 +102,14 @@ export function CarouselCard({
 					</motion.a>
 				</div>
 
-				{/* Image column  large, fills the card height on desktop */}
+				{/* Image column  large, fills the card height on desktop. Below lg it
+				    is the flex item that gives way: the card has a fixed height, so if
+				    the copy runs long the image compresses instead of the text clipping
+				    out of the card's overflow-hidden box. */}
 				<motion.div
 					variants={item}
 					className={cn(
-						"relative aspect-[16/10] w-full shrink-0 overflow-hidden rounded-2xl border lg:aspect-auto lg:h-full lg:w-[58%]",
+						"relative aspect-[16/10] w-full shrink overflow-hidden rounded-2xl border lg:aspect-auto lg:h-full lg:w-[58%] lg:shrink-0",
 						light ? "border-steel-200" : "border-white/10",
 					)}>
 					<Image

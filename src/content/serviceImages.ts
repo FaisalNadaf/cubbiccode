@@ -141,7 +141,7 @@ const INDUSTRY_IMAGE: Record<string, string> = {
   smes: p("SmallMediumEnterprisesSMEs.jpg"),
   retail: p("Retail Chains & Franchises.webp"),
   staffing: p("HRStaffingAgencies.jpg"),
-  startups: p("NewStart-ups.jpg"),
+  startups: p("startup.webp"),
 };
 
 // One image per solution (aligned to industries.ts `solutions`, in order).
@@ -152,7 +152,7 @@ const INDUSTRY_SOLUTION_IMAGES: Record<string, string[]> = {
     p("CustomERP_converted.jpg"),
     p("Dealer & distributor portals_converted.jpg"),
     p("Workflow automation_converted.jpg"),
-    p("Industrial SEO.webp"),
+    p("seo.webp"),
   ],
   education: [
     p("Lead Generation.webp"),

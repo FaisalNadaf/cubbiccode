@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/Button";
 import { site } from "@/content/site";
 
 export const metadata = {
-	title: "Become a Sales Partner  Grow With Cubiccode",
+	title: "Become a Sales Partner Grow With Cubiccode",
 	description:
 		"Refer clients, earn recurring commissions and let Cubiccode handle delivery. Partner with an ISO 9001:2015 certified company trusted by 500+ businesses across India.",
 };
@@ -41,7 +41,7 @@ const steps = [
 	{
 		icon: FileSignature,
 		title: "We deliver",
-		text: "Cubiccode handles design, engineering, delivery and support  to the quality our 500+ clients expect.",
+		text: "Cubiccode handles design, engineering, delivery and support to the quality our 500+ clients expect.",
 	},
 	{
 		icon: Wallet,
@@ -54,7 +54,7 @@ const benefits = [
 	{
 		icon: TrendingUp,
 		title: "Recurring earning potential",
-		text: "Strong commissions on every project you bring in  and repeat business as clients grow with us.",
+		text: "Strong commissions on every project you bring in and repeat business as clients grow with us.",
 	},
 	{
 		icon: ShieldCheck,
@@ -64,7 +64,7 @@ const benefits = [
 	{
 		icon: Layers,
 		title: "Full-stack capability",
-		text: "Websites, web apps, custom ERP, SEO, training and remote teams  one partner covers nearly any need.",
+		text: "Websites, web apps, custom ERP, SEO, training and remote teams one partner covers nearly any need.",
 	},
 	{
 		icon: Headphones,
@@ -99,14 +99,14 @@ export default function PartnerPage() {
 			</PageHero>
 
 			{/* How it works */}
-			<section className="relative overflow-hidden bg-canvas py-20 lg:py-28">
+			<section className="relative overflow-hidden bg-canvas py-20 md:py-28 lg:py-28">
 				<div className="pointer-events-none absolute inset-0 bg-radial-fade" />
 				<div className="container-x relative">
 					<SectionHeading
 						align="center"
 						kicker="How the partnership works"
 						title="Four simple steps from referral to reward"
-						intro="A straightforward, transparent model. You bring the relationship  we bring the delivery."
+						intro="A straightforward, transparent model. You bring the relationship we bring the delivery."
 					/>
 
 					<RevealGroup
@@ -135,13 +135,13 @@ export default function PartnerPage() {
 			</section>
 
 			{/* Benefits */}
-			<section className="relative overflow-hidden bg-canvas-soft py-20 lg:py-28">
+			<section className="relative overflow-hidden bg-canvas-soft py-20 md:py-28 lg:py-28">
 				<div className="pointer-events-none absolute inset-0 bg-grid-steel [background-size:46px_46px] [mask-image:radial-gradient(70%_60%_at_50%_50%,#000,transparent)] opacity-60" />
 				<div className="container-x relative">
 					<SectionHeading
 						kicker="Why partner with us"
 						title="A partnership built to reward the right introductions"
-						intro="We invest in our partners because great referrals deserve great returns  and a delivery team that makes you look good."
+						intro="We invest in our partners because great referrals deserve great returns and a delivery team that makes you look good."
 					/>
 
 					<RevealGroup
@@ -149,7 +149,7 @@ export default function PartnerPage() {
 						className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-2">
 						{benefits.map((b) => (
 							<RevealItem key={b.title}>
-								<div className="flex h-full gap-5 rounded-4xl border border-steel-200 bg-white p-7 shadow-soft lg:p-8">
+								<div className="flex h-full flex-col gap-5 rounded-4xl border border-steel-200 bg-white p-7 shadow-soft md:flex-row lg:p-8">
 									<span className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-corporate-50 text-corporate-600 ring-1 ring-corporate-100">
 										<b.icon className="size-5" />
 									</span>
@@ -167,7 +167,7 @@ export default function PartnerPage() {
 					</RevealGroup>
 
 					<Reveal delay={0.1}>
-						<div className="mt-12 flex flex-col items-center justify-between gap-6 rounded-4xl border border-steel-200 bg-white p-8 shadow-soft sm:flex-row lg:p-10">
+						<div className="mt-12 flex flex-col items-center justify-between gap-6 rounded-4xl border border-steel-200 bg-white p-6 shadow-soft sm:p-8 md:flex-row lg:p-10">
 							<div className="max-w-xl">
 								<h3 className="font-display text-xl font-bold tracking-tight text-ink">
 									Ready to start referring?

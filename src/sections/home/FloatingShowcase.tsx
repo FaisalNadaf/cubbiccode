@@ -50,7 +50,7 @@ type Shot = {
 const shots: Shot[] = [
 	{
 		src: "/images/portfolio/prionsbiotec.jpg",
-		alt: "Prions Biotech  website built by Cubiccode",
+		alt: "Prions Biotech website built by Cubiccode",
 		pos: "lg:left-[1%] lg:top-[3%] lg:w-[52%]",
 		span: "col-span-2",
 		z: "z-20",
@@ -62,7 +62,7 @@ const shots: Shot[] = [
 	},
 	{
 		src: "/images/portfolio/positron.jpeg",
-		alt: "Positron  website built by Cubiccode",
+		alt: "Positron website built by Cubiccode",
 		pos: "lg:left-[50%] lg:top-[0%] lg:w-[46%]",
 		z: "z-30",
 		speed: 26,
@@ -73,7 +73,7 @@ const shots: Shot[] = [
 	},
 	{
 		src: "/images/portfolio/woodpeckerexotic.jpg",
-		alt: "Woodpecker Exotica  website built by Cubiccode",
+		alt: "Woodpecker Exotica website built by Cubiccode",
 		pos: "lg:left-[9%] lg:top-[39%] lg:w-[50%]",
 		z: "z-40",
 		speed: 88,
@@ -84,7 +84,7 @@ const shots: Shot[] = [
 	},
 	{
 		src: "/images/portfolio/city-index.jpg",
-		alt: "CityIndex  investment web app built by Cubiccode",
+		alt: "CityIndex investment web app built by Cubiccode",
 		pos: "lg:left-[56%] lg:top-[41%] lg:w-[42%]",
 		z: "z-20",
 		speed: 36,
@@ -95,7 +95,7 @@ const shots: Shot[] = [
 	},
 	{
 		src: "/images/portfolio/harsharakes.jpg",
-		alt: "Harsha & Rakesh Salon  e-commerce store built by Cubiccode",
+		alt: "Harsha & Rakesh Salon e-commerce store built by Cubiccode",
 		pos: "lg:left-[20%] lg:top-[71%] lg:w-[46%]",
 		z: "z-30",
 		speed: 64,
@@ -122,7 +122,14 @@ function FloatCard({ shot }: { shot: Shot }) {
 					src={shot.src}
 					alt={shot.alt}
 					fill
-					sizes="(max-width: 1024px) 45vw, 28vw"
+					// Below lg the collage is a 2-col grid, so a `span` shot is full-bleed
+					// while the rest stay half-width. The >=1024px clauses are identical
+					// for both so the collage never changes which source it picks.
+					sizes={
+						shot.span ?
+							"(max-width: 1023px) 92vw, (max-width: 1024px) 45vw, 28vw"
+						:	"(max-width: 1024px) 45vw, 28vw"
+					}
 					className="object-cover object-top transition-transform duration-700 group-hover:scale-[1.06]"
 				/>
 			</div>

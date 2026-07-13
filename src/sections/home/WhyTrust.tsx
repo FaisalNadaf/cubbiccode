@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	motion,
 	useMotionValue,
@@ -29,8 +29,8 @@ const ownership = [
 	{
 		icon: Gauge,
 		title: "Your scorecard is ours",
-		text: "We treat your launch date, your traffic and your conversions as our own KPIs  not yours alone.",
-		image: "/images/downloads/creditscor.jpg",
+		text: "We treat your launch date, your traffic and your conversions as our own KPIs not yours alone.",
+		image: "/images/Moments/varrrn.jpeg",
 	},
 	{
 		icon: LifeBuoy,
@@ -50,6 +50,7 @@ function FloatingCard({
 	position,
 	delay,
 	reduce,
+	parallax,
 }: {
 	item: (typeof ownership)[number];
 	x: MotionValue<number>;
@@ -58,12 +59,13 @@ function FloatingCard({
 	position: string;
 	delay: number;
 	reduce: boolean;
+	parallax: boolean;
 }) {
 	return (
 		<motion.div
 			// Outer layer = pointer-driven depth parallax (+ real z translate).
 			style={
-				reduce ? undefined : { x, y, z: depth, transformStyle: "preserve-3d" }
+				parallax ? { x, y, z: depth, transformStyle: "preserve-3d" } : undefined
 			}
 			className={`absolute ${position}`}>
 			<motion.div
@@ -81,16 +83,20 @@ function FloatingCard({
 						className="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-[1.08]"
 					/>
 					{/* legibility scrim  stronger so titles stay crisp on any image */}
-					<div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-transparent" />
-					<div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/85 to-transparent" />
+					<div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/10 to-transparent" />
+					<div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-ink/45 to-transparent" />
 
-					{/* content  title always, text reveals on hover */}
+					{/* content  title always, text reveals on hover (and is revealed
+					    up-front on touch, where there is no hover to reveal it with) */}
 					<div className="absolute inset-x-5 bottom-5 text-white">
 						<span className="mb-2.5 block h-[3px] w-9 rounded-full bg-corporate-400 shadow-[0_0_12px_rgba(63,134,208,0.7)]" />
 						<p className="font-display text-lg font-bold leading-snug tracking-tight text-white sm:text-xl [text-shadow:0_2px_20px_rgba(8,20,39,0.98),0_1px_2px_rgba(8,20,39,0.9)]">
 							{item.title}
 						</p>
-						<p className="mt-2 max-h-0 overflow-hidden text-[13.5px] font-medium leading-snug text-white/90 opacity-0 transition-all duration-500 ease-out [text-shadow:0_1px_10px_rgba(8,20,39,0.9)] group-hover:max-h-28 group-hover:opacity-100">
+						{/* Coarse-pointer reveal is gated at `sm` on purpose: below 640px the
+						    tile is ~145px wide, so the copy would be clipped mid-sentence by
+						    max-h-28 — worse than the title-only state it replaces. */}
+						<p className="mt-2 max-h-0 overflow-hidden text-[13.5px] font-medium leading-snug text-white/90 opacity-0 transition-all duration-500 ease-out [text-shadow:0_1px_10px_rgba(8,20,39,0.9)] group-hover:max-h-28 group-hover:opacity-100 sm:[@media(pointer:coarse)]:max-h-28 sm:[@media(pointer:coarse)]:opacity-100">
 							{item.text}
 						</p>
 					</div>
@@ -105,6 +111,22 @@ function FloatingCard({
 export function WhyTrust() {
 	const sectionRef = useRef<HTMLDivElement>(null);
 	const reduce = useReducedMotion() ?? false;
+	const [coarse, setCoarse] = useState(false);
+
+	// The cluster's tilt/parallax is a cursor affordance. A touch device has no
+	// hovering cursor, but iOS still synthesises one `mousemove` on tap — enough
+	// to jerk the whole 3D collage sideways under the finger — so the pointer
+	// layer (and the 3D context it needs) is switched off on coarse pointers.
+	// Starts `false` so the server render and first client render are unchanged.
+	useEffect(() => {
+		const mq = window.matchMedia("(pointer: coarse)");
+		const sync = () => setCoarse(mq.matches);
+		sync();
+		mq.addEventListener("change", sync);
+		return () => mq.removeEventListener("change", sync);
+	}, []);
+
+	const flat = reduce || coarse;
 
 	// Pointer tracking (0..1), spring-smoothed for buttery motion.
 	const px = useMotionValue(0.5);
@@ -133,7 +155,7 @@ export function WhyTrust() {
 	const spotlight = useMotionTemplate`radial-gradient(600px circle at ${spotX} ${spotY}, rgba(27,110,194,0.12), transparent 60%)`;
 
 	const handleMove =
-		reduce ? undefined : (
+		flat ? undefined : (
 			(e: React.MouseEvent<HTMLElement>) => {
 				const r = sectionRef.current?.getBoundingClientRect();
 				if (!r) return;
@@ -142,7 +164,7 @@ export function WhyTrust() {
 			}
 		);
 	const handleLeave =
-		reduce ? undefined : (
+		flat ? undefined : (
 			() => {
 				px.set(0.5);
 				py.set(0.5);
@@ -164,7 +186,7 @@ export function WhyTrust() {
 				<div className="absolute -right-40 -top-20 size-[560px] rounded-full bg-corporate-100/50 blur-3xl" />
 				<div className="absolute -left-40 bottom-0 size-[440px] rounded-full bg-steel-100 blur-3xl" />
 			</div>
-			{!reduce && (
+			{!flat && (
 				<motion.div
 					style={{ background: spotlight }}
 					className="pointer-events-none absolute inset-0 z-[1]"
@@ -174,7 +196,7 @@ export function WhyTrust() {
 
 			<div className="container-x relative z-10 grid items-center gap-16 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14">
 				{/* ── LEFT  copy + CTA + proof ──────────────────────────────── */}
-				<motion.div style={reduce ? undefined : { x: leftX }}>
+				<motion.div style={flat ? undefined : { x: leftX }}>
 					<Reveal>
 						<span className="inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-kicker text-corporate-600">
 							<span className="h-px w-8 bg-corporate-400/70" />
@@ -260,7 +282,7 @@ export function WhyTrust() {
 				<div className="relative [perspective:1500px]">
 					<motion.div
 						style={
-							reduce ? undefined : (
+							flat ? undefined : (
 								{
 									rotateX: tiltX,
 									rotateY: tiltY,
@@ -296,7 +318,7 @@ export function WhyTrust() {
 								repeat: Infinity,
 								ease: "easeInOut",
 							}}
-							style={reduce ? undefined : { z: 90 }}
+							style={flat ? undefined : { z: 90 }}
 							className="absolute -right-5 -bottom-5 z-40 inline-flex items-center gap-3 rounded-2xl border border-steel-200 bg-white/95 px-4 py-3 shadow-lift backdrop-blur-md">
 							<span className="flex size-9 items-center justify-center rounded-xl bg-corporate-600 text-white">
 								<Users className="size-[18px]" />
@@ -319,6 +341,7 @@ export function WhyTrust() {
 							depth={70}
 							delay={0.05}
 							reduce={reduce}
+							parallax={!flat}
 							position="right-0 top-[7%] z-30 h-[56%] w-[50%]"
 						/>
 						<FloatingCard
@@ -328,6 +351,7 @@ export function WhyTrust() {
 							depth={40}
 							delay={0.15}
 							reduce={reduce}
+							parallax={!flat}
 							position="left-0 top-0 z-20 h-[48%] w-[53%]"
 						/>
 						<FloatingCard
@@ -337,6 +361,7 @@ export function WhyTrust() {
 							depth={10}
 							delay={0.25}
 							reduce={reduce}
+							parallax={!flat}
 							position="bottom-0 left-[12%] z-10 h-[48%] w-[56%]"
 						/>
 					</motion.div>

@@ -8,6 +8,7 @@ import { Search, X, SearchX, SlidersHorizontal } from "lucide-react";
 import { Reveal } from "@/components/ui/Reveal";
 import { cn } from "@/lib/utils";
 import { SeoClientCard } from "./SeoClientCard";
+import { PlatformIcons } from "./PlatformIcons";
 import {
 	SEO_CLIENTS,
 	INDUSTRY_SEGMENTS,
@@ -50,7 +51,7 @@ function Chips({
 						onClick={() => onChange(opt.value)}
 						aria-pressed={active}
 						className={cn(
-							"relative inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-200",
+							"tap-target-h relative inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-[13px] font-medium transition-colors duration-200",
 							active ?
 								"border-ink text-white"
 							:	"border-steel-200 bg-white text-steel-600 hover:border-corporate-300 hover:text-ink",
@@ -147,9 +148,9 @@ export function SeoDashboard() {
 					<Reveal delay={0.18}>
 						<p className="mx-auto mt-4 max-w-2xl text-lg leading-relaxed text-steel-600">
 							Every card below is a live-verifiable ranking. Filter by industry or
-							city, search a keyword, then hit{" "}
-							<span className="font-semibold text-ink">Search on Google</span> to
-							see the result for yourself.
+							city, search a keyword, then hit
+							 Search on <PlatformIcons />
+							to see the result for yourself.
 						</p>
 					</Reveal>
 				</div>
@@ -159,20 +160,25 @@ export function SeoDashboard() {
 					<div className="mx-auto mt-12 max-w-2xl">
 						<div className="group relative">
 							<Search className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-steel-400 transition-colors group-focus-within:text-corporate-500" />
+							{/* The field must be 16px at base — anything smaller makes iOS Safari
+							    zoom the page on focus. The 15px design size returns at lg. */}
 							<input
 								type="text"
 								value={query}
 								onChange={(e) => setQuery(e.target.value)}
 								placeholder="Search a client, keyword, industry or city…"
 								aria-label="Search ranked clients"
-								className="h-14 w-full rounded-full border border-steel-200 bg-white pl-11 pr-11 text-[15px] text-ink shadow-soft outline-none transition-all duration-300 placeholder:text-steel-400 focus:border-corporate-400 focus:shadow-glow"
+								className="h-14 w-full rounded-full border border-steel-200 bg-white pl-11 pr-11 text-[16px] text-ink shadow-soft outline-none transition-all duration-300 placeholder:text-steel-400 focus:border-corporate-400 focus:shadow-glow lg:text-[15px]"
 							/>
 							{query && (
 								<button
 									type="button"
 									onClick={() => setQuery("")}
 									aria-label="Clear search"
-									className="absolute right-3.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-steel-400 transition-colors hover:bg-steel-100 hover:text-ink">
+									/* 44x44 on touch. right-1.5 + size-11 keeps the glyph's centre on
+									   the exact pixel right-3.5 + size-7 puts it, so only the hit area
+									   grows. Both variants are inert on a fine pointer. */
+									className="absolute right-3.5 top-1/2 grid size-7 -translate-y-1/2 place-items-center rounded-full text-steel-400 transition-colors hover:bg-steel-100 hover:text-ink [@media(pointer:coarse)]:right-1.5 [@media(pointer:coarse)]:size-11">
 									<X className="size-4" />
 								</button>
 							)}
@@ -220,7 +226,7 @@ export function SeoDashboard() {
 								initial={{ opacity: 0, x: 8 }}
 								animate={{ opacity: 1, x: 0 }}
 								exit={{ opacity: 0, x: 8 }}
-								className="inline-flex items-center gap-1.5 rounded-full border border-steel-200 bg-white px-3 py-1.5 text-[13px] font-medium text-steel-600 transition-colors hover:border-corporate-300 hover:text-ink">
+								className="tap-target-h inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border border-steel-200 bg-white px-3 py-1.5 text-[13px] font-medium text-steel-600 transition-colors hover:border-corporate-300 hover:text-ink">
 								<X className="size-3.5" /> Clear filters
 							</motion.button>
 						)}
@@ -265,7 +271,7 @@ export function SeoDashboard() {
 							<button
 								type="button"
 								onClick={clearAll}
-								className="mt-6 inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-corporate-700">
+								className="tap-target-h mt-6 inline-flex items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-corporate-700">
 								<X className="size-4" /> Reset filters
 							</button>
 						</motion.div>

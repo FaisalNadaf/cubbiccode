@@ -1,5 +1,8 @@
+'use client';
+
 import React, { useRef, useEffect, useState } from 'react';
 import { gsap } from 'gsap';
+import { prefersReducedMotion } from '@/lib/motion';
 
 interface MenuItemData {
   link: string;
@@ -99,6 +102,9 @@ const MenuItem: React.FC<MenuItemProps> = ({
   useEffect(() => {
     const setupMarquee = () => {
       if (!marqueeInnerRef.current) return;
+      // An infinite GSAP tween is untouched by the global prefers-reduced-motion
+      // rule, which only neutralises CSS animation. Leave the strip parked.
+      if (prefersReducedMotion()) return;
       const marqueeContent = marqueeInnerRef.current.querySelector('.marquee-part') as HTMLElement;
       if (!marqueeContent) return;
       const contentWidth = marqueeContent.offsetWidth;
@@ -154,8 +160,10 @@ const MenuItem: React.FC<MenuItemProps> = ({
       ref={itemRef}
       style={{ borderTop: isFirst ? 'none' : `1px solid ${borderColor}` }}
     >
+      {/* `4vh` collapses to ~15px in mobile landscape (a 375px-tall viewport), so
+          below lg it takes a 20px floor. `lg:` restores the raw `4vh` desktop uses. */}
       <a
-        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-[4vh]"
+        className="flex items-center justify-center h-full relative cursor-pointer uppercase no-underline font-semibold text-[length:max(1.25rem,4vh)] lg:text-[4vh]"
         href={link}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -171,9 +179,11 @@ const MenuItem: React.FC<MenuItemProps> = ({
         <div className="h-full w-fit flex" ref={marqueeInnerRef}>
           {[...Array(repetitions)].map((_, idx) => (
             <div className="marquee-part flex items-center flex-shrink-0" key={idx} style={{ color: marqueeTextColor }}>
-              <span className="whitespace-nowrap uppercase font-normal text-[4vh] leading-[1] px-[1vw]">{text}</span>
+              <span className="whitespace-nowrap uppercase font-normal text-[length:max(1.25rem,4vh)] lg:text-[4vh] leading-[1] px-[1vw]">{text}</span>
+              {/* A 200px chip is over half a 320px screen, so one repeat of the strip
+                  reads as a wall of image. It is back to 200px from lg up. */}
               <div
-                className="w-[200px] h-[7vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
+                className="w-[120px] lg:w-[200px] h-[7vh] my-[2em] mx-[2vw] py-[1em] rounded-[50px] bg-cover bg-center"
                 style={{ backgroundImage: `url(${image})` }}
               />
             </div>

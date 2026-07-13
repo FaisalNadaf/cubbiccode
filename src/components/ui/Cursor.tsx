@@ -5,56 +5,77 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 /** Subtle dual-ring custom cursor. Desktop pointer devices only. */
 export function Cursor() {
-  const [enabled, setEnabled] = useState(false);
-  const [active, setActive] = useState(false);
-  const x = useMotionValue(-100);
-  const y = useMotionValue(-100);
-  const ringX = useSpring(x, { stiffness: 220, damping: 26, mass: 0.5 });
-  const ringY = useSpring(y, { stiffness: 220, damping: 26, mass: 0.5 });
+	const [enabled, setEnabled] = useState(false);
+	const [active, setActive] = useState(false);
 
-  useEffect(() => {
-    const fine =
-      window.matchMedia("(pointer: fine)").matches &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!fine) return;
-    setEnabled(true);
+	const x = useMotionValue(-100);
+	const y = useMotionValue(-100);
+	const ringX = useSpring(x, { stiffness: 220, damping: 26, mass: 0.5 });
+	const ringY = useSpring(y, { stiffness: 220, damping: 26, mass: 0.5 });
 
-    const move = (e: MouseEvent) => {
-      x.set(e.clientX);
-      y.set(e.clientY);
-    };
-    const over = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      setActive(!!target.closest("a,button,[data-cursor],input,textarea"));
-    };
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseover", over);
-    return () => {
-      window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseover", over);
-    };
-  }, [x, y]);
+	useEffect(() => {
+		const fine =
+			window.matchMedia("(pointer: fine)").matches &&
+			!window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		if (!fine) return;
+		setEnabled(true);
 
-  if (!enabled) return null;
+		const move = (e: MouseEvent) => {
+			x.set(e.clientX);
+			y.set(e.clientY);
+		};
+		const over = (e: MouseEvent) => {
+			const target = e.target as HTMLElement;
+			setActive(!!target.closest("a,button,[data-cursor],input,textarea"));
+		};
+		// Neither handler calls preventDefault; passive lets the browser skip the
+		// "will it block scrolling?" wait on every event.
+		window.addEventListener("mousemove", move, { passive: true });
+		window.addEventListener("mouseover", over, { passive: true });
+		return () => {
+			window.removeEventListener("mousemove", move);
+			window.removeEventListener("mouseover", over);
+		};
+	}, [x, y]);
 
-  return (
-    <>
-      <motion.div
-        style={{ left: x, top: y }}
-        className="pointer-events-none fixed z-[90] hidden -translate-x-1/2 -translate-y-1/2 rounded-full bg-corporate-600 lg:block"
-        animate={{ width: active ? 8 : 6, height: active ? 8 : 6 }}
-      />
-      <motion.div
-        style={{ left: ringX, top: ringY }}
-        className="pointer-events-none fixed z-[90] hidden -translate-x-1/2 -translate-y-1/2 rounded-full border border-ink/40 lg:block"
-        animate={{
-          width: active ? 56 : 34,
-          height: active ? 56 : 34,
-          borderColor: active ? "rgba(27,110,194,0.6)" : "rgba(11,27,58,0.35)",
-          backgroundColor: active ? "rgba(27,110,194,0.06)" : "rgba(27,110,194,0)",
-        }}
-        transition={{ type: "spring", stiffness: 220, damping: 22 }}
-      />
-    </>
-  );
+	if (!enabled) return null;
+
+	// Position is driven by `x`/`y` (compositor transforms) instead of `left`/
+	// `top`, which invalidated layout on every pointer frame — and again on each
+	// spring frame while the ring settled behind the cursor.
+	//
+	// Centering is done with negative margins rather than a -50% translate, so
+	// framer-motion's composed transform stays purely translate and nothing
+	// fights it. Size still animates on hover: that fires twice per hover, not
+	// 60x/second, and keeps the ring's 1px border visually exact (a scale()
+	// would thicken it).
+	return (
+		<>
+			<motion.div
+				aria-hidden
+				style={{ x, y }}
+				className="pointer-events-none fixed left-0 top-0 z-[90] hidden rounded-full bg-corporate-600 will-change-transform lg:block"
+				animate={{
+					width: active ? 8 : 6,
+					height: active ? 8 : 6,
+					marginLeft: active ? -4 : -3,
+					marginTop: active ? -4 : -3,
+				}}
+			/>
+			<motion.div
+				aria-hidden
+				style={{ x: ringX, y: ringY }}
+				className="pointer-events-none fixed left-0 top-0 z-[90] hidden rounded-full border border-ink/40 will-change-transform lg:block"
+				animate={{
+					width: active ? 56 : 34,
+					height: active ? 56 : 34,
+					marginLeft: active ? -28 : -17,
+					marginTop: active ? -28 : -17,
+					borderColor: active ? "rgba(27,110,194,0.6)" : "rgba(11,27,58,0.35)",
+					backgroundColor: active ? "rgba(27,110,194,0.06)" : "rgba(27,110,194,0)",
+				}}
+				transition={{ type: "spring", stiffness: 220, damping: 22 }}
+			/>
+		</>
+	);
 }

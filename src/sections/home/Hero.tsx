@@ -90,7 +90,7 @@ export function Hero() {
 				{/* ── Centered content ────────────────────────────────────────────── */}
 				<motion.div
 					style={reduce ? undefined : { y: contentY, opacity: contentFade }}
-					className="container-x relative z-10 flex  flex-col items-center text-center">
+					className="container-x relative z-10 flex flex-col items-center text-center">
 					<Reveal direction="up">
 						<span className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-4 py-1.5 text-xs font-medium text-white/90 shadow-soft backdrop-blur">
 							<ShieldCheck className="size-3.5 text-corporate-200" />

@@ -11,12 +11,14 @@ import {
 	useReducedMotion,
 	useTransform,
 } from "framer-motion";
+import { BrandCube } from "./BrandCube";
 
 /**
  * Preloader  branded first-load splash for Cubiccode.
  *
- * Sequence: the brand cube draws + assembles face-by-face, the wordmark
- * rises in with a letter stagger, and a hairline progress bar tracks the
+ * Sequence: the brand cube draws + assembles face-by-face, the three-line
+ * white wordmark lockup (CUBICCODE / DIGITAL MEDIA LLP / ISO 9001 : 2015
+ * CERTIFIED) rises in line by line, and a hairline progress bar tracks the
  * real page load (window `load`), showing no less than MIN_VISIBLE_MS and
  * no more than MAX_VISIBLE_MS. The exit is a two-layer curtain lift that
  * reuses the route-transition easing from app/template.tsx so the motion
@@ -42,31 +44,7 @@ const MAX_VISIBLE_MS = 5000;
 const CURTAIN_EASE = [0.76, 0, 0.24, 1] as const;
 const RISE_EASE = [0.22, 1, 0.36, 1] as const;
 
-const LETTERS = ["C", "u", "b", "i", "c", "c", "o", "d", "e"];
-const ACCENT_FROM = 5; // "code" tail rendered in corporate blue
-
-// Isometric cube faces (120×120 viewBox), each with its assembly offset
-// faces fly in from outside toward the closed cube.
-const FACES = [
-	{
-		d: "M60 22 L92 40 L60 58 L28 40 Z",
-		fill: "url(#cc-face-top)",
-		dx: 0,
-		dy: -16,
-	},
-	{
-		d: "M92 40 L92 76 L60 94 L60 58 Z",
-		fill: "url(#cc-face-right)",
-		dx: 16,
-		dy: 10,
-	},
-	{
-		d: "M28 40 L60 58 L60 94 L28 76 Z",
-		fill: "url(#cc-face-left)",
-		dx: -16,
-		dy: 10,
-	},
-];
+const LETTERS = [..."CUBICCODE"];
 
 export function Preloader() {
 	const reduce = useReducedMotion();
@@ -252,178 +230,28 @@ export function Preloader() {
 								scale: reduce ? 1 : 0.98,
 								transition: { duration: 0.26, ease: "easeIn" },
 							}}>
-							{/* Cube + glow. */}
+							{/* Cube  shared with the route-change loader. */}
 							<div className="relative">
-								<motion.div
-									aria-hidden
-									className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full"
-									style={{
-										background:
-											"radial-gradient(closest-side, rgba(63,134,208,0.4), rgba(63,134,208,0) 72%)",
-									}}
-									initial={{ opacity: 0, scale: 0.7 }}
-									animate={{ opacity: 1, scale: 1 }}
-									transition={tr({
-										duration: 0.9,
-										ease: "easeOut",
-										delay: 0.55,
-									})}>
-									{!reduce && (
-										<motion.div
-											className="absolute inset-0 rounded-full"
-											style={{
-												background:
-													"radial-gradient(closest-side, rgba(111,166,223,0.35), rgba(111,166,223,0) 65%)",
-											}}
-											animate={{ scale: [1, 1.14, 1], opacity: [0.7, 1, 0.7] }}
-											transition={{
-												duration: 3,
-												ease: "easeInOut",
-												repeat: Infinity,
-												delay: 1.4,
-											}}
-										/>
-									)}
-								</motion.div>
-
-								<motion.div
-									animate={reduce ? undefined : { y: [0, -6, 0] }}
-									transition={
-										reduce ? undefined : (
-											{
-												duration: 3.6,
-												ease: "easeInOut",
-												repeat: Infinity,
-												delay: 1.7,
-											}
-										)
-									}>
-									<svg
-										viewBox="0 0 120 120"
-										className="relative h-24 w-24 md:h-28 md:w-28"
-										aria-hidden>
-										<defs>
-											<linearGradient
-												id="cc-face-top"
-												x1="0"
-												y1="0"
-												x2="1"
-												y2="1">
-												<stop
-													offset="0%"
-													stopColor="#6FA6DF"
-												/>
-												<stop
-													offset="100%"
-													stopColor="#1B6EC2"
-												/>
-											</linearGradient>
-											<linearGradient
-												id="cc-face-right"
-												x1="0"
-												y1="0"
-												x2="0"
-												y2="1">
-												<stop
-													offset="0%"
-													stopColor="#1B6EC2"
-												/>
-												<stop
-													offset="100%"
-													stopColor="#0F4C81"
-												/>
-											</linearGradient>
-											<linearGradient
-												id="cc-face-left"
-												x1="1"
-												y1="0"
-												x2="0"
-												y2="1">
-												<stop
-													offset="0%"
-													stopColor="#0B3A63"
-												/>
-												<stop
-													offset="100%"
-													stopColor="#071D33"
-												/>
-											</linearGradient>
-										</defs>
-										{FACES.map((f, i) => (
-											<motion.path
-												key={f.d}
-												d={f.d}
-												fill={f.fill}
-												stroke="#A7C9ED"
-												strokeWidth="1.4"
-												strokeLinejoin="round"
-												strokeOpacity="0.85"
-												initial={{
-													pathLength: 0,
-													fillOpacity: 0,
-													opacity: 0,
-													x: f.dx,
-													y: f.dy,
-												}}
-												animate={{
-													pathLength: 1,
-													fillOpacity: 1,
-													opacity: 1,
-													x: 0,
-													y: 0,
-												}}
-												transition={
-													reduce ? snap : (
-														{
-															opacity: {
-																duration: 0.22,
-																ease: "easeOut",
-																delay: 0.1 + i * 0.14,
-															},
-															pathLength: {
-																duration: 0.6,
-																ease: "easeInOut",
-																delay: 0.1 + i * 0.14,
-															},
-															x: {
-																duration: 0.6,
-																ease: RISE_EASE,
-																delay: 0.1 + i * 0.14,
-															},
-															y: {
-																duration: 0.6,
-																ease: RISE_EASE,
-																delay: 0.1 + i * 0.14,
-															},
-															fillOpacity: {
-																duration: 0.5,
-																ease: "easeOut",
-																delay: 0.5 + i * 0.14,
-															},
-														}
-													)
-												}
-											/>
-										))}
-									</svg>
-								</motion.div>
+								{/* The short+coarse override is a landscape phone: at md the
+								    lockup stands ~308px tall in a ~375px viewport and runs
+								    into the bottom rail. Gated on pointer:coarse, so a fine
+								    pointer can never match it. */}
+								<BrandCube className="h-32 w-32 md:h-36 md:w-36 [@media(max-height:500px)_and_(pointer:coarse)]:!h-20 [@media(max-height:500px)_and_(pointer:coarse)]:!w-20" />
 							</div>
 
-							{/* Wordmark  per-letter rise behind an overflow mask + glint sweep. */}
-							<div className="relative mt-7 overflow-hidden px-2 pb-1 md:mt-8">
-								<div
-									aria-hidden
-									className="flex font-display text-4xl font-bold tracking-tightest md:text-5xl">
+							{/* Wordmark lockup  each line rises behind its own overflow mask,
+							    the whole stack lit by a single glint sweep. */}
+							<div
+								aria-hidden
+								className="relative mt-7 px-2 text-center text-white md:mt-8">
+								{/* CUBICCODE  per-letter stagger. */}
+								<div className="flex justify-center overflow-hidden pb-[0.12em] font-display text-[2.15rem] font-extrabold leading-none tracking-[0.005em] md:text-6xl">
 									{LETTERS.map((ch, i) => (
 										<span
 											key={i}
 											className="inline-flex overflow-hidden">
 											<motion.span
-												className={
-													i >= ACCENT_FROM ?
-														"inline-block text-corporate-400"
-													:	"inline-block text-white"
-												}
+												className="inline-block"
 												initial={{ y: "112%" }}
 												animate={{ y: 0 }}
 												transition={tr({
@@ -436,9 +264,37 @@ export function Preloader() {
 										</span>
 									))}
 								</div>
+
+								{/* DIGITAL MEDIA LLP  tracked out to sit flush under the wordmark. */}
+								<div className="mt-2 overflow-hidden pb-[0.14em] md:mt-3">
+									<motion.div
+										className="pl-[0.2em] font-display text-base font-bold leading-none tracking-[0.2em] md:text-2xl"
+										initial={{ y: "115%" }}
+										animate={{ y: 0 }}
+										transition={tr({
+											duration: 0.6,
+											ease: RISE_EASE,
+											delay: 1.32,
+										})}>
+										DIGITAL MEDIA LLP
+									</motion.div>
+								</div>
+
+								{/* ISO line. */}
+								<motion.div
+									className="mt-2.5 pl-[0.08em] text-[10px] font-semibold leading-none tracking-[0.08em] md:mt-3 md:text-sm"
+									initial={{ opacity: 0, y: 8 }}
+									animate={{ opacity: 1, y: 0 }}
+									transition={tr({
+										duration: 0.55,
+										ease: "easeOut",
+										delay: 1.62,
+									})}>
+									ISO 9001 : 2015 CERTIFIED
+								</motion.div>
+
 								{!reduce && (
 									<motion.div
-										aria-hidden
 										className="pointer-events-none absolute inset-0"
 										style={{
 											background:
@@ -451,40 +307,28 @@ export function Preloader() {
 										transition={{
 											duration: 1.1,
 											ease: "easeInOut",
-											delay: 1.9,
+											delay: 2,
 										}}
 									/>
 								)}
 							</div>
-
-							{/* Kicker. */}
-							<motion.div
-								aria-hidden
-								className="mt-4 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-kicker text-steel-400 md:text-xs"
-								initial={{ opacity: 0, y: 10 }}
-								animate={{ opacity: 1, y: 0 }}
-								transition={tr({
-									duration: 0.55,
-									ease: "easeOut",
-									delay: 1.45,
-								})}>
-								<span className="h-px w-8 bg-gradient-to-r from-transparent to-corporate-400/70" />
-								Digital Media LLP
-								<span className="h-px w-8 bg-gradient-to-l from-transparent to-corporate-400/70" />
-							</motion.div>
 						</motion.div>
 
 						{/* Bottom rail  ISO note, live percentage, hairline progress. */}
+						{/* layout.tsx ships viewport-fit=cover, so the insets are real on a
+						    notched iPhone: without this the progress bar sits under the home
+						    indicator and, in landscape, "Loading" sits under the notch. Every
+						    env() here resolves to 0px on desktop. */}
 						<motion.div
 							aria-hidden
-							className="absolute inset-x-0 bottom-0"
+							className="absolute inset-x-0 bottom-0 pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
 							initial={{ opacity: 0 }}
 							animate={{ opacity: 1 }}
 							transition={tr({ duration: 0.6, ease: "easeOut", delay: 1.5 })}
 							exit={{ opacity: 0, transition: { duration: 0.2 } }}>
 							<div className="flex items-end justify-between px-6 pb-5 md:px-8">
 								<span className="text-[10px] font-medium uppercase tracking-[0.18em] text-steel-500">
-									ISO 9001 : 2015 Certified
+									Loading
 								</span>
 								<span className="text-xs tabular-nums text-steel-400">
 									<motion.span>{pct}</motion.span>%
