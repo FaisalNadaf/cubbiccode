@@ -14,6 +14,10 @@ import { PortfolioShowcase } from "@/sections/home/PortfolioShowcase";
 import { ClientWall } from "@/sections/home/ClientWall";
 import { Testimonials } from "@/sections/home/Testimonials";
 import { TechEcosystem } from "@/sections/home/TechEcosystem";
+import { buildMetadata } from "@/lib/seo";
+import { pageSeo } from "@/content/seo";
+
+export const metadata = buildMetadata(pageSeo.home);
 
 export default function HomePage() {
 	return (

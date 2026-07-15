@@ -31,7 +31,8 @@ export type SeoIndustry =
 	| "Finance"
 	| "Fitness"
 	| "Wedding"
-	| "Sports";
+	| "Sports"
+	| "Industrial";
 
 /** Lucide icon per industry — keeps card + legend iconography consistent. */
 export const INDUSTRY_ICON: Record<SeoIndustry, string> = {
@@ -46,6 +47,7 @@ export const INDUSTRY_ICON: Record<SeoIndustry, string> = {
 	Fitness: "Dumbbell",
 	Wedding: "Gem",
 	Sports: "Trophy",
+	Industrial: "Gauge",
 };
 
 export type SeoClient = {
@@ -223,6 +225,14 @@ export const SEO_CLIENTS: SeoClient[] = [
 		city: "Bangalore",
 		keyword: "japanese classes in bangalore",
 		score: 95,
+	},
+	{
+		slug: "synapsis-techno-instruments",
+		name: "Synapsis Techno Instruments",
+		category: "Load Measuring & Payload Monitoring Systems",
+		industry: "Industrial",
+		keyword: "Online Load Measuring System",
+		score: 99,
 	},
 ];
 

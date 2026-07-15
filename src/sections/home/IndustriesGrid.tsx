@@ -202,7 +202,7 @@ function IndustryCard({
 }) {
 	return (
 		<Link
-			href={`/industries/${ind.slug}`}
+			href={ind.path}
 			className="group relative block h-full min-h-[132px] w-full transition-transform duration-300 ease-out hover:z-20 hover:-translate-y-1 focus-visible:z-20 focus-visible:outline-none lg:min-h-0">
 			{/* Thin border  accents on hover */}
 			<div

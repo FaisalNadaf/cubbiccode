@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { site, nav } from "@/content/site";
 import { cn } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 
 const EASE = [0.21, 0.47, 0.32, 0.98] as const;
 
@@ -134,7 +135,11 @@ export function Footer() {
 	const viewport = { once: true, amount: 0.15 } as const;
 
 	return (
-		<footer className="relative overflow-hidden bg-ink text-steel-300">
+		// `data-fab-yield`: the footer already carries the phone, the email and the
+		// map, so the floating contact dock steps aside here.
+		<footer
+			data-fab-yield
+			className="relative overflow-hidden bg-ink text-steel-300">
 			{/* Blueprint texture + ambient glows */}
 			<div className="pointer-events-none absolute inset-0 bg-blueprint [background-size:34px_34px] opacity-[0.12]" />
 			<div className="pointer-events-none absolute -left-40 top-0 size-96 rounded-full bg-corporate-600/20 blur-3xl" />
@@ -356,12 +361,12 @@ export function Footer() {
 					    single unwrapped line. */}
 					<div className="flex items-center gap-5 [@media(max-width:1023.98px)]:flex-wrap [@media(max-width:1023.98px)]:justify-center">
 						<SweepLink
-							href="/terms"
+							href={routes.terms}
 							className="text-[12.5px]">
 							Terms
 						</SweepLink>
 						<SweepLink
-							href="/privacy"
+							href={routes.privacy}
 							className="text-[12.5px]">
 							Privacy
 						</SweepLink>

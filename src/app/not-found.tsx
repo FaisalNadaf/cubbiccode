@@ -1,6 +1,7 @@
 /** @format */
 
 import { Button } from "@/components/ui/Button";
+import { routes } from "@/lib/routes";
 
 export default function NotFound() {
 	// `vh` resolves against the *large* viewport on mobile Safari, so 80vh is
@@ -29,7 +30,7 @@ export default function NotFound() {
 						Back to home
 					</Button>
 					<Button
-						href="/contact"
+						href={routes.contact}
 						variant="outline">
 						Contact us
 					</Button>

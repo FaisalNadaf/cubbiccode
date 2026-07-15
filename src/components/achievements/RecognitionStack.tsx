@@ -2,11 +2,12 @@
 
 "use client";
 
-import { useEffect, useState, type CSSProperties } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import ScrollStack, { ScrollStackItem } from "@/components/ScrollStack";
 import { Icon } from "@/components/ui/Icon";
 import { recognitions, type Recognition } from "@/content/company";
+import { usePrefersReducedMotion } from "@/lib/motion";
 
 const TOTAL = String(recognitions.length).padStart(2, "0");
 
@@ -200,21 +201,9 @@ export function RecognitionStack() {
 												"radial-gradient(closest-side, rgba(27,110,194,0.12), transparent)",
 										}}
 									/>
-									<Image
-										src={r.image}
-										alt={r.title}
-										fill
-										sizes="(min-width: 1024px) 55vw, 100vw"
+									<RecognitionMedia
+										r={r}
 										priority={i === 0}
-										className={
-											// Photographs fill the frame; cropping one costs nothing.
-											// Certificates and press cuttings are documents — they run
-											// edge to edge of the frame's *height* and are never
-											// cropped, so `contain` with no padding. The portrait scans
-											// are taller than the frame, so contain fits them by height
-											// and they end up full-bleed top to bottom.
-											r.fit === "cover" ? "object-cover" : "object-contain"
-										}
 									/>
 									<span
 										aria-hidden
@@ -297,5 +286,110 @@ export function RecognitionStack() {
 				})}
 			</ScrollStack>
 		</>
+	);
+}
+
+/**
+ * The proof inside a card's frame: a still, or — when the recognition has
+ * footage — a looping, self-starting YouTube embed.
+ *
+ * `mute=1` is not a preference, it is the price of admission: every browser
+ * blocks an autoplaying video that carries sound, and a blocked player just sits
+ * there on a black frame. `loop=1` alone does nothing on a single video — YouTube
+ * only honours it when `playlist` names the same id, which is what turns the
+ * clip into a one-video playlist that repeats.
+ *
+ * The player is mounted only once its card nears the viewport, and never before.
+ * Nine cards render at once, so embedding all of them up front would pull the
+ * YouTube player onto the page for footage most visitors scroll straight past,
+ * and would leave a live iframe playing inside a deck that rescales every card
+ * on scroll — forcing the player to re-rasterise on every frame. The award
+ * photograph stays underneath as the poster, so the frame is never empty while
+ * the player loads.
+ */
+function RecognitionMedia({
+	r,
+	priority,
+}: {
+	r: Recognition;
+	priority: boolean;
+}) {
+	const reduce = usePrefersReducedMotion();
+	const [near, setNear] = useState(false);
+	const frameRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const el = frameRef.current;
+		if (!el) return;
+		// No observer (old browser, jsdom) → just show it rather than never at all.
+		if (typeof IntersectionObserver === "undefined") {
+			setNear(true);
+			return;
+		}
+		const io = new IntersectionObserver(
+			([entry]) => {
+				if (!entry.isIntersecting) return;
+				setNear(true);
+				io.disconnect(); // one-way: never tear the player down mid-play
+			},
+			{ rootMargin: "300px" }, // start loading just before it is reached
+		);
+		io.observe(el);
+		return () => io.disconnect();
+	}, []);
+
+	const poster = (
+		<Image
+			src={r.image}
+			alt={r.title}
+			fill
+			sizes="(min-width: 1024px) 55vw, 100vw"
+			priority={priority}
+			className={
+				// Photographs fill the frame; cropping one costs nothing. Certificates
+				// and press cuttings are documents — they run edge to edge of the
+				// frame's *height* and are never cropped, so `contain` with no padding.
+				// The portrait scans are taller than the frame, so contain fits them by
+				// height and they end up full-bleed top to bottom.
+				r.fit === "cover" ? "object-cover" : "object-contain"
+			}
+		/>
+	);
+
+	if (!r.youtubeId) return poster;
+
+	// A video that starts and loops on its own is exactly what a reduced-motion
+	// visitor has asked not to be given, so for them the player loads paused and
+	// waits on its own play button.
+	const autoplay = !reduce;
+
+	const params = new URLSearchParams({
+		autoplay: autoplay ? "1" : "0",
+		mute: "1",
+		loop: "1",
+		playlist: r.youtubeId, // required, or `loop` is ignored on a single video
+		playsinline: "1",
+		rel: "0",
+		modestbranding: "1",
+	});
+
+	return (
+		<div
+			ref={frameRef}
+			className="absolute inset-0 size-full bg-ink">
+			{poster}
+			{near && (
+				<iframe
+					// -nocookie: no YouTube ad cookie is set on a visitor who only
+					// scrolled past the card.
+					src={`https://www.youtube-nocookie.com/embed/${r.youtubeId}?${params}`}
+					title={r.title}
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerPolicy="strict-origin-when-cross-origin"
+					allowFullScreen
+					className="absolute inset-0 size-full border-0"
+				/>
+			)}
+		</div>
 	);
 }

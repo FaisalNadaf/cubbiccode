@@ -1,6 +1,9 @@
 /** @format */
 
-// Cubiccode services  authoritative copy. Drives /capabilities/[slug] + homepage showcase.
+// Cubiccode services  authoritative copy. Drives the root [slug] capability
+// pages + the homepage showcase.
+
+import { featuredProjects } from "./portfolio";
 
 /**
  * `image` is that project's own screenshot in /public/images/portfolio. Omit it
@@ -12,6 +15,23 @@
 export type WorkItem = { name: string; note?: string; image?: string };
 
 /**
+ * Work cards projected out of the portfolio, addressed by the project's URL.
+ *
+ * The websites in the capability fan are the same builds the portfolio page
+ * shows, so their name, screenshot and copy live in `content/portfolio.ts` and
+ * are read from there — a re-shot screenshot or reworded blurb then lands on
+ * both pages at once. An unknown URL throws at build rather than silently
+ * dropping a card.
+ */
+const fromPortfolio = (...urls: string[]): WorkItem[] =>
+	urls.map((url) => {
+		const project = featuredProjects.find((p) => p.url === url);
+		if (!project)
+			throw new Error(`capabilities: no portfolio project for "${url}"`);
+		return { name: project.name, note: project.blurb, image: project.image };
+	});
+
+/**
  * One card in the "What You Get" grid — a single outcome of the engagement.
  * `icon` is a lucide name that must also be registered in components/ui/Icon.tsx.
  *
@@ -21,7 +41,12 @@ export type WorkItem = { name: string; note?: string; image?: string };
 export type Outcome = { icon: string; title: string; text: string };
 
 export type Capability = {
+	/** Stable internal id. Keys the image + copy maps — never appears in a URL. */
 	slug: string;
+	/** Canonical, keyword-first URL. Served by the root `[slug]` route. */
+	path: string;
+	metaTitle: string;
+	metaDescription: string;
 	icon: string; // lucide-react icon name
 	title: string; // nav + card title
 	short: string; // homepage "What We Do" card description
@@ -73,6 +98,11 @@ const webApps: WorkItem[] = [
 export const capabilities: Capability[] = [
 	{
 		slug: "website-development",
+		path: "/best-website-designing-and-development-company-in-belgaum-karnataka-india",
+		metaTitle:
+			"Best Website Designers and Developers in Belgaum and Bangalore, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+		metaDescription:
+			"Fast, responsive, conversion-driven websites designed and developed in Belgaum and Bangalore, Karnataka, India. 42+ live sites and 700+ builds from an ISO 9001:2015 certified team.",
 		icon: "MonitorSmartphone",
 		title: "Website Designing & Development",
 		short:
@@ -102,44 +132,24 @@ export const capabilities: Capability[] = [
 		work: {
 			heading: "Our Work Websites We've Built",
 			tag: "Website",
-			items: [
-				{
-					name: "Harsha & Rakesh Salon",
-					note: "Booking-first salon experience",
-					image: "/images/portfolio/harsharakes.jpg",
-				},
-				{
-					name: "Positron Engineering Corporation",
-					note: "Precision heat transfer, engineered for global infrastructure",
-					image: "/images/portfolio/positron.jpeg",
-				},
-				{
-					name: "Creintors Group of Companies",
-					note: "Group holding site across multiple businesses",
-					image: "/images/portfolio/creintors.jpg",
-				},
-				{
-					name: "Mabda Group",
-					note: "Industrial group brand site",
-					image: "/images/portfolio/MabdaGroup.jpg",
-				},
-				{
-					name: "Avenore Events",
-					note: "Event company portfolio and enquiry flow",
-					image: "/images/portfolio/avenoreevent.jpeg",
-				},
-				{
-					name: "Simple.life",
-					note: "Clean, conversion-led product site",
-					image: "/images/portfolio/simple.lif.jpeg",
-				},
-				// No screenshot yet — renders as a placeholder card.
-				{ name: "Initium", image: "/images/portfolio/initium.png" },
-			],
+			items: fromPortfolio(
+				"harsharakesh.com",
+				"madhtara.com",
+				"positron-he.com",
+				"foraam.com",
+				"simple.life",
+				"mabdaglobal.com/en",
+				"forcescholar.com",
+			),
 		},
 	},
 	{
 		slug: "web-application-development",
+		path: "/best-web-application-development-company-belgaum-karnataka-india",
+		metaTitle:
+			"Best Web Application Development Company in Belgaum and Bangalore, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+		metaDescription:
+			"SaaS platforms, dashboards and portals built to scale. Cubiccode's web applications run real businesses at 99.99% uptime, engineered in Belgaum and Bangalore, Karnataka, India.",
 		icon: "AppWindow",
 		title: "Web Application Development",
 		short:
@@ -174,6 +184,11 @@ export const capabilities: Capability[] = [
 	},
 	{
 		slug: "custom-erp",
+		path: "/best-custom-erp-software-development-company-in-belgaum-karnataka-india",
+		metaTitle:
+			"Best Custom ERP Software Development Company in Belgaum and Bangalore, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+		metaDescription:
+			"Custom ERP software that gives your operations one source of truth. Built for manufacturers, retailers and service businesses across Karnataka and India by Cubiccode.",
 		icon: "Boxes",
 		title: "Custom ERP Software Solutions",
 		short:
@@ -206,6 +221,11 @@ export const capabilities: Capability[] = [
 	},
 	{
 		slug: "workflow-automation",
+		path: "/best-workflow-automation-company-in-belgaum-karnataka-india",
+		metaTitle:
+			"Best Workflow Automation Company in Belgaum and Bangalore, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+		metaDescription:
+			"Automate the repetitive, scale the rest. Cubiccode builds workflow automation that strips manual work out of operations, sales and finance teams across Karnataka and India.",
 		icon: "Workflow",
 		title: "Workflow Automation",
 		short:
@@ -233,6 +253,11 @@ export const capabilities: Capability[] = [
 	},
 	{
 		slug: "seo",
+		path: "/best-seo-company-in-belgaum-karnataka-india",
+		metaTitle:
+			"Best SEO Company in Belgaum and Bangalore, Karnataka, India - Search Visibility and Domain Authority - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+		metaDescription:
+			"Rank higher, attract qualified organic traffic and build domain authority with the best SEO company in Belgaum and Bangalore, Karnataka, India. ISO 9001:2015 certified delivery.",
 		icon: "TrendingUp",
 		title: "SEO, Search Visibility & Domain Authority Accelerator",
 		short:
@@ -288,3 +313,7 @@ export const capabilities: Capability[] = [
 
 export const capabilityBySlug = (slug: string) =>
 	capabilities.find((c) => c.slug === slug);
+
+/** URL segment (no leading slash) → capability. Used by the root `[slug]` route. */
+export const capabilityByPathSegment = (segment: string) =>
+	capabilities.find((c) => c.path === `/${segment}`);

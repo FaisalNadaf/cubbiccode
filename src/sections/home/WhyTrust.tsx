@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/Button";
 import { CountStat } from "@/components/ui/Stat";
 import { Reveal } from "@/components/ui/Reveal";
 import { site } from "@/content/site";
+import { routes } from "@/lib/routes";
 
 /* Each ownership pillar now rides on its own floating image tile. */
 const ownership = [
@@ -24,7 +25,7 @@ const ownership = [
 		icon: Users,
 		title: "A cross-functional team",
 		text: "Designers, full-stack developers and a dedicated project manager on every single engagement.",
-		image: "/images/downloads/crossTeam.jpg",
+		image: "/images/Headerimages/_DSC9846 - Copy.JPG",
 	},
 	{
 		icon: Gauge,
@@ -36,7 +37,7 @@ const ownership = [
 		icon: LifeBuoy,
 		title: "We don't vanish at launch",
 		text: "Ongoing support and AMC mean we're with you long after the site goes live.",
-		image: "/images/downloads/ongingsupport.jpg",
+		image: "/images/Headerimages/_DSC9802 - Copy.JPG",
 	},
 ];
 
@@ -227,7 +228,7 @@ export function WhyTrust() {
 					<Reveal delay={0.24}>
 						<div className="mt-9 flex flex-wrap gap-3">
 							<Button
-								href="/about"
+								href={routes.about}
 								variant="outline"
 								arrow>
 								Why Cubiccode

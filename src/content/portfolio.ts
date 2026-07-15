@@ -26,6 +26,13 @@ export const featuredProjects: (WebsiteProject & {
 		image: "/images/portfolio/madhtara.jpg",
 		blurb:
 			"A refined 925-silver jewellery storefront collection-led merchandising, tactile product galleries and a checkout tuned to convert.",
+	},{
+		name: "The School Excel",
+		url: "theschoolexcel.com",
+		category: "Education",
+		image: "/images/portfolio/theschoolexce.jpeg",
+		blurb:
+			"A modern school website warm storytelling, clear admissions pathways and parent-friendly information architecture.",
 	},
 	{
 		name: "Positron",
@@ -118,6 +125,14 @@ export const featuredProjects: (WebsiteProject & {
 			"A women's streetwear store with high-energy merchandising, quick browsing and a conversion-first mobile checkout.",
 	},
 	{
+		name: "FORCE Scholar",
+		url: "forcescholar.com",
+		category: "Education",
+		image: "/images/portfolio/forcescholar.png",
+		blurb:
+			"The Foundation of Research in Careers & Education online a career exploration lab for high-school students, built around discovery calls and a clear path into the programme.",
+	},
+	{
 		name: "Woodpecker Exotica",
 		url: "woodpeckerexotica.com",
 		category: "Website",
@@ -133,7 +148,6 @@ export const featuredProjects: (WebsiteProject & {
 		blurb:
 			"A conversion-focused storefront with rich merchandising, instant search and a checkout built to sell.",
 	},
-
 
 	{
 		name: "Ankur Jewels",
@@ -187,17 +201,51 @@ export const featuredProjects: (WebsiteProject & {
 	},
 
 	{
-		name: "The School Excel",
-		url: "theschoolexcel.com",
-		category: "Education",
-		image: "/images/portfolio/theschoolexce.jpeg",
+		name: "Scheppers",
+		url: "scheppers.in",
+		category: "Website",
+		image: "/images/portfolio/schepper.jpg",
 		blurb:
-			"A modern school website warm storytelling, clear admissions pathways and parent-friendly information architecture.",
+			"An engineering and infrastructure group told as one story service divisions, group companies and clientele under a single, confident corporate system.",
+	},
+
+	{
+		name: "Prithvi Metals",
+		url: "prithvimetals.com",
+		category: "Website",
+		image: "/images/portfolio/prithvimetal.jpg",
+		blurb:
+			"A precision-engineering site for a Tier-2 Indian Defence supplier machining and surface-treatment capability laid out industry by industry, with the credibility a BrahMos-programme partner has to project.",
+	},
+
+	{
+		name: "Prasad Engineering",
+		url: "prasadengineering.in",
+		category: "Website",
+		image: "/images/portfolio/prasadengineerin.jpg",
+		blurb:
+			"An ISO-certified aluminium casting and engineering manufacturer, with capability, industries and quality systems put in front of export-ready buyers heading straight for a quote.",
+	},
+
+	{
+		name: "Roshni Boutique",
+		url: "roshniboutiques.com",
+		category: "E-commerce",
+		image: "/images/portfolio/roshniboutique.jpg",
+		blurb:
+			"A women-owned ethnic-wear boutique online occasion-led collections, inclusive plus-size ranges, pre-orders and a wholesale enquiry path running alongside the retail checkout.",
 	},
 ];
 
-// Full live website portfolio (42 projects) from cubiccode.in
+// Full live website portfolio (44 projects) from cubiccode.in
 export const websiteProjects: WebsiteProject[] = [
+	{ name: "Scheppers", url: "scheppers.in", category: "Website" },
+	{
+		name: "Prasad Engineering",
+		url: "prasadengineering.in",
+		category: "Website",
+	},
+	{ name: "FORCE Scholar", url: "forcescholar.com", category: "Education" },
 	{ name: "Prions Biotech", url: "prionsbiotech.com", category: "Website" },
 	{ name: "Avenore Events", url: "avenoreevents.com", category: "Website" },
 	{ name: "BridgeNow", url: "bridge-now.de", category: "Website" },

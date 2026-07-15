@@ -22,6 +22,7 @@ import {
 } from "framer-motion";
 import { ChevronDown, ArrowUpRight, ArrowRight } from "lucide-react";
 import { nav, site, type NavGroup, type NavLink } from "@/content/site";
+import { routes } from "@/lib/routes";
 import { Logo } from "@/components/ui/Logo";
 import { Icon } from "@/components/ui/Icon";
 import { Magnetic } from "@/components/ui/MagneticButton";
@@ -83,7 +84,7 @@ export function Navbar() {
 	// floats transparently with white text at the very top, then solidifies into the
 	// light glass bar on scroll / panel open. Only the handful of pages that open on a
 	// light background keep the solid bar from the start.
-	const lightHeroRoutes = ["/culture", "/clientele"];
+	const lightHeroRoutes: string[] = [routes.culture, routes.clientele];
 	const overDarkHero =
 		!lightHeroRoutes.includes(pathname) && !scrolled && openIndex === null;
 
@@ -478,6 +479,10 @@ function MegaPanel({
 		group.columns ??
 		(group.links ? [{ heading: group.label, links: group.links }] : []);
 	const multi = columns.length > 1;
+	const single = multi ? undefined : columns[0];
+	// Up to 4 links stack as one vertical list; longer lists would run past the
+	// viewport bottom, so they stay on the 2-up grid.
+	const verticalList = !!single && single.links.length <= 4;
 
 	// Position the panel's left edge so it is centered under its trigger,
 	// clamped to stay within the bar so it never overflows the viewport.
@@ -554,14 +559,21 @@ function MegaPanel({
 							</div>
 						))}
 					</div>
-				:	<div className="relative w-[560px] p-1.5">
-						<ColHeading>{columns[0]?.heading}</ColHeading>
+				:	<div
+						className={cn(
+							"relative p-1.5",
+							verticalList ? "w-[344px]" : "w-[560px]",
+						)}>
+						<ColHeading>{single?.heading}</ColHeading>
 						<motion.div
 							variants={listVariants}
 							initial="hidden"
 							animate="show"
-							className="mt-1 grid grid-cols-2 gap-0.5">
-							{columns[0]?.links.map((link) => (
+							className={cn(
+								"mt-1",
+								verticalList ? "space-y-0.5" : "grid grid-cols-2 gap-0.5",
+							)}>
+							{single?.links.map((link) => (
 								<LinkRow
 									key={link.label}
 									link={link}
@@ -610,11 +622,11 @@ function LinkRow({
 				</motion.span>
 			)}
 			<span className="min-w-0 flex-1">
-				<span className="block text-[14.5px] font-semibold text-ink">
+				<span className="block text-[14.5px] font-semibold leading-snug text-ink">
 					{link.label}
 				</span>
 				{link.desc && (
-					<span className="mt-0.5 block truncate text-[12.5px] text-steel-500">
+					<span className="mt-0.5 block truncate text-[12.5px] leading-snug text-steel-500">
 						{link.desc}
 					</span>
 				)}

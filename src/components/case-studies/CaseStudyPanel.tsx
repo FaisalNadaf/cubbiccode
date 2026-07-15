@@ -13,6 +13,7 @@ import type { CaseStudy } from "@/content/portfolio";
 import type { CaseChartData, ChartSpec } from "@/lib/caseStudyCharts";
 import { entryId, type SignatureSpec } from "@/lib/caseStudyMetrics";
 import { cn } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 
 /** Fixed plot height for the cartesian charts (others self-size). The chart card
  *  spans the full panel now, so the plot can afford to be taller. */
@@ -173,7 +174,7 @@ export function CaseStudyPanel({
 							</div>
 							<div className="flex flex-wrap items-center gap-3">
 								<Button
-									href="/contact"
+									href={routes.contact}
 									arrow
 									variant="accent"
 									size="sm">

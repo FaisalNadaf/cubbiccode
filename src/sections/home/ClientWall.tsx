@@ -7,6 +7,7 @@ import { Marquee } from "@/components/ui/Marquee";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { featuredClients, namedClients } from "@/content/clients";
+import { routes } from "@/lib/routes";
 
 function LogoCell({ name, logo }: { name: string; logo: string }) {
 	return (
@@ -77,7 +78,7 @@ export function ClientWall() {
 			<div className="container-x mt-12 flex justify-center">
 				<Reveal>
 					<Link
-						href="/clientele"
+						href={routes.clientele}
 						className="group tap-target-h inline-flex items-center gap-3 rounded-full border border-steel-200 bg-canvas-soft px-5 py-2.5 text-sm text-steel-600 transition-colors duration-300 hover:border-corporate-300 hover:bg-white hover:text-ink">
 						<span className="font-display text-xl font-bold text-ink">
 							500+

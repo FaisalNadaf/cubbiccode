@@ -52,7 +52,7 @@ const CHAPTERS: {
 	},
 	{
 		id: "now",
-		src: "/images/about/parallax-2.jpg",
+		src: "/images/Headerimages/Screenshot 2026-07-14 230346.png",
 		alt: "Cubiccode collecting a national award for web application development",
 		year: "2026",
 		title: "Where we are now",

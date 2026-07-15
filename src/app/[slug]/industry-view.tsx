@@ -1,0 +1,120 @@
+/**
+ * Designed & Developed by Faisal Nadaf
+ * Email : faisalfnadaf@gmail.com
+ *
+ * @format
+ */
+
+import Image from "next/image";
+import { type Industry } from "@/content/industries";
+import {
+	industryHeroImage,
+	industryImage,
+	industrySolutionImages,
+} from "@/content/serviceImages";
+import { site } from "@/content/site";
+import { routes } from "@/lib/routes";
+import { PageHero } from "@/components/layout/PageHero";
+import { SolutionsSequence } from "@/sections/industries/SolutionsSequence";
+import { HowWeDoItBetter } from "@/sections/shared/HowWeDoItBetter";
+import { TheResult } from "@/sections/shared/TheResult";
+import { Button } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
+import { Reveal } from "@/components/ui/Reveal";
+
+export function IndustryView({ ind }: { ind: Industry }) {
+	return (
+		<>
+			<PageHero
+				kicker="Industry"
+				title={ind.headline}
+				subtitle={ind.subheadline}
+				image={industryHeroImage(ind.slug)}
+				imageAlt={`The Cubiccode team delivering for ${ind.title}`}
+				breadcrumb={[
+					{ label: "Home", href: "/" },
+					{ label: "Industries" },
+					{ label: ind.title },
+				]}>
+				<div className="flex flex-wrap items-center gap-4">
+					<Button
+						href={site.proposalCta}
+						external
+						arrow
+						variant="accent"
+						size="lg">
+						{ind.cta}
+					</Button>
+					<Button
+						href={routes.caseStudies}
+						variant="outline"
+						size="lg">
+						See Our Work
+					</Button>
+				</div>
+			</PageHero>
+
+			{/* ============ THE PROBLEM ============ */}
+			<section className="section relative overflow-hidden bg-canvas">
+				<div className="pointer-events-none absolute inset-0 bg-radial-fade" />
+				<div className="container-x relative grid items-center gap-14 lg:grid-cols-2 lg:gap-20">
+					<Reveal direction="right">
+						<div>
+							<span className="kicker">The reality today</span>
+							<p className="mt-6 text-pretty text-xl font-medium leading-relaxed text-steel-700 lg:text-2xl">
+								{ind.problem}
+							</p>
+						</div>
+					</Reveal>
+
+					<Reveal
+						direction="left"
+						delay={0.1}>
+						<div className="relative">
+							<div className="pointer-events-none absolute -bottom-6 -right-6 -z-10 size-48 rounded-3xl bg-blueprint [background-size:24px_24px] opacity-60" />
+							<div className="relative overflow-hidden rounded-4xl border border-steel-200 shadow-lift">
+								<div className="relative aspect-[4/3] w-full">
+									<Image
+										src={industryImage(ind.slug)}
+										alt={ind.title}
+										fill
+										sizes="(min-width: 1024px) 45vw, 90vw"
+										className="object-cover"
+									/>
+									<div className="absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/5 to-transparent" />
+								</div>
+								<div className="absolute inset-x-0 bottom-0 p-7">
+									<span className="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-1.5 text-xs font-semibold text-ink backdrop-blur">
+										<Icon
+											name={ind.icon}
+											className="size-4 text-corporate-600"
+										/>
+										{ind.title}
+									</span>
+								</div>
+							</div>
+						</div>
+					</Reveal>
+				</div>
+			</section>
+
+			{/* ============ HOW WE HELP ============ */}
+			<SolutionsSequence
+				title={ind.title}
+				icon={ind.icon}
+				solutions={ind.solutions}
+				titles={ind.solutionTitles}
+				images={industrySolutionImages(ind.slug, ind.solutions.length)}
+			/>
+
+			{/* ============ HOW WE DO IT BETTER ============ */}
+			<HowWeDoItBetter
+				blocks={ind.better}
+				cta={ind.cta}
+			/>
+
+			{/* ============ THE RESULT ============ */}
+			<TheResult outcomes={ind.result} />
+		</>
+	);
+}

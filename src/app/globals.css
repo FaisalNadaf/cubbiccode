@@ -11,6 +11,9 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     scroll-behavior: auto; /* Lenis handles smooth scroll */
+    /* Keeps a focused control from being scrolled to rest underneath the
+       floating contact dock (WCAG 2.4.11): dock is 56px + its 16px inset. */
+    scroll-padding-bottom: 6rem;
     @apply font-sans;
   }
 
@@ -315,6 +318,13 @@ html[data-preloader-seen] [data-preloader] {
 [data-preloader] {
   animation: preloader-failsafe 0.5s ease 9s forwards;
 }
+
+/* Collect.chat needs no CSS of ours. Its launcher is a right-edge tab and its
+   panel opens in the right-hand corner; the contact dome sits bottom-CENTRE, so
+   the two never meet, in any of the three positions the dashboard offers. (The
+   dome does not fight for the corner even when the bot is put back in it.) The
+   dome's "Chatbot" action opens the same widget via collectchat.open(), and it
+   stands down entirely while the chat panel is up — see ui/FloatingContact.tsx. */
 
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {

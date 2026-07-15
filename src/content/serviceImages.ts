@@ -22,92 +22,105 @@ const fallback = (i: number) => FALLBACK_POOL[i % FALLBACK_POOL.length];
 
 /* ── Capabilities ─────────────────────────────────────────────────────────── */
 
-// Hero / card image per capability slug.
+// Card image per capability slug, read by the homepage capabilities showcase —
+// its own artwork set, kept in /images/HOMEPAGE rather than shared with the
+// service pages, so the home cards can be re-shot without touching them.
+const HOME_DIR = "/images/HOMEPAGE/";
+const home = (name: string) => `${HOME_DIR}${name}`;
+
 const CAPABILITY_IMAGE: Record<string, string> = {
-  "website-development": p("Website Designing & Development.webp"),
-  "web-application-development": p("Web Application Development.webp"),
-  "custom-erp": p("Custom ERP Software Solutions.jpg"),
-  "workflow-automation": p("Workflow Automation.jpg"),
-  seo: p("SEOSearchVisibilityDomainAuthorityAccelerator.jpg"),
+  "website-development": home("webdevelopment.webp"),
+  "web-application-development": home("webapplicationn.jpg"),
+  "custom-erp": home("customerphome.jpg"),
+  "workflow-automation": home("workflowautomatio.jpeg"),
+  seo: home("seo-capability-home.jpg"),
 };
 
 // One image per feature (aligned to capabilities.ts `features`, in order).
 const CAPABILITY_FEATURE_IMAGES: Record<string, string[]> = {
   "website-development": [
-    p("CustomWebsiteDesign.jpg"),
-    p("ResponsiveMobile-FirstBuilds.jpg"),
-    p("E-commerceStores.jpg"),
+    p("seo better result.webp"),
+    p("Responsive & Mobile-First Builds.webp"),
+    p("using e commrce website.jpg"),
     p("Booking & Appointment Websites_converted.jpg"),
-    p("High-converting landing pages.jpg"),
-    p("CMS Integration_converted.jpg"),
-    p("SpeedSEOOptimisation_converted.jpg"),
-    p("Maintenance & AMC website.webp"),
+    p("madhtara.jpg"),
+    p("CustomERP_converted.jpg"),
+    p("seo better result.webp"),
+    p("web maintainnece.webp"),
   ],
   "web-application-development": [
-    p("Custom Web Applications.webp"),
-    p("SaaS Products.webp"),
+    p("hero-minimal-bold-2.webp"),
+    p("usig saas.webp"),
     p("DashboardsAdminPanel.jpeg"),
     p("Customer & Client Portals_converted.jpg"),
-    p("API Integration & Development.webp"),
+    p("api integration amkeing payment.webp"),
     p("web application development.jpg"),
     p("Ongoing Support & AMC_converted.jpg"),
   ],
   "custom-erp": [
-    p("Custom ERP modules.webp"),
+    p("Custom logistics ERP_converted.jpg"),
     p("Role-based dashboards.webp"),
     p("Real-time reporting.webp"),
-    p("Integrations with your existing tools.webp"),
-    p("Cloud-based access.webp"),
+    p("api integration amkeing payment.webp"),
+    p("uploading in cloud.webp"),
   ],
   "workflow-automation": [
-    p("Lead Generation.webp"),
+    p("fast lead.webp"),
     p("Automated notifications_converted.jpg"),
-    p("Integrations with your existing tools.webp"),
+    p("workflow.webp"),
     p("Automatedreporting.jpg"),
-    p("Communicationautomation.jpg"),
-    p("Workflow automation_converted.jpg"),
+    p("auutomationn.webp"),
+    p("work done.webp"),
   ],
   seo: [
-    p("Technical SEO.webp"),
-    p("On-page optimisation.webp"),
-    p("Off-page & authority-building.webp"),
-    p("Local SEO & Google Business Profile.webp"),
-    p("Contentoptimisation_converted.jpg"),
+    p("tech seo.webp"),
+    p("onpageseoo.jpg"),
+    p("offpage seo.webp"),
+    p("localseo.jpg"),
+    p("lead genn.webp"),
     p("Analyticsreporting_converted.jpg"),
   ],
 };
 
 // Four topical images for the "The Problem" floating scene per capability.
+// Chosen to echo each capability's `problem` copy (slow/dated sites, scattered
+// data, manual grind, invisibility) rather than reuse the solution/feature shots.
 const CAPABILITY_PROBLEM_IMAGES: Record<string, string[]> = {
+  // Loads slowly, dated on mobile, leaks revenue, generic template build.
   "website-development": [
-    p("Slow load.webp"),
-    p("Datedonmobile.jpg"),
-    p("seo.webp"),
-    p("Lost leads.jpg"),
+    p("hero-smart-key-1.webp"),
+    p("cards-servico-editorial-1.webp"),
+    p("hero-organico-editorial-3.webp"),
+    p("hero-stats-flutuantes-3.webp"),
   ],
+  // Spreadsheets hit a ceiling, data scattered across disconnected apps,
+  // developers who disappear ("we dont vanish on launch").
   "web-application-development": [
-    p("Custom Web Applications.webp"),
-    p("SaaS Products.webp"),
-    p("DashboardsAdminPanel.jpeg"),
-    p("Customer & Client Portals_converted.jpg"),
+    p("custom dashboard.jpg"),
+    p("Web Application Development.webp"),
+    p("API Integration & Development.webp"),
+    p("we dont vansih on launch.webp"),
   ],
+  // Sales / inventory / accounts in separate silos, no real-time visibility.
   "custom-erp": [
-    p("Custom ERP modules.webp"),
-    p("Role-based dashboards.webp"),
-    p("Real-time reporting.webp"),
-    p("Integrations with your existing tools.webp"),
+    p("Custom ERP Software Solutions.jpg"),
+    p("Cloud-based access.webp"),
+    p("laptop-desk-displaying-data-charts.jpg"),
+    p("A cross-functional team.webp"),
   ],
+  // Hours lost copying data by hand, chasing follow-ups and reminders.
   "workflow-automation": [
-    p("Communicationautomation.jpg"),
-    p("Automatedreporting.jpg"),
-    p("Automated notifications_converted.jpg"),
-    p("Follow-up automation_converted.jpg"),
+    p("Workflow Automation.jpg"),
+    p("woman-working-laptop.jpg"),
+    p("auto follow up.webp"),
+    p("reminderautomai.jpg"),
   ],
+  // Invisible off page one; bad SEO (stuffing, spam) actively hurts.
   seo: [
-    p("Technical SEO.webp"),
-    p("On-page optimisation.webp"),
-    p("Off-page & authority-building.webp"),
-    p("Local SEO & Google Business Profile.webp"),
+    p("SEOSearchVisibilityDomainAuthorityAccelerator.jpg"),
+    p("SpeedSEOOptimisation_converted.jpg"),
+    p("Built-inSEOanalytics_converted.jpg"),
+    p("Contentoptimisation_converted.jpg"),
   ],
 };
 
@@ -147,76 +160,76 @@ const INDUSTRY_IMAGE: Record<string, string> = {
 // One image per solution (aligned to industries.ts `solutions`, in order).
 const INDUSTRY_SOLUTION_IMAGES: Record<string, string[]> = {
   manufacturing: [
-    p("B2B product catalogue websites.webp"),
-    p("RFQenquiryportals.jpg"),
+    p("prithvimetal.jpg"),
+    p("enquary portal.webp"),
     p("CustomERP_converted.jpg"),
     p("Dealer & distributor portals_converted.jpg"),
     p("Workflow automation_converted.jpg"),
-    p("seo.webp"),
+    p("industraila seo.webp"),
   ],
   education: [
-    p("Lead Generation.webp"),
+    p("lead generation education.webp"),
     p("Admission-focused websites engineered.webp"),
-    p("Follow-up automation_converted.jpg"),
-    p("Student & admission portals.webp"),
-    p("LearningManagementSystems_converted.jpg"),
-    p("Local & education SEO.jpg"),
+    p("auto follow up.webp"),
+    p("studenonlineapplicatipn.jpg"),
+    p("learningmanagementportal.jpg"),
+    p("localseo.jpg"),
     p("Fee & communication automation_converted.jpg"),
   ],
   logistics: [
-    p("Customertrackingportals_converted.jpg"),
+    p("onpageseoo.jpg"),
     p("Onlinebookingplatforms_converted.jpg"),
-    p("Fleet & dispatch dashboards_converted.jpg"),
+    p("fleet dispatch.webp"),
     p("Custom logistics ERP_converted.jpg"),
     p("Automated notifications_converted.jpg"),
-    p("SEO & web presence.webp"),
+    p("seo better result.webp"),
   ],
   healthcare: [
-    p("Appointment-booking websites_converted.jpg"),
-    p("Automated reminders_converted.jpg"),
+    p("appontpatient.jpg"),
+    p("auto follow up.webp"),
     p("Patient portals_converted.jpg"),
     p("Clinic & hospital management dashboards_converted.jpg"),
-    p("Local SEO & Google Business Profile.webp"),
+    p("localseo.jpg"),
     p("Review & reputation building.jpg"),
   ],
   construction: [
-    p("Premium project & property showcase websites.jpg"),
-    p("Property listing portals_converted.jpg"),
+    p("Premiumprojectpropertyshowcasewebsite.jpeg"),
+    p("propertylistingportal.jpg"),
     p("Lead-capture & CRM systems_converted.jpg"),
-    p("Follow-up automation_converted.jpg"),
-    p("Real estate SEO & local visibility_converted.jpg"),
+    p("workflow.webp"),
+    p("industraila seo.webp"),
     p("Virtualtoursrichmedia.jpg"),
   ],
   smes: [
     p("Conversion-focused websites_converted.jpg"),
-    p("E-commerceStores.jpg"),
+    p("using e commrce website.jpg"),
     p("Workflow automation_converted.jpg"),
-    p("SEO & web presence.webp"),
+    p("seo better result.webp"),
     p("A tech partner_converted.jpg"),
   ],
   retail: [
     p("Conversion-focused websites_converted.jpg"),
     p("Onlineorderinge-commerce.jpg"),
-    p("DashboardsAdminPanel.jpeg"),
+    p("Real-time reporting.webp"),
     p("Customer & Client Portals_converted.jpg"),
     p("Automatedreporting.jpg"),
-    p("Local SEO & Google Business Profile.webp"),
+    p("localseo.jpg"),
   ],
   staffing: [
-    p("Brandedjobportalscareerssites.jpg"),
-    p("DashboardsAdminPanel.jpeg"),
+    p("job attractive portal.webp"),
+    p("aplication tracking portal.webp"),
     p("Screeningschedulingautomation.jpg"),
     p("Customer & Client Portals_converted.jpg"),
     p("Candidaterolematching.jpg"),
-    p("Communicationautomation.jpg"),
+    p("auutomationn.webp"),
   ],
   startups: [
-    p("High-converting landing pages.jpg"),
-    p("MVPdevelopment.jpg"),
-    p("Scalable web apps_converted.jpg"),
-    p("Brand-grade design_converted.jpg"),
-    p("SaaS Products.webp"),
-    p("SEO & web presence.webp"),
+    p("hero-dark-luxury-2.webp"),
+    p("hero-smart-key-1.webp"),
+    p("Automatedreporting.jpg"),
+    p("hero-noir-lux-1.webp"),
+    p("usig saas.webp"),
+    p("seo better result.webp"),
   ],
 };
 
@@ -229,4 +242,51 @@ export const industrySolutionImages = (
 ): string[] => {
   const set = INDUSTRY_SOLUTION_IMAGES[slug] ?? [];
   return Array.from({ length: count }, (_, i) => set[i] ?? fallback(i));
+};
+
+/* ── Page-header photographs ──────────────────────────────────────────────── */
+
+// The studio photograph behind each page's PageHero, in /public/images/Headerimages.
+//
+// No two pages on the site share a header, so these are one shot per slug rather
+// than one shot for "capabilities" and one for "industries" — the [slug] routes
+// render many pages each, and a single image there repeated across all of them.
+// There are exactly as many photographs as pages, so there is no spare to fall
+// back on: an unmapped slug throws at build rather than quietly duplicating
+// another page's header.
+const HEADER_DIR = "/images/Headerimages/";
+const h = (name: string) => `${HEADER_DIR}${name}`;
+
+const CAPABILITY_HERO: Record<string, string> = {
+  "website-development": h("_DSC9932.JPG"),
+  "web-application-development": h("_DSC9804.JPG"),
+  "custom-erp": h("_DSC9847.JPG"),
+  "workflow-automation": h("_DSC9931.JPG"),
+  seo: h("_DSC9840.JPG"),
+};
+
+const INDUSTRY_HERO: Record<string, string> = {
+  manufacturing: h("_DSC9921.JPG"),
+  education: h("_DSC9845.JPG"),
+  logistics: h("_DSC9807.JPG"),
+  healthcare: h("_DSC9886.JPG"),
+  construction: h("_DSC9829.JPG"),
+  smes: h("_DSC9814.JPG"),
+  retail: h("_DSC9818.JPG"),
+  staffing: h("_DSC9881.JPG"),
+  startups: h("_DSC9860.JPG"),
+};
+
+export const capabilityHeroImage = (slug: string): string => {
+  const src = CAPABILITY_HERO[slug];
+  if (!src)
+    throw new Error(`serviceImages: no header photo for capability "${slug}"`);
+  return src;
+};
+
+export const industryHeroImage = (slug: string): string => {
+  const src = INDUSTRY_HERO[slug];
+  if (!src)
+    throw new Error(`serviceImages: no header photo for industry "${slug}"`);
+  return src;
 };

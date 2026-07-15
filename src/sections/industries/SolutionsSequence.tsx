@@ -40,32 +40,69 @@ const ARCH_ID = "solutions-arch-curve";
 
 type Item = { text: string; label: string; image: string };
 
-/** Derive a short, curved-title label from a full solution sentence. */
+/**
+ * Words a title must never end on. Cutting a sentence to a fixed word count
+ * routinely lands on one of these ("Real estate SEO &", "MVP development ship a"),
+ * which reads as truncated. We trim any that end up trailing so the arc headline
+ * always closes on a real word.
+ */
+const TRAILING_CONNECTIVES = new Set([
+	"&", "and", "or", "a", "an", "the", "to", "of", "for", "with", "in", "on",
+	"at", "by", "from", "that", "so", "your", "our",
+]);
+
+/**
+ * Derive a short, curved-title label from a full solution sentence.
+ *
+ * The whole sentence still shows in the caption below, so this is only the arc
+ * headline: it must read as a complete phrase, never a mid-clause cut. Two rules
+ * keep it whole:
+ *   • Split at the first *clause* boundary — a spaced connective ("… for …"),
+ *     clause punctuation (`,:(`) or a spaced dash. A dash *inside* a word is a
+ *     compound ("Candidate–role") and is kept, so it no longer truncates to
+ *     "Candidate".
+ *   • After capping the length, drop any trailing connective, so a title can
+ *     never end on "&", an article or a preposition.
+ */
 function shortLabel(s: string): string {
 	const lead = s
-		.split(/\s+(?:|–|that|so|for|with|to|connecting)\s+|[,–:(]/i)[0]
+		.split(/\s+(?:that|so|for|with|to|connecting)\s+|\s+–\s+|[,:(]/i)[0]
 		.trim();
 	const base = lead.length > 1 ? lead : s;
-	const words = base.split(/\s+/);
-	return words.length > 4 ? words.slice(0, 4).join(" ") : base;
+	let words = base.split(/\s+/);
+	if (words.length > 4) words = words.slice(0, 4);
+	while (
+		words.length > 1 &&
+		TRAILING_CONNECTIVES.has(words[words.length - 1].toLowerCase())
+	)
+		words.pop();
+	return words.join(" ");
 }
 
 export function SolutionsSequence({
 	title,
 	icon,
 	solutions,
+	titles,
 	images,
 }: {
 	title: string;
 	icon: string;
 	solutions: string[];
+	/**
+	 * Curated arc headlines, index-aligned to `solutions`. A blank or omitted
+	 * entry falls back to a label derived from the sentence (`shortLabel`). Use
+	 * this only where the derived label reads truncated — most solutions need no
+	 * override.
+	 */
+	titles?: string[];
 	/** Per-solution artwork, index-aligned to `solutions`. Falls back to the pool. */
 	images?: string[];
 }) {
 	const reduce = useReducedMotion();
 	const items: Item[] = solutions.map((text, i) => ({
 		text,
-		label: shortLabel(text),
+		label: titles?.[i]?.trim() || shortLabel(text),
 		image: images?.[i] ?? IMAGE_POOL[i % IMAGE_POOL.length],
 	}));
 

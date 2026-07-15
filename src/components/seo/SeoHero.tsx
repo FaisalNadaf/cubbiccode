@@ -9,6 +9,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Magnetic } from "@/components/ui/MagneticButton";
 import { SeoBackground } from "./SeoBackground";
 import { TOTAL_CLIENTS, INDUSTRIES, CITIES } from "@/lib/seoClients";
+import { routes } from "@/lib/routes";
 
 const TRUST = [
 	`${TOTAL_CLIENTS}+ businesses ranked`,
@@ -57,7 +58,7 @@ export function SeoHero() {
 						<div className="mt-9 flex flex-wrap items-center justify-center gap-4">
 							<Magnetic strength={0.28}>
 								<a
-									href="/contact"
+									href={routes.contact}
 									className="group relative inline-flex h-14 items-center justify-center gap-2 overflow-hidden rounded-full bg-corporate-600 px-8 text-base font-semibold text-white shadow-glow transition-transform duration-300 hover:-translate-y-0.5">
 									<span className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full">
 										<span className="absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-sm transition-transform duration-700 ease-out group-hover:translate-x-[420%]" />

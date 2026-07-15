@@ -210,7 +210,7 @@ export function CapabilitiesShowcase() {
 
 					{/* CTA button, bottom-right */}
 					<Link
-						href={`/capabilities/${cap.slug}`}
+						href={cap.path}
 						aria-label={`View ${cap.title}`}
 						className="group absolute bottom-[8vh] right-[6vw] z-40 flex w-[300px] items-center justify-between gap-4 overflow-hidden rounded-2xl bg-white p-5 shadow-card ring-1 ring-steel-200/80 transition-all duration-300 hover:-translate-y-1 hover:shadow-lift hover:ring-corporate-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-500 focus-visible:ring-offset-2">
 						{/* Blue sweep fills the card on hover */}
@@ -354,7 +354,7 @@ function CapabilitiesStatic({ animated }: { animated: boolean }) {
 									))}
 								</ul>
 								<Link
-									href={`/capabilities/${cap.slug}`}
+									href={cap.path}
 									className="group tap-target-h mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-corporate-600 hover:text-corporate-700">
 									View capability
 									<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

@@ -13,6 +13,7 @@ import {
 	useMotionValueEvent,
 	useReducedMotion,
 } from "framer-motion";
+import { routes } from "@/lib/routes";
 
 /**
  * ORIGIN · OBJECTS  scroll-pinned editorial object showcase.
@@ -219,7 +220,7 @@ export function OriginObjects() {
 
 					{/* Explore Objects button */}
 					<Link
-						href="/portfolio"
+						href={routes.portfolio}
 						className="group absolute bottom-[8vh] right-[6vw] z-40 flex h-[92px] w-[268px] flex-col justify-between rounded-2xl bg-white p-5 shadow-[0_20px_50px_-24px_rgba(21,20,21,0.45)] ring-1 ring-black/5 transition-transform duration-300 hover:-translate-y-1">
 						<span className="font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-[#151415]">
 							Explore Objects
@@ -397,7 +398,7 @@ function OriginObjectsStatic({ animated }: { animated: boolean }) {
 
 				<motion.div {...fade}>
 					<Link
-						href="/portfolio"
+						href={routes.portfolio}
 						className="group flex h-[92px] w-[268px] flex-col justify-between rounded-2xl bg-white p-5 text-left shadow-[0_20px_50px_-24px_rgba(21,20,21,0.45)] ring-1 ring-black/5">
 						<span className="font-sans text-[13px] font-medium uppercase tracking-[0.14em] text-[#151415]">
 							Explore Objects

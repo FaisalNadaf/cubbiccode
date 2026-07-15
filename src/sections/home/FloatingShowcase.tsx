@@ -9,6 +9,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { Parallax } from "@/components/ui/Parallax";
 import { cn } from "@/lib/utils";
+import { routes } from "@/lib/routes";
 
 /**
  * FLOATING-IMAGES SHOWCASE  the signature scroll moment.
@@ -242,12 +243,12 @@ export function FloatingShowcase() {
 					<Reveal delay={0.35}>
 						<div className="mt-10 flex flex-wrap gap-3">
 							<Button
-								href="/portfolio"
+								href={routes.portfolio}
 								arrow>
 								Explore Our Work
 							</Button>
 							<Button
-								href="/case-studies"
+								href={routes.caseStudies}
 								variant="outline"
 								arrow>
 								View Case Studies

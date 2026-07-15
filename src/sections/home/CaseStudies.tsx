@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 import { GlowCard } from "@/components/ui/GlowCard";
 import { Icon } from "@/components/ui/Icon";
+import { routes } from "@/lib/routes";
 
 export function CaseStudies() {
 	return (
@@ -22,7 +23,7 @@ export function CaseStudies() {
 						intro="Our web applications don't just look good they manage crores in assets, thousands of users and millions in transactions, every month."
 					/>
 					<Link
-						href="/case-studies"
+						href={routes.caseStudies}
 						className="tap-target group inline-flex items-center gap-1.5 text-sm font-medium text-corporate-200 hover:text-white">
 						All case studies
 						<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />

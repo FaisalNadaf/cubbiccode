@@ -16,6 +16,13 @@ export type Recognition = {
 	/** The proof: the certificate scan, press cutting or stage photograph. */
 	image: string;
 	/**
+	 * YouTube id of the footage of the award itself. When set, the card's figure
+	 * becomes a player: `image` stays on as its poster frame and the embed is only
+	 * fetched once someone presses play. Nothing autoplays — the card is inside a
+	 * deck that scales on scroll, and a live iframe there re-rasterises every frame.
+	 */
+	youtubeId?: string;
+	/**
 	 * Certificates and press cuttings are documents — they must be shown whole
 	 * (`contain`) or the text is cropped away. Photographs may fill the frame
 	 * (`cover`), since cropping a photo costs nothing.
@@ -52,6 +59,7 @@ export const recognitions: Recognition[] = [
 		kind: "Award",
 		icon: "GraduationCap",
 		image: "/images/Moments/DSC_7895.JPG",
+		youtubeId: "8pesjkSey9M",
 		fit: "cover",
 		aspect: 1.51,
 	},
@@ -65,8 +73,59 @@ export const recognitions: Recognition[] = [
 		icon: "Trophy",
 		image: "/images/Moments/paper.jpg",
 		fit: "contain",
-		aspect: 1.41,
+		aspect: 1.15, // measured: 1007 × 875. Guessing here is what puts bands back.
 		featured: true,
+	},
+	{
+		title: "Silver — Web Application Development Company of the Year",
+		org: "16th India Digital Awards",
+		blurb:
+			"Cubiccode Digital Media LLP took Silver at the IAMAI's 16th India Digital Awards, for enterprise-grade web application work.",
+		year: "2026",
+		kind: "Award",
+		icon: "Medal",
+		image: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
+		fit: "cover",
+		aspect: 1.9,
+		featured: true,
+	},
+
+	{
+		title: "On the TEDx Stage",
+		org: "TEDxSJEC",
+		blurb:
+			"Co-founder Sarvesh Kakkeri delivered his first TEDx talk, on teaching in the digital age, to an audience of students and aspiring entrepreneurs.",
+		year: "2020",
+		kind: "Talk",
+		icon: "Mic",
+		image: "/images/Moments/2020.jpg",
+		fit: "cover",
+		aspect: 0.92,
+	},
+	{
+		title: "Most Innovative and Creative Web Solution of the Year",
+		org: "Brandscouncil Ratings Conclave & Awards",
+		blurb:
+			"Presented at Hotel Radisson, Mumbai on 28 July 2021, following the second phase of the Brandscouncil Ratings Survey.",
+		year: "2021",
+		kind: "Award",
+		icon: "Star",
+		image: "/images/certificates/brandcounselling.jpg",
+		fit: "contain",
+		aspect: 0.75,
+	},
+	{
+		title:
+			"Most Innovative & Futuristic Training Platform of the Year, South India",
+		org: "Educational Excellence Awards & Conference",
+		blurb:
+			"Presented by BeginUp Research Intelligence at the Taj West End, Bengaluru, citing our quality training, technology courses and outstanding trainers.",
+		year: "2023",
+		kind: "Recognition",
+		icon: "BookOpen",
+		image: "/images/certificates/educationale.jpg",
+		fit: "contain",
+		aspect: 0.75,
 	},
 	{
 		title: "Most Outstanding Web Development Company",
@@ -93,67 +152,6 @@ export const recognitions: Recognition[] = [
 		fit: "contain",
 		aspect: 0.75,
 		featured: true,
-	},
-	{
-		title: "On the TEDx Stage",
-		org: "TEDxSJEC",
-		blurb:
-			"Co-founder Sarvesh Kakkeri delivered his first TEDx talk, on teaching in the digital age, to an audience of students and aspiring entrepreneurs.",
-		year: "2020",
-		kind: "Talk",
-		icon: "Mic",
-		image: "/images/Moments/2020.jpg",
-		fit: "cover",
-		aspect: 0.92,
-	},
-	{
-		title: "Most Innovative and Creative Web Solution of the Year",
-		org: "Brandscouncil Ratings Conclave & Awards",
-		blurb:
-			"Presented at Hotel Radisson, Mumbai on 28 July 2021, following the second phase of the Brandscouncil Ratings Survey.",
-		year: "2021",
-		kind: "Award",
-		icon: "Star",
-		image: "/images/certificates/brandcounselling.jpg",
-		fit: "contain",
-		aspect: 0.75,
-	},
-	{
-		title: "Most Innovative & Futuristic Training Platform of the Year, South India",
-		org: "Educational Excellence Awards & Conference",
-		blurb:
-			"Presented by BeginUp Research Intelligence at the Taj West End, Bengaluru, citing our quality training, technology courses and outstanding trainers.",
-		year: "2023",
-		kind: "Recognition",
-		icon: "BookOpen",
-		image: "/images/certificates/educationale.jpg",
-		fit: "contain",
-		aspect: 0.75,
-	},
-	{
-		title: "Silver — Web Application Development Company of the Year",
-		org: "16th India Digital Awards",
-		blurb:
-			"Cubiccode Digital Media LLP took Silver at the IAMAI's 16th India Digital Awards, for enterprise-grade web application work.",
-		year: "2026",
-		kind: "Award",
-		icon: "Medal",
-		image: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
-		fit: "cover",
-		aspect: 1.9,
-		featured: true,
-	},
-	{
-		title: "ISO 9001:2015 Certified Company",
-		org: "Quality Control Certification (UASL, UK)",
-		blurb:
-			"An audited quality management system covering our IT, training and consulting services — certificate QMS/B9F3/0125, valid to January 2028.",
-		year: "2025",
-		kind: "Certification",
-		icon: "BadgeCheck",
-		image: "/images/certificates/ISO Certificate.jpeg",
-		fit: "contain",
-		aspect: 0.7,
 	},
 ];
 
@@ -203,9 +201,9 @@ export type Milestone = {
 	/** Primary photo for the journey slideshow (in /public/images/Moments). */
 	image?: string;
 	/** Optional secondary photo layered behind the primary for depth. */
-	image2?: string;
-	/** True when `image2` is a portrait document (a certificate)  renders in a taller, fully-visible frame instead of a cropped landscape one. */
-	image2Certificate?: boolean;
+	// image2?: string;
+	// /** True when `image2` is a portrait document (a certificate)  renders in a taller, fully-visible frame instead of a cropped landscape one. */
+	// image2Certificate?: boolean;
 };
 
 // Our Journey  authoritative milestones.
@@ -215,14 +213,14 @@ export const journey: Milestone[] = [
 		title: "Cubiccode is founded",
 		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
 		image: "/images/Moments/2016.jpeg",
-		image2: "/images/Moments/1.jpg",
+		// image2: "/images/Moments/1.jpg",
 	},
 	{
 		year: "2017",
 		title: "Bridging the skills gap",
 		text: "We began training students in Belgaum after identifying a significant gap between academic learning and industry requirements. By bridging it with practical, industry-focused training, we trained over 100 students within our first year.",
 		image: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM1.jpeg",
-		image2: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM2.jpeg",
+		// // image2: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM2.jpeg",
 	},
 	{
 		year: "2018",
@@ -235,45 +233,44 @@ export const journey: Milestone[] = [
 		title: "National recognition & 250+ companies",
 		text: "A major milestone recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
 		image: "/images/Moments/DSC_5557.JPG",
-		image2: "/images/Moments/business-excellence-certificate1.jpg",
-		image2Certificate: true,
+		// image2: "/images/Moments/business-excellence-certificate1.jpg",
+		// image2Certificate: true,
 	},
 	{
 		year: "2020",
 		title: "On the TEDx stage",
 		text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
 		image: "/images/Moments/IMG_7820.JPG",
-		image2: "/images/Moments/2020.jpg",
+		// image2: "/images/Moments/2020.jpg",
 	},
 	{
 		year: "2021",
 		title: "Most Innovative & Creative Web Solution",
 		text: "At the Brandscouncil Ratings Conclave & Awards 2021, held on 28 July at Hotel Radisson, Mumbai, Cubiccode was presented the Certificate of Achievement for Most Innovative and Creative Web Solution of the Year. The honour followed the second phase of the Brandscouncil Ratings Survey 2021, an international ratings, rankings and research programme run by the Council for Brand Business Promotions and Research.",
 		image: "/images/Moments/award-bg.jpg",
-		image2: "/images/Moments/brandcounselling1.jpg",
-		image2Certificate: true,
+		// image2: "/images/Moments/brandcounselling1.jpg",
+		// image2Certificate: true,
 	},
 	{
 		year: "2022",
 		title: "GDG Belgaum & DevFest",
 		text: "We became the organizer of the Google Developer Group Belgaum, growing it into a thriving community of 4,500+ developers. Under this leadership, DevFest 2022 became the 5th largest DevFest held in the country that year.",
 		image: "/images/Moments/devfest2022_2.jpg",
-		image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
+		// // image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
 	},
 	{
 		year: "2023",
 		title: "Most Innovative & Futuristic Training Platform",
 		text: "Our training arm was recognised as the Most Innovative & Futuristic Training Platform / Institute of the Year 2023 for South India at the Educational Excellence Awards & Conference 2023, National Edition. Presented by BeginUp Research Intelligence at the Taj West End, Bengaluru, the Certificate of Recognition cited our quality training, technology courses and outstanding trainers.",
 		image: "/images/Moments/79074b8b-a3d8-4bf9-accb-708b6acb57a1.jpg",
-		image2: "/images/Moments/EducationalE.jpg",
-		image2Certificate: true,
+		// image2: "/images/Moments/EducationalE.jpg",
+		// image2Certificate: true,
 	},
 	{
 		year: "2024",
 		title: "1,000+ students trained",
 		text: "Cubiccode's sister arm the Belgaum Institute of Data Analytics and Digital Marketing with AI had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
-		image: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
-		image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.16AM.jpeg",
+		image: "/images/Headerimages/x3.jpg.jpeg",
 	},
 	{
 		year: "2025",
@@ -285,6 +282,8 @@ export const journey: Milestone[] = [
 		year: "2026",
 		title: "Our new office",
 		text: "Ten years on from the small office we started in, we moved into a new home for the team a space with room to build, to train, and to host the community that has grown around us.",
+		image: "/images/Headerimages/Screenshot 2026-07-14 230346.png",
+		// image2: "/images/Headerimages/_DSC9889.JPG",
 	},
 ];
 
@@ -292,67 +291,86 @@ export type Value = {
 	icon: string;
 	title: string;
 	text: string;
+	/**
+	 * The printed plate as it hangs on the Belagavi office wall, scanned out of
+	 * the culture deck. Order matters: `values` runs in wall order (left to
+	 * right, top to bottom), and each plate is pinned to its own value here so a
+	 * reordered list can never silently mismatch a card to someone else's plate.
+	 */
+	plate: string;
 };
 
 // Company Culture  the twelve principles.
 export const values: Value[] = [
 	{
 		icon: "ShieldCheck",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0002.jpg",
 		title: "Ownership Over Excuses",
 		text: "Take responsibility. Own the outcome. Never wait to be told twice. Solve problems.",
 	},
 	{
 		icon: "Zap",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0003.jpg",
 		title: "Speed With Excellence",
 		text: "Move fast. Maintain quality. Execute with precision. Delays kill momentum.",
 	},
 	{
 		icon: "Target",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0004.jpg",
 		title: "Outcome Oriented",
 		text: "Effort matters, but being busy means nothing. Results matter more. Deliver measurable impact.",
 	},
 	{
 		icon: "BookOpen",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0005.jpg",
 		title: "Curiosity & Continuous Learning",
 		text: "Stay adaptable. Keep learning. Keep improving. Stay ahead.",
 	},
 	{
 		icon: "TrendingUp",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0006.jpg",
 		title: "Raise The Standard",
 		text: "Good is not enough. Excellence is the expectation.",
 	},
 	{
 		icon: "Scale",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0007.jpg",
 		title: "Integrity Always",
 		text: "Do the right thing even when nobody is watching.",
 	},
 	{
 		icon: "MessagesSquare",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0008.jpg",
 		title: "Open & Honest Feedback Without Ego",
 		text: "Great teams grow through direct, transparent communication.",
 	},
 	{
 		icon: "Lightbulb",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0009.jpg",
 		title: "Solution First Thinking",
 		text: "Bring solutions, not just problems.",
 	},
 	{
 		icon: "HeartHandshake",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0010.jpg",
 		title: "Respect For People",
 		text: "Professionalism, empathy and mutual respect at all times.",
 	},
 	{
 		icon: "BadgeCheck",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0011.jpg",
 		title: "Reliability Builds Trust",
 		text: "Do what you said you would do every single time. Commitment to your deadlines.",
 	},
 	{
 		icon: "Compass",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0012.jpg",
 		title: "Purpose Driven Work",
 		text: "Understand the “why” behind everything we do.",
 	},
 	{
 		icon: "Users",
+		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0013.jpg",
 		title: "Win Together",
 		text: "Collaboration over ego. Team success over individual credit. No egos. No silos. One mission.",
 	},
@@ -397,11 +415,29 @@ export type Founder = {
 	 * monogram rather than rendering a broken image.
 	 */
 	photo?: string;
+	/**
+	 * `object-position` for the square crop, defaulting to the centre. Both press
+	 * portraits are full-body shots against the logo wall with the founder well
+	 * off-centre, so an unaided centre crop lands on the wall, not the face.
+	 */
+	photoPosition?: string;
 };
 
 export const founders: Founder[] = [
-	{ name: "Sarvesh Kakkeri", role: "Co-Founder", initials: "SK" },
-	{ name: "Shivani Jadhav", role: "Co-Founder", initials: "SJ" },
+	{
+		name: "Sarvesh Kakkeri",
+		role: "Co-Founder",
+		initials: "SK",
+		photo: "/images/press/sarvesh-kakkeri.jpg",
+		photoPosition: "12% center",
+	},
+	{
+		name: "Shivani Jadhav",
+		role: "Co-Founder",
+		initials: "SJ",
+		photo: "/images/press/shivani-jadhav.jpg",
+		photoPosition: "center 8%",
+	},
 ];
 
 // Message from the founders.

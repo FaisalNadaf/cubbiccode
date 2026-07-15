@@ -5,6 +5,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Button } from "@/components/ui/Button";
 import { Carousel } from "@/components/ui/carousel";
 import type { ShowcaseSlide } from "@/content/showcase";
+import { routes } from "@/lib/routes";
 
 // The sites featured on the home page, shown in this order.
 const HOME_SHOWCASE_URLS = [
@@ -58,7 +59,7 @@ export function PortfolioShowcase() {
 						intro="A glimpse of the brands we've helped launch, scale and grow."
 					/>
 					<Button
-						href="/portfolio"
+						href={routes.portfolio}
 						variant="outline"
 						arrow
 						className="shrink-0">

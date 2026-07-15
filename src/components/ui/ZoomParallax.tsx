@@ -54,6 +54,27 @@ const LAYOUT: { w: string; h?: string; top?: string; left?: string }[] = [
 	{ w: "min(15vw, 26.25vh)", top: "26vh", left: "31vw" }, // ≤ 14vh
 ];
 
+/**
+ * How many slides either side of the active one stay mounted.
+ *
+ * This is the whole reason the carousel scales. Every slide is two full-viewport
+ * images — a sharp `object-contain` shot and a blurred backdrop — each of which
+ * the compositor promotes to its own layer and keeps a decoded bitmap for. Mount
+ * all of them and the cost is linear in the number of projects: at 27 slides it
+ * measured 64 images, 90 promoted layers and ~114MB of decoded bitmaps, and the
+ * GPU simply ran out of budget. It then evicted and re-rastered tiles on every
+ * frame — which is what the flicker was — and dragged frames out to ~90ms, which
+ * is what made the page feel dead. Adding projects made it strictly worse, so
+ * this would have broken again on the next launch.
+ *
+ * A cross-fade only ever needs the slide you are on and the one you are heading
+ * for: `opacityStops` leaves a slide fully transparent beyond ±0.68 of a
+ * segment. One neighbour is therefore enough to be *correct*; the second is
+ * lead time, so the next shot is decoded before it has to be shown and no slide
+ * ever fades up from blank.
+ */
+const WINDOW = 2;
+
 /** Cross-fade keyframes for carousel slide `i`, clean first/last endpoints. */
 function opacityStops(i: number, total: number) {
 	const seg = 1 / total;
@@ -159,18 +180,28 @@ export function 	ZoomParallax({
 				<motion.div
 					style={{ opacity: carouselOpacity }}
 					className="absolute inset-0">
-					{images.map((img, i) => (
-						<CarouselSlide
-							key={i}
-							img={img}
-							i={i}
-							total={N}
-							cp={cp}
-						/>
-					))}
+					{images.map((img, i) =>
+						Math.abs(i - active) <= WINDOW ?
+							<CarouselSlide
+								key={i}
+								img={img}
+								i={i}
+								total={N}
+								cp={cp}
+							/>
+						:	null,
+					)}
 				</motion.div>
 
-				{/* ── Zoom scatter layer (fades out at the hand-off) ── */}
+				{/* ── Zoom scatter layer (fades out at the hand-off) ──
+				    Dropped from the tree once the carousel is properly under way. The
+				    seven tiles are full-size images on their own promoted layers, and
+				    they were being carried — decoded, composited, transformed — through
+				    the entire carousel, long after `zoomOpacity` had taken them to 0.
+				    The gate is `active`, not opacity: it only unmounts from the second
+				    slide on, so scrubbing back to the hand-off finds the tiles already
+				    there, and they are still invisible for the whole of slide 1 anyway. */}
+				{active < 1 ?
 				<motion.div
 					style={{ opacity: zoomOpacity }}
 					className="pointer-events-none absolute inset-0 z-10">
@@ -206,6 +237,7 @@ export function 	ZoomParallax({
 						</motion.div>
 					))}
 				</motion.div>
+				:	null}
 
 				{/* Legibility wash */}
 				<div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-t from-ink/70 via-transparent to-ink/25" />
@@ -299,7 +331,12 @@ function CarouselSlide({
 		<motion.div
 			style={{ opacity }}
 			className="pointer-events-none absolute inset-0 [will-change:opacity]">
-			{/* Blurred cover fill  keeps the frame immersive behind the full shot */}
+			{/* Blurred cover fill  keeps the frame immersive behind the full shot.
+			    `sizes` is deliberately tiny: this layer is under a 40px blur, a 1.1
+			    upscale and a 60% ink wash, so a ~300px source is indistinguishable
+			    from a 2560px one — and asking for the full-width candidate meant
+			    fetching and decoding a second copy of every screenshot at full size,
+			    purely to throw the detail away. */}
 			<motion.div
 				style={{ scale: bgScale }}
 				className="absolute inset-0 [will-change:transform]">
@@ -308,7 +345,7 @@ function CarouselSlide({
 					alt=""
 					aria-hidden
 					fill
-					sizes="100vw"
+					sizes="20vw"
 					className="scale-110 object-cover blur-2xl"
 				/>
 				<div className="absolute inset-0 bg-ink/60" />

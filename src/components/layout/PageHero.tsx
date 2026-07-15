@@ -10,15 +10,20 @@ import { cn } from "@/lib/utils";
  * ink overlays, breadcrumb, kicker, headline, subtitle and CTAs.
  *
  * This is the single source of truth for every interior page header, so they
- * all share the exact look of the About page hero. Pass an `image` to set the
- * background; it falls back to the About parallax shot.
+ * all share the exact look of the About page hero.
+ *
+ * `image` is required and has no default: no two pages on the site repeat a
+ * header photograph, and /public/images/Headerimages holds exactly as many
+ * shots as there are pages. A default would therefore have to be some other
+ * page's photo, and a new page that forgot to pass one would silently wear it.
+ * Requiring the prop makes that a compile error instead.
  */
 export function PageHero({
 	kicker,
 	title,
 	subtitle,
 	children,
-	image = "/images/about/parallax-1.jpg",
+	image,
 	/**
 	 * The banner sits behind four ink overlays with the headline and subtitle
 	 * already in the DOM, so it is decorative by default and is skipped by
@@ -38,11 +43,11 @@ export function PageHero({
 	 */
 	breadcrumb?: { label: string; href?: string }[];
 	children?: React.ReactNode;
-	image?: string;
+	image: string;
 	imageAlt?: string;
 	align?: "left" | "center";
 	className?: string;
-}) {
+}) {	
 	const centered = align === "center";
 
 	return (
@@ -62,18 +67,43 @@ export function PageHero({
 				"relative flex h-auto min-h-[440px] w-full items-end overflow-hidden lg:h-[50vh]",
 				className,
 			)}>
-			{/* Background image + cinematic overlays */}
-			<div className="absolute inset-0">
-				<Image
-					src={image}
-					alt={imageAlt}
-					fill
-					priority
-					sizes="100vw"
-					className="object-cover object-center"
-				/>
-				<div className="absolute inset-0 bg-ink/45" />
-				<div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20" />
+			{/* Background image + cinematic overlays.
+			    The ink base is on the wrapper, not just under the photo: from `lg` the
+			    photo only covers the right column, so the left half is this colour and
+			    nothing else. */}
+			<div className="absolute inset-0 bg-ink">
+				{/* Full-bleed below `lg` — at phone widths a half-width photo is a
+				    sliver, and the headline already sits on top of it. From `lg` it
+				    takes the right column and dissolves leftward.
+
+				    The fade is a mask, not a gradient painted over the top: the pixels
+				    themselves go transparent, so the photo melts into the ink base at
+				    any viewport width. A dark gradient overlay instead would only ever
+				    approximate the base colour and would leave a visible seam wherever
+				    the two disagreed. `-webkit-mask-image` is still required for Safari. */}
+				<div
+					className={cn(
+						"absolute inset-y-0 left-0 right-0 lg:left-1/2",
+						"lg:[-webkit-mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.45)_28%,#000_62%)]",
+						"lg:[mask-image:linear-gradient(to_right,transparent_0%,rgba(0,0,0,0.45)_28%,#000_62%)]",
+					)}>
+					<Image
+						src={image}
+						alt={imageAlt}
+						fill
+						priority
+						// Half the viewport from `lg`, so the browser stops fetching a
+						// 2x-wider file than it can paint.
+						sizes="(min-width: 1024px) 50vw, 100vw"
+						className="object-cover object-center"
+					/>
+				</div>
+
+				{/* Legibility stack. Below `lg` these do the work of separating the
+				    headline from the photo; from `lg` the left column is already empty
+				    ink, so they only feather the seam and settle the photo's contrast. */}
+				<div className="absolute inset-0 bg-ink/45 lg:bg-ink/25" />
+				<div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/20 lg:via-ink/70 lg:to-transparent" />
 				<div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/10 to-transparent" />
 				<div className="absolute inset-0 bg-blueprint [background-size:44px_44px] opacity-[0.12]" />
 				<div className="pointer-events-none absolute -left-24 -top-16 size-[440px] rounded-full bg-corporate-600/25 blur-3xl" />

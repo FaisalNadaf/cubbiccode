@@ -1,7 +1,12 @@
 // Industries Cubiccode serves  authoritative copy. Drives /industries/[slug] + homepage grid.
 
 export type Industry = {
+  /** Stable internal id. Keys the image maps — never appears in a URL. */
   slug: string;
+  /** Canonical, keyword-first URL. Served by the root `[slug]` route. */
+  path: string;
+  metaTitle: string;
+  metaDescription: string;
   icon: string; // lucide-react name
   title: string;
   short: string; // homepage grid description
@@ -10,6 +15,14 @@ export type Industry = {
   cta: string;
   problem: string; // opening problem paragraph
   solutions: string[]; // "How We Help" bullets
+  /**
+   * Optional short arc headlines for the "How We Help" carousel, index-aligned
+   * to `solutions`. A blank ("") or missing entry falls back to a label derived
+   * from the sentence. Only fill a slot where that derived label would read
+   * truncated (e.g. a sentence that runs a noun phrase straight into a verb, so
+   * there is no punctuation to cut on).
+   */
+  solutionTitles?: string[];
   /**
    * "How We Do It Better"  one block per point, rendered as a numbered card.
    * Keep these balanced (roughly 140175 chars each) so no card looks starved
@@ -24,6 +37,11 @@ export type Industry = {
 export const industries: Industry[] = [
   {
     slug: "manufacturing",
+    path: "/website-and-erp-development-company-for-manufacturing-industries-in-india",
+    metaTitle:
+      "Website and ERP Development Company for Manufacturing Industries in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "B2B catalogue websites, custom ERP and workflow automation for manufacturing units across Belgaum, Bangalore and India. Tie production to dispatch and end the spreadsheet era.",
     icon: "Factory",
     title: "Industries & Manufacturing Units",
     short:
@@ -55,6 +73,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "education",
+    path: "/website-and-erp-development-company-for-education-and-training-institutes-in-india",
+    metaTitle:
+      "Website and ERP Development Company for Schools, Colleges and Training Institutes in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Admission-driving websites, student portals and institute ERP for schools, colleges and training centres across Belgaum, Bangalore and India, built by Cubiccode.",
     icon: "GraduationCap",
     title: "Education & Training Institutes",
     short:
@@ -74,6 +97,8 @@ export const industries: Industry[] = [
       "Local & education SEO so you rank when parents search “best [course] in [city]”.",
       "Fee & communication automation reminders, receipts and updates that send themselves.",
     ],
+    // Overrides only where the derived label runs a noun phrase into a verb.
+    solutionTitles: ["Lead generation", "Admission-focused websites"],
     better: [
       "We're not guessing at this industry, we live in it. Cubiccode runs its own training brands, so every system we ship has already been tested on our own institutes.",
       "Our co-founder was named Best Youngest Digital Marketing Teacher in India, and that classroom experience shapes how we design admissions and student journeys.",
@@ -87,6 +112,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "logistics",
+    path: "/website-and-erp-development-company-for-logistics-and-transport-companies-in-india",
+    metaTitle:
+      "Website and ERP Development Company for Logistics and Transport Companies in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Fleet, consignment and dispatch platforms plus conversion-driven websites for logistics and transport companies across Belgaum, Bangalore and India, engineered by Cubiccode.",
     icon: "Truck",
     title: "Logistics & Transport",
     short:
@@ -105,6 +135,7 @@ export const industries: Industry[] = [
       "Automated notifications pickup, in-transit and delivery updates sent automatically.",
       "SEO & web presence so shippers searching for transport partners find you.",
     ],
+    solutionTitles: ["Customer tracking portals"],
     better: [
       "We start with your biggest bottleneck, usually status-tracking calls or dispatch coordination, and remove that one first before touching anything else.",
       "Every change ships with clear before-and-after metrics, so you see exactly how many hours and how many phone calls you've eliminated. Nothing is taken on faith.",
@@ -118,6 +149,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "healthcare",
+    path: "/website-and-erp-development-company-for-hospitals-and-healthcare-in-india",
+    metaTitle:
+      "Website and Software Development Company for Hospitals, Clinics and Healthcare in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Appointment-booking websites, patient portals and clinic management software for hospitals, clinics and wellness brands across Belgaum, Bangalore and India.",
     icon: "Stethoscope",
     title: "Healthcare Hospitals, Clinics & Wellness",
     short:
@@ -136,6 +172,8 @@ export const industries: Industry[] = [
       "Local SEO & Google Business Profile own the “[speciality] near me” searches.",
       "Review & reputation building turn happy patients into your best marketing.",
     ],
+    // Index 4 ("Local SEO & …") derives to "Local SEO & Google" — a cut compound.
+    solutionTitles: ["Appointment-booking websites", "", "", "", "Local SEO"],
     better: [
       "We design for the realities of a busy practice. Booking flows are simple enough for a nervous or elderly patient to finish on the first try, without a phone call.",
       "Automated reminders quietly cut no-shows, and patient information is handled with the privacy and care your practice is held to.",
@@ -150,6 +188,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "construction",
+    path: "/website-and-erp-development-company-for-construction-and-real-estate-in-india",
+    metaTitle:
+      "Website and ERP Development Company for Construction and Real Estate in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Project-showcase websites, enquiry funnels and site-to-office ERP for builders, developers and real estate firms across Belgaum, Bangalore and India.",
     icon: "Building2",
     title: "Construction & Real Estate",
     short:
@@ -168,6 +211,9 @@ export const industries: Industry[] = [
       "Real estate SEO & local visibility for “flats/plots/villas in [location]”.",
       "Virtual tours & rich media that sell the space before the site visit.",
     ],
+    // Index 0 and 5 derive to cut compounds ("Premium project & property",
+    // "Virtual tours & rich"); index 4 derives cleanly to "Real estate SEO".
+    solutionTitles: ["Premium showcase websites", "", "", "", "", "Virtual tours & media"],
     better: [
       "We treat your ad spend as sacred. Every rupee you put into generating a lead is wasted the moment that lead sits unanswered in somebody's inbox.",
       "So every system is engineered so the leads you pay for get captured, responded to instantly, and nurtured patiently until they're ready to convert.",
@@ -181,6 +227,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "smes",
+    path: "/website-and-erp-development-company-for-small-and-medium-enterprises-in-india",
+    metaTitle:
+      "Website and Software Development Company for Small and Medium Enterprises (SMEs) in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Affordable, conversion-driven websites and business software for SMEs across Belgaum, Bangalore and India. Look bigger, sell more, run leaner with Cubiccode.",
     icon: "Store",
     title: "Small & Medium Enterprises (SMEs)",
     short:
@@ -211,6 +262,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "retail",
+    path: "/website-and-erp-development-company-for-retail-chains-and-franchises-in-india",
+    metaTitle:
+      "Website, Ecommerce and ERP Development Company for Retail Chains and Franchises in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Ecommerce websites, multi-outlet ERP and franchise management platforms for retail chains across Belgaum, Bangalore and India. One source of truth for every store.",
     icon: "ShoppingBag",
     title: "Retail Chains & Franchises",
     short:
@@ -243,6 +299,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "staffing",
+    path: "/website-and-software-development-company-for-hr-and-staffing-agencies-in-india",
+    metaTitle:
+      "Website and Software Development Company for HR and Staffing Agencies in Belgaum, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "Job portals, applicant tracking and candidate management platforms for HR and staffing agencies across Belgaum, Bangalore and India, built by Cubiccode.",
     icon: "Users",
     title: "HR & Staffing Agencies",
     short:
@@ -275,6 +336,11 @@ export const industries: Industry[] = [
   },
   {
     slug: "startups",
+    path: "/website-and-web-application-development-company-for-startups-in-india",
+    metaTitle:
+      "Website and Web Application Development Company for Start-ups in Belgaum, Bangalore, Karnataka, India - Cubiccode Digital Media LLP - ISO 9001:2015 Certified Company.",
+    metaDescription:
+      "MVPs, SaaS platforms and investor-ready websites for new start-ups across Belgaum, Bangalore and India. Ship fast without building tech debt, with Cubiccode.",
     icon: "Rocket",
     title: "New Start-ups",
     short:
@@ -293,6 +359,7 @@ export const industries: Industry[] = [
       "Payment & subscription systems ready for revenue.",
       "Growth & SEO from day one.",
     ],
+    solutionTitles: ["", "MVP development", "Scalable web apps", "Brand & website"],
     better: [
       "We've been a start-up ourselves: bootstrapped, lean and obsessed with shipping. We know which corners cost you nothing and which ones cost you the company.",
       "So we help you spend capital where it counts, on a credible brand and a fast MVP now, rather than on infrastructure for users you don't have yet.",
@@ -309,3 +376,7 @@ export const industries: Industry[] = [
 
 export const industryBySlug = (slug: string) =>
   industries.find((i) => i.slug === slug);
+
+/** URL segment (no leading slash) → industry. Used by the root `[slug]` route. */
+export const industryByPathSegment = (segment: string) =>
+  industries.find((i) => i.path === `/${segment}`);

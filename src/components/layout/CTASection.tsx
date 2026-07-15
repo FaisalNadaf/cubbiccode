@@ -25,7 +25,12 @@ export function CTASection({
 	const reduced = usePrefersReducedMotion();
 
 	return (
-		<section className="relative overflow-hidden bg-ink py-24 text-white lg:py-32">
+		// `data-fab-yield`: this band is the page's own "talk to us" moment, so the
+		// floating contact dock stands down while it is on screen (see
+		// components/ui/FloatingContact.tsx).
+		<section
+			data-fab-yield
+			className="relative overflow-hidden bg-ink py-24 text-white lg:py-32">
 			{/* Background video, heavily darkened so the white headline stays legible.
           Swap the footage at public/videos/demo.mp4. */}
 			<div className="pointer-events-none absolute inset-0">

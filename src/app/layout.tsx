@@ -9,7 +9,13 @@ import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { Cursor } from "@/components/ui/Cursor";
 import { Preloader } from "@/components/ui/Preloader";
 import { PageLoader } from "@/components/ui/PageLoader";
+import { CollectChat } from "@/components/ui/CollectChat";
+import { FloatingContact } from "@/components/ui/FloatingContact";
+import { COLLECT_ID } from "@/lib/collectchat";
 import { site } from "@/content/site";
+import { pageSeo } from "@/content/seo";
+import { buildMetadata, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
+import { JsonLd } from "@/components/seo/JsonLd";
 import { cn } from "@/lib/utils";
 
 const inter = Inter({
@@ -39,39 +45,21 @@ const playfair = Playfair_Display({
 const CREDIT_COMMENT =
 	"<!--\n  Designed & Developed by Faisal Nadaf\n  Email : faisalfnadaf@gmail.com\n-->";
 
+// Every page writes its own full <title> in the keyword-first house style, so
+// there is deliberately no `template` here — a "· Cubiccode" suffix would push
+// the tail of already-long titles past what Google renders. `pageSeo.home`
+// supplies the default for anything that forgets to set one.
 export const metadata: Metadata = {
+	...buildMetadata(pageSeo.home),
 	metadataBase: new URL(site.url),
-	title: {
-		default:
-			"Cubiccode Top-Rated Website, Web App & ERP Development Company in India",
-		template: "%s · Cubiccode",
-	},
-	description: site.metaDescription,
-	keywords: [
-		"web development company India",
-		"website designing Belgaum",
-		"web application development",
-		"custom ERP software",
-		"Laravel React development",
-		"SEO company India",
-		"Cubiccode",
-	],
+	title: { default: pageSeo.home.title, template: "%s" },
+	applicationName: site.legalName,
 	authors: [{ name: site.legalName }],
+	creator: site.legalName,
+	publisher: site.legalName,
+	category: "Web Design & Development",
 	icons: { icon: "/favicon.png", apple: "/favicon.png" },
-	openGraph: {
-		type: "website",
-		locale: "en_IN",
-		url: site.url,
-		siteName: site.legalName,
-		title: "Cubiccode We Build Top-Rated Websites & Web Apps",
-		description: site.metaDescription,
-	},
-	twitter: {
-		card: "summary_large_image",
-		title: "Cubiccode We Build Top-Rated Websites & Web Apps",
-		description: site.metaDescription,
-	},
-	robots: { index: true, follow: true },
+	formatDetection: { telephone: true, address: true, email: true },
 };
 
 // Desktop browsers ignore the viewport meta entirely, so none of this can move
@@ -92,7 +80,18 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
-			className={cn(inter.variable, sora.variable, playfair.variable, "font-sans")}>
+			// The inline <head> script below sets data-preloader-seen / data-anim on
+			// <html> before hydration, so the client tree intentionally differs from
+			// the server HTML on this element. suppressHydrationWarning silences that
+			// one expected mismatch; it applies only one level deep, so real
+			// mismatches anywhere inside the tree are still reported.
+			suppressHydrationWarning
+			className={cn(
+				inter.variable,
+				sora.variable,
+				playfair.variable,
+				"font-sans",
+			)}>
 			<head>
 				{/* Two pre-paint gates, both set before first paint so nothing flashes:
             1. `data-preloader-seen` — this session already watched the intro,
@@ -111,6 +110,21 @@ export default function RootLayout({
 				<noscript>
 					<style>{`[data-route-fade]{opacity:1 !important}[data-preloader]{display:none !important}[data-split-reveal]{opacity:1 !important}`}</style>
 				</noscript>
+				{/* Collect.chat's bot id. `launcher.js` reads this global once, at
+				    execution time, and never polls or retries — if it is missing at that
+				    instant the bot silently never loads, forever. So it is set here, in
+				    the head, before anything else can run. (next/script's
+				    `beforeInteractive` defers to Next's own bootstrap queue; this is the
+				    same guarantee without the indirection, and it matches the preloader
+				    gate above.) The launcher itself loads late — see ui/CollectChat.tsx. */}
+				<script
+					dangerouslySetInnerHTML={{
+						__html: `window.CollectId=${JSON.stringify(COLLECT_ID)};`,
+					}}
+				/>
+				{/* Company + site graph, on every page. Individual pages add their own
+				    Service / BreadcrumbList nodes that point back at these @ids. */}
+				<JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
 			</head>
 			<body className="min-h-screen bg-canvas font-sans text-ink">
 				{/* Emits a genuine HTML comment into the page source. */}
@@ -126,8 +140,13 @@ export default function RootLayout({
 				<SmoothScroll>
 					<ScrollProgress />
 					<Cursor />
+					{/* Every page, including the bare brand gates: the dock and the bot are
+					    site-wide. Mounted here rather than in template.tsx, which remounts on
+					    every navigation and would replay the entrance each time. */}
+					<FloatingContact />
 					<SiteChrome>{children}</SiteChrome>
 				</SmoothScroll>
+				<CollectChat />
 			</body>
 		</html>
 	);
