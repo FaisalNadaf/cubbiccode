@@ -201,9 +201,9 @@ export type Milestone = {
 	/** Primary photo for the journey slideshow (in /public/images/Moments). */
 	image?: string;
 	/** Optional secondary photo layered behind the primary for depth. */
-	// image2?: string;
-	// /** True when `image2` is a portrait document (a certificate)  renders in a taller, fully-visible frame instead of a cropped landscape one. */
-	// image2Certificate?: boolean;
+	image2?: string;
+	/** True when `image2` is a portrait document (a certificate)  renders in a taller, fully-visible frame instead of a cropped landscape one. */
+	image2Certificate?: boolean;
 };
 
 // Our Journey  authoritative milestones.
