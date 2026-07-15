@@ -15,7 +15,7 @@ import {
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { techStack } from "@/content/tech";
-import { getTechIcon, getTechIconColor } from "@/content/techIcons";
+import { getTechIcon, getTechIconColor, getTechLogo } from "@/content/techIcons";
 import { cn } from "@/lib/utils";
 
 /**
@@ -96,16 +96,28 @@ export function TechEcosystem() {
 							<div className="flex flex-wrap justify-center gap-1.5">
 								{cat.items.slice(0, 5).map((it) => {
 									const IconComp = getTechIcon(it);
+									const logo = getTechLogo(it);
 									return (
 										<span
 											key={it}
-											className="grid size-7 place-items-center rounded-lg bg-steel-50 ring-1 ring-inset ring-steel-200"
+											className="grid size-7 place-items-center overflow-hidden rounded-lg bg-white ring-1 ring-inset ring-steel-200"
 											title={it}>
-											<IconComp
-												aria-hidden
-												className="size-4"
-												style={{ color: getTechIconColor(it) }}
-											/>
+											{logo ? (
+												<Image
+													src={logo}
+													alt=""
+													aria-hidden
+													width={20}
+													height={20}
+													className="size-4 object-contain"
+												/>
+											) : (
+												<IconComp
+													aria-hidden
+													className="size-4"
+													style={{ color: getTechIconColor(it) }}
+												/>
+											)}
 											{/* `title` is a hover affordance; touch/AT get the real name.
 											    sr-only is position:absolute, so it adds no grid track. */}
 											<span className="sr-only">{it}</span>
@@ -307,6 +319,7 @@ function RadialHub() {
 										const dx = Math.cos(a) * R;
 										const dy = Math.sin(a) * R;
 										const IconComp = getTechIcon(it);
+										const logo = getTechLogo(it);
 										return (
 											<motion.div
 												key={it}
@@ -322,12 +335,22 @@ function RadialHub() {
 												}}>
 												<div className="flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1.5">
 													<span
-														className="grid size-16 place-items-center rounded-2xl border border-steel-200 bg-white shadow-[0_8px_24px_-6px_rgba(11,27,58,0.25)]"
+														className="grid size-16 place-items-center overflow-hidden rounded-2xl border border-steel-200 bg-white shadow-[0_8px_24px_-6px_rgba(11,27,58,0.25)]"
 														title={it}>
-														<IconComp
-															className="size-8"
-															style={{ color: getTechIconColor(it) }}
-														/>
+														{logo ? (
+															<Image
+																src={logo}
+																alt={it}
+																width={56}
+																height={56}
+																className="size-10 object-contain"
+															/>
+														) : (
+															<IconComp
+																className="size-8"
+																style={{ color: getTechIconColor(it) }}
+															/>
+														)}
 													</span>
 													<span className="max-w-[104px] truncate rounded-full bg-white px-2 py-0.5 text-center text-[10px] font-semibold text-steel-700 shadow-sm ring-1 ring-steel-200">
 														{it}

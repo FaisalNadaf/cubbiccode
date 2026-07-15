@@ -265,3 +265,50 @@ const COLOR: Record<string, string> = {
 export function getTechIconColor(name: string): string {
   return COLOR[name] ?? "#1B6EC2";
 }
+
+// Real raster brand logos dropped into /public/images/new logos, shown in place
+// of a vector glyph where we have the actual mark. Most of these are the brands
+// Simple Icons removed for trademark reasons (AWS, Azure, Magento, the Adobe
+// apps, Canva, ChatGPT/DALL·E, Midjourney, Ahrefs, …) that otherwise fell back
+// to a generic Lucide glyph. Values are filenames within that folder.
+const LOGO: Record<string, string> = {
+  // CMS & E-Commerce
+  Magento: "megnetocmslog.jpeg",
+  // Databases
+  Firebase: "firebaselogo.webp",
+  Redis: "redislogo.webp",
+  // Cloud & Hosting
+  AWS: "awslogo.webp",
+  "Google Cloud": "gcplogo.webp",
+  Azure: "azurelogo.webp",
+  // AI & Content
+  Gemini: "geminilogo.webp",
+  ChatGPT: "chatgptlogo.webp",
+  Midjourney: "midjournylogo.webp",
+  "DALL·E": "dalleelogo.webp",
+  // Workflow Automation
+  Make: "makelogo.jpg",
+  // SEO & Analytics
+  "Search Console": "googlesearchconsolelog.jpeg",
+  "Tag Manager": "googletagmanagerlog.jpeg",
+  Ahrefs: "ahrefslog.jpeg",
+  Moz: "mozlog.jpeg",
+  "Screaming Frog": "screamingfroglogo.jpg",
+  "Google Business Profile": "googlrbuissnesslogo.jpg",
+  // Design & Prototyping
+  Photoshop: "photoshoplog.jpeg",
+  Illustrator: "ilustraturelog.jpeg",
+  "Adobe XD": "adobelogo.jpg",
+  Canva: "canvalogo.jpg",
+  // Payments & Integrations
+  PayU: "payulog.jpeg",
+};
+
+/**
+ * Real logo image path for a technology, or null to fall back to a vector icon.
+ * The folder name has a space, so the whole path is encoded for use as a src.
+ */
+export function getTechLogo(name: string): string | null {
+  const file = LOGO[name];
+  return file ? encodeURI(`/images/new logos/${file}`) : null;
+}

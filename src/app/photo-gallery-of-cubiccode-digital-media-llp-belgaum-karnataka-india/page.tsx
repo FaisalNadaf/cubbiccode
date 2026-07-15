@@ -17,33 +17,67 @@ import { pageSeo } from "@/content/seo";
 export const metadata = buildMetadata(pageSeo.gallery);
 
 /**
- * Every photo in /public/images/Moments, read at build time — drop a new one in
- * and it joins the sphere on the next build, with nothing to wire up.
+ * The sphere is built at build time from two folders under /public/images:
+ * `Moments` (the primary store) and the studio photoshoot in `Headerimages`
+ * whose frames also serve as page heroes. Drop a new photo into either and it
+ * joins the sphere on the next build, with nothing to wire up.
  *
- * The folder is not purely photographic: it doubles as the store for the
- * certificate scans and press cuttings the achievements page points at. Those
- * are documents, and a grayscale certificate spinning past on a sphere reads as
- * a mistake, so they are named out here rather than filtered by a guess at the
- * filename.
+ * Neither folder is purely photographic. `Moments` doubles as the store for the
+ * certificate scans and press cuttings the achievements page points at, and
+ * `Headerimages` holds section banners, UI screenshots and a promo graphic.
+ * Those are not "moments" — a grayscale certificate or a screenshot spinning
+ * past on the sphere reads as a mistake — so they are named out below rather
+ * than filtered by a guess at the filename.
  */
 const NOT_A_PHOTO = new Set([
+	// /images/Moments — press cuttings, certificate scans, a backdrop texture.
 	"paper.jpg", // Times of India cutting
 	"brandcounselling1.jpg",
 	"business-excellence-certificate1.jpg",
 	"india-excellence-award-certificate1.jpg",
 	"EducationalE.jpg",
 	"award-bg.jpg", // a backdrop texture, not a moment
+	// /images/Headerimages — hero and section banners already shown as headers
+	// across the site, UI screenshots, and a promo graphic.
+	"ansdjad.JPG", // this page's own hero
+	"founders.JPG",
+	"culture.JPG",
+	"acchiveements.JPG",
+	"joinuscareer.JPG",
+	"x3.jpg.jpeg",
+	"Screenshot 2026-07-14 211158.png",
+	"Screenshot 2026-07-14 211433.png",
+	"Screenshot 2026-07-14 230346.png",
 ]);
 
 const PHOTO_EXT = /\.(jpe?g|png|webp|avif)$/i;
 
-function getMoments(): string[] {
-	const dir = path.join(process.cwd(), "public", "images", "Moments");
+// Windows "Name - Copy.ext" duplicates that were left in the folders.
+const IS_DUPLICATE = / - Copy\.\w+$/i;
+
+const PHOTO_DIRS = ["Moments", "Headerimages"];
+
+function readPhotos(folder: string): string[] {
+	const dir = path.join(process.cwd(), "public", "images", folder);
 	return fs
 		.readdirSync(dir)
-		.filter((f) => PHOTO_EXT.test(f) && !NOT_A_PHOTO.has(f))
-		.sort()
-		.map((f) => `/images/Moments/${f}`);
+		.filter(
+			(f) => PHOTO_EXT.test(f) && !NOT_A_PHOTO.has(f) && !IS_DUPLICATE.test(f),
+		)
+		.map((f) => `/images/${folder}/${f}`);
+}
+
+function getMoments(): string[] {
+	// Keyed by filename so a photo that ever lands in both folders is shown once.
+	const seen = new Set<string>();
+	return PHOTO_DIRS.flatMap(readPhotos)
+		.filter((src) => {
+			const name = src.slice(src.lastIndexOf("/") + 1).toLowerCase();
+			if (seen.has(name)) return false;
+			seen.add(name);
+			return true;
+		})
+		.sort();
 }
 
 export default function PhotoGalleryPage() {

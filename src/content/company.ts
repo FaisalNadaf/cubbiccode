@@ -84,7 +84,7 @@ export const recognitions: Recognition[] = [
 		year: "2026",
 		kind: "Award",
 		icon: "Medal",
-		image: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
+		image: "/images/Moments/varrrn.jpeg",
 		fit: "cover",
 		aspect: 1.9,
 		featured: true,

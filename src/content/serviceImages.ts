@@ -267,7 +267,7 @@ const CAPABILITY_HERO: Record<string, string> = {
 
 const INDUSTRY_HERO: Record<string, string> = {
   manufacturing: h("_DSC9921.JPG"),
-  education: h("_DSC9845.JPG"),
+  education: h("_DSC9814.JPG"),
   logistics: h("_DSC9807.JPG"),
   healthcare: h("_DSC9886.JPG"),
   construction: h("_DSC9829.JPG"),

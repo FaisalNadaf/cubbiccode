@@ -175,7 +175,11 @@ export function Testimonials() {
 													alt={t.name}
 													width={48}
 													height={48}
-													className="size-12 rounded-full border border-steel-200 object-cover"
+													className={`size-12 rounded-full border border-steel-200 ${
+														t.logo
+															? "bg-white object-contain p-1.5"
+															: "object-cover"
+													}`}
 												/>
 												<div>
 													<div className="text-sm font-semibold text-ink">

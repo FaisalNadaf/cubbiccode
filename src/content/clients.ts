@@ -17,6 +17,10 @@ export const featuredClients: { name: string; logo: string }[] = [
 	{ name: "Accenture", logo: "/images/clients/accenture.png" },
 
 	{ name: "Aditiya Birla Group", logo: "/images/clients/aditiya birla.webp" },
+
+	{ name: "Mabda Group", logo: "/images/clientsLogo/Asset1.jpeg" },
+	{ name: "Positron Engineering Corporation", logo: "/images/clientsLogo/positron.png" },
+	{ name: "Creintors", logo: "/images/clientsLogo/creintors.png" },
 ];
 
 // Named brands worked with (text  no local logo files). Used in the clientele wall.
