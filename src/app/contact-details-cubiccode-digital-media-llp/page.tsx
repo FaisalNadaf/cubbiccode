@@ -70,7 +70,7 @@ export default function ContactPage() {
 										</span>
 										<div className="min-w-0">
 											<p className="text-[13px] font-semibold uppercase tracking-wider text-steel-400">
-												Call us
+												Call or WhatsApp
 											</p>
 											<div className="mt-1.5 flex flex-col gap-0.5">
 												{site.phones.map((p) => (
@@ -142,20 +142,22 @@ export default function ContactPage() {
 							{/* Promise / certification strip */}
 							<RevealItem>
 								<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-									<div className="flex items-center gap-3 rounded-3xl border border-steel-200 bg-white p-5 shadow-soft">
+									<div className="flex items-start gap-3 rounded-3xl border border-steel-200 bg-white p-5 shadow-soft">
 										<span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-corporate-50 text-corporate-600">
 											<Clock className="size-[18px]" />
 										</span>
 										<div>
 											<p className="font-display text-sm font-bold text-ink">
-												Reply within a day
+												Office hours
 											</p>
 											<p className="text-[12.5px] text-steel-500">
-												Often within a few hours.
+												Mon–Fri 10AM – 7PM
+												<br />
+												Sat 10AM – 2PM
 											</p>
 										</div>
 									</div>
-									<div className="flex items-center gap-3 rounded-3xl border border-steel-200 bg-white p-5 shadow-soft">
+									<div className="flex items-start gap-3 rounded-3xl border border-steel-200 bg-white p-5 shadow-soft">
 										<span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-corporate-50 text-corporate-600">
 											<ShieldCheck className="size-[18px]" />
 										</span>
@@ -278,8 +280,8 @@ export default function ContactPage() {
 									amount={0.2}>
 									<article className="relative flex h-full min-h-[24rem] flex-col overflow-hidden rounded-4xl border border-steel-200 bg-ink shadow-soft">
 										<Image
-											src="/images/about/about-main.png"
-											alt={`${site.legalName}  award wins, TEDx stage and training rooms`}
+											src="/images/Headerimages/_DSC9796.jpg"
+											alt={`${site.legalName}  the team at work in the Belagavi studio`}
 											fill
 											sizes="(min-width: 1024px) 50vw, 100vw"
 											className="object-cover"

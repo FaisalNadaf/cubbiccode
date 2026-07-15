@@ -34,12 +34,13 @@ const EMPTY: Fields = {
 };
 
 const SUBJECTS = [
-	"New website or web app",
-	"Custom ERP / software",
-	"SEO & growth",
-	"Remote team / IT talent",
-	"Training & upskilling",
-	"Something else",
+	"Website Designing & Development Service",
+	"Web Application & ERP Softwares",
+	"Lead Generation & Performance Marketing Service",
+	"SEO & AEO Service",
+	"Courses + Learning & Development",
+	"Applying for a Job/ Internship @Cubiccode",
+	"Other",
 ];
 
 function validate(values: Fields): Errors {
@@ -65,7 +66,9 @@ export function EnquiryForm() {
 	const [touched, setTouched] = useState<
 		Partial<Record<keyof Fields, boolean>>
 	>({});
-	const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
+	const [status, setStatus] = useState<
+		"idle" | "sending" | "sent" | "error"
+	>("idle");
 
 	function update(key: keyof Fields, value: string) {
 		setValues((prev) => ({ ...prev, [key]: value }));
@@ -79,7 +82,7 @@ export function EnquiryForm() {
 		setErrors(validate(values));
 	}
 
-	function handleSubmit(e: FormEvent<HTMLFormElement>) {
+	async function handleSubmit(e: FormEvent<HTMLFormElement>) {
 		e.preventDefault();
 		const found = validate(values);
 		setErrors(found);
@@ -93,8 +96,42 @@ export function EnquiryForm() {
 		if (Object.keys(found).length > 0) return;
 
 		setStatus("sending");
-		// No backend exists  simulate a graceful submit, then surface real channels.
-		window.setTimeout(() => setStatus("sent"), 850);
+
+		// Web3Forms delivers the enquiry straight to the inbox with no backend of
+		// our own. The access key is a public, submit-only token (safe to ship in
+		// the client bundle). Without it we keep the graceful WhatsApp/email
+		// hand-off on the success screen, so the form never hard-fails.
+		const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
+		if (!accessKey) {
+			window.setTimeout(() => setStatus("sent"), 850);
+			return;
+		}
+
+		try {
+			const res = await fetch("https://api.web3forms.com/submit", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+					Accept: "application/json",
+				},
+				body: JSON.stringify({
+					access_key: accessKey,
+					subject: `New website enquiry: ${values.subject || "Project enquiry"}`,
+					from_name: "Cubiccode website",
+					// The visitor's own address, so a reply goes straight back to them.
+					replyto: values.email,
+					name: values.name,
+					email: values.email,
+					phone: values.phone || "—",
+					topic: values.subject,
+					message: values.message,
+				}),
+			});
+			const data = (await res.json()) as { success?: boolean };
+			setStatus(data.success ? "sent" : "error");
+		} catch {
+			setStatus("error");
+		}
 	}
 
 	function reset() {
@@ -216,18 +253,20 @@ export function EnquiryForm() {
 								autoComplete="email"
 								required
 							/>
-							<Field
-								label="Phone (optional)"
-								name="phone"
-								type="tel"
-								value={values.phone}
-								error={touched.phone ? errors.phone : undefined}
-								onChange={(v) => update("phone", v)}
-								onBlur={() => handleBlur("phone")}
-								autoComplete="tel"
-							/>
+							<div className="sm:col-span-2">
+								<Field
+									label="Phone (optional)"
+									name="phone"
+									type="tel"
+									value={values.phone}
+									error={touched.phone ? errors.phone : undefined}
+									onChange={(v) => update("phone", v)}
+									onBlur={() => handleBlur("phone")}
+									autoComplete="tel"
+								/>
+							</div>
 
-							<div>
+							<div className="sm:col-span-2">
 								<label
 									htmlFor="subject"
 									className="mb-1.5 block text-[13px] font-medium text-steel-700">
@@ -276,7 +315,7 @@ export function EnquiryForm() {
 							<label
 								htmlFor="message"
 								className="mb-1.5 block text-[13px] font-medium text-steel-700">
-								Project details <span className="text-corporate-600">*</span>
+								Note <span className="text-corporate-600">*</span>
 							</label>
 							<textarea
 								id="message"
@@ -299,6 +338,21 @@ export function EnquiryForm() {
 								</p>
 							)}
 						</div>
+
+						{status === "error" && (
+							<p className="mt-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] leading-relaxed text-red-600">
+								Sorry, something went wrong sending your enquiry. Please try
+								again, or reach us directly on{" "}
+								<a
+									href={waHref}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="font-semibold underline underline-offset-2">
+									WhatsApp
+								</a>
+								.
+							</p>
+						)}
 
 						<div className="mt-7 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 							<button

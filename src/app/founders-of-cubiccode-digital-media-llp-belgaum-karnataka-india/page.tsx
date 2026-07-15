@@ -169,6 +169,23 @@ export default function FoundersPage() {
 													{f.role}
 												</p>
 											</div>
+											{f.linkedin && (
+												<a
+													href={f.linkedin}
+													target="_blank"
+													rel="noopener noreferrer"
+													aria-label={`${f.name} on LinkedIn`}
+													className="tap-target ml-auto flex size-10 shrink-0 items-center justify-center rounded-xl border border-steel-200 bg-white text-steel-500 transition-colors hover:border-corporate-300 hover:text-corporate-600">
+													<Image
+													src="/images/new%20logos/linkedinlogo.png"
+													alt=""
+													aria-hidden
+													width={18}
+													height={18}
+													className="size-[18px] object-contain"
+												/>
+												</a>
+											)}
 										</li>
 									))}
 								</ul>

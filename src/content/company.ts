@@ -213,7 +213,7 @@ export const journey: Milestone[] = [
 		title: "Cubiccode is founded",
 		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
 		image: "/images/Moments/2016.jpeg",
-		// image2: "/images/Moments/1.jpg",
+		// image2: "/images/Moments/1759160316850.jpg",
 	},
 	{
 		year: "2017",
@@ -304,73 +304,85 @@ export type Value = {
 export const values: Value[] = [
 	{
 		icon: "ShieldCheck",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0002.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0002.jpg",
 		title: "Ownership Over Excuses",
 		text: "Take responsibility. Own the outcome. Never wait to be told twice. Solve problems.",
 	},
 	{
 		icon: "Zap",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0003.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0003.jpg",
 		title: "Speed With Excellence",
 		text: "Move fast. Maintain quality. Execute with precision. Delays kill momentum.",
 	},
 	{
 		icon: "Target",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0004.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0004.jpg",
 		title: "Outcome Oriented",
 		text: "Effort matters, but being busy means nothing. Results matter more. Deliver measurable impact.",
 	},
 	{
 		icon: "BookOpen",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0005.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0005.jpg",
 		title: "Curiosity & Continuous Learning",
 		text: "Stay adaptable. Keep learning. Keep improving. Stay ahead.",
 	},
 	{
 		icon: "TrendingUp",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0006.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0006.jpg",
 		title: "Raise The Standard",
 		text: "Good is not enough. Excellence is the expectation.",
 	},
 	{
 		icon: "Scale",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0007.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0007.jpg",
 		title: "Integrity Always",
 		text: "Do the right thing even when nobody is watching.",
 	},
 	{
 		icon: "MessagesSquare",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0008.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0008.jpg",
 		title: "Open & Honest Feedback Without Ego",
 		text: "Great teams grow through direct, transparent communication.",
 	},
 	{
 		icon: "Lightbulb",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0009.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0009.jpg",
 		title: "Solution First Thinking",
 		text: "Bring solutions, not just problems.",
 	},
 	{
 		icon: "HeartHandshake",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0010.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0010.jpg",
 		title: "Respect For People",
 		text: "Professionalism, empathy and mutual respect at all times.",
 	},
 	{
 		icon: "BadgeCheck",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0011.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0011.jpg",
 		title: "Reliability Builds Trust",
 		text: "Do what you said you would do every single time. Commitment to your deadlines.",
 	},
 	{
 		icon: "Compass",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0012.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0012.jpg",
 		title: "Purpose Driven Work",
 		text: "Understand the “why” behind everything we do.",
 	},
 	{
 		icon: "Users",
-		plate: "/images/companyCulture/Cubiccode Company Culture and ethics_page-0013.jpg",
+		plate:
+			"/images/companyCulture/Cubiccode Company Culture and ethics_page-0013.jpg",
 		title: "Win Together",
 		text: "Collaboration over ego. Team success over individual credit. No egos. No silos. One mission.",
 	},
@@ -421,6 +433,8 @@ export type Founder = {
 	 * off-centre, so an unaided centre crop lands on the wall, not the face.
 	 */
 	photoPosition?: string;
+	/** Personal LinkedIn profile — surfaced as an icon link on the founder card. */
+	linkedin?: string;
 };
 
 export const founders: Founder[] = [
@@ -430,6 +444,7 @@ export const founders: Founder[] = [
 		initials: "SK",
 		photo: "/images/press/sarvesh-kakkeri.jpg",
 		photoPosition: "12% center",
+		linkedin: "https://www.linkedin.com/in/sarveshkakkeri/",
 	},
 	{
 		name: "Shivani Jadhav",
@@ -437,6 +452,7 @@ export const founders: Founder[] = [
 		initials: "SJ",
 		photo: "/images/press/shivani-jadhav.jpg",
 		photoPosition: "center 8%",
+		linkedin: "https://www.linkedin.com/in/shivani-jadhav14/",
 	},
 ];
 

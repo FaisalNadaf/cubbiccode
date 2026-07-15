@@ -249,12 +249,12 @@ function PinnedSolutions({
 							{/* stone shadow */}
 							<div className="pointer-events-none absolute bottom-3 h-16 w-[68%] rounded-[50%] bg-ink/25 blur-2xl" />
 
-							{/* arch-framed image. The lower clamp bounds only ever bind below
-							    lg (at >= 1024px, 44vw >= 450px and the lg: pair restores the
-							    original clamps verbatim). 280px was wider than a 320px phone's
-							    content box (100vw - 48px of gutter), and the 293px floor left
-							    no room for the caption on a short viewport. */}
-							<div className="relative h-[clamp(220px,52vh,440px)] w-[clamp(240px,44vw,760px)] lg:h-[clamp(293px,52vh,440px)] lg:w-[clamp(280px,44vw,760px)]">
+							{/* arch-framed image. Below lg it spans the screen width: `85vw` is never
+							    wider than the `px-6` content box (100vw − 48px), so it can't
+							    overflow the gutter even on a 320px phone, and it caps at 560px for
+							    tablets. A shorter height keeps the wide frame from towering. The
+							    lg: pair restores the original desktop clamps verbatim. */}
+							<div className="relative h-[clamp(200px,40vh,320px)] w-[min(85vw,560px)] lg:h-[clamp(293px,52vh,440px)] lg:w-[clamp(280px,44vw,760px)]">
 								<AnimatePresence>
 									<motion.div
 										key={active}
@@ -419,9 +419,13 @@ function ArchedTitle({ label }: { label: string }) {
 						fill="none"
 					/>
 				</defs>
+				{/* Font size drops below lg: the arch scales with its 88vw width, so at
+				    70 a long label runs the full arc and its ends clip where the
+				    `textPath` meets the leg endpoints. A smaller size keeps even long
+				    labels on the curve. Restored to 70 verbatim at lg. */}
 				<text
-					className="fill-ink font-display"
-					style={{ fontWeight: 700, fontSize: 70, letterSpacing: "0.4px" }}>
+					className="fill-ink font-display text-[54px] lg:text-[70px]"
+					style={{ fontWeight: 700, letterSpacing: "0.4px" }}>
 					<AnimatePresence initial={false}>
 						<motion.textPath
 							key={label}

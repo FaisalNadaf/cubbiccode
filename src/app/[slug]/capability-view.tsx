@@ -228,6 +228,11 @@ export function CapabilityView({ cap }: { cap: Capability }) {
 				<OutcomeShowcase
 					lead={cap.result}
 					outcomes={cap.results}
+					cta={
+						cap.slug === "seo" ?
+							{ href: routes.seoResults, label: "See our SEO results" }
+						:	undefined
+					}
 				/>
 			)}
 

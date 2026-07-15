@@ -60,6 +60,14 @@ export const featuredProjects: (WebsiteProject & {
 	},
 
 	{
+		name: "23DC Architects",
+		url: "23dcarchitects.com",
+		category: "Website",
+		image: "/images/portfolio/23dcarchitects.jpg",
+		blurb:
+			"A premium architecture and interior design studio online cinematic project galleries, refined editorial layouts and a calm visual system that puts the built work front and centre.",
+	},
+	{
 		name: "Mabda Global",
 		url: "mabdaglobal.com/en",
 		category: "Website",

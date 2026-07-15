@@ -2,6 +2,7 @@
 
 import type { Outcome } from "@/content/capabilities";
 import { Icon } from "@/components/ui/Icon";
+import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { RevealGroup, RevealItem } from "@/components/ui/Reveal";
 
@@ -29,9 +30,12 @@ const GRID: Record<number, string> = {
 export function OutcomeShowcase({
 	lead,
 	outcomes,
+	cta,
 }: {
 	lead: string;
 	outcomes: Outcome[];
+	/** Optional centred call-to-action below the grid (e.g. SEO → results page). */
+	cta?: { href: string; label: string };
 }) {
 	return (
 		<section className="section relative overflow-hidden bg-canvas-soft">
@@ -85,6 +89,18 @@ export function OutcomeShowcase({
 						</RevealItem>
 					))}
 				</RevealGroup>
+
+				{cta && (
+					<div className="mt-12 flex justify-center">
+						<Button
+							href={cta.href}
+							variant="accent"
+							size="lg"
+							arrow>
+							{cta.label}
+						</Button>
+					</div>
+				)}
 			</div>
 		</section>
 	);

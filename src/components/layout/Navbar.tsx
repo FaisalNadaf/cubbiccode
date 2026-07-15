@@ -427,7 +427,7 @@ function ProposalCta({
 				<span className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full">
 					<span className="absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-sm transition-transform duration-700 ease-out group-hover:translate-x-[420%]" />
 				</span>
-				Get a Proposal
+				Get a Proposal / Contact
 				<ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
 			</Link>
 		</Magnetic>

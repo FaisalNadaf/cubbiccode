@@ -1,15 +1,14 @@
 /**
- * FloatingContact — the "Connect" dome, bottom-centre.
+ * FloatingContact — the "Connect" dome, bottom-left corner.
  *
- * At rest it is a circle sitting half below the fold, so only a dome peeks over
- * the bottom edge — enough to be found, small enough to stay out of the way of
- * the page. Every so often it nudges upward and shakes, then settles. Open it
- * (click, or hover on a mouse) and four actions fan out along an arc above it:
- * WhatsApp, Chatbot, Call, Visit.
+ * It sits as a full circle pinned in the bottom-left corner — always in view,
+ * small enough to stay out of the way of the page. Every so often it nudges
+ * upward and shakes, then settles. Open it (click, or hover on a mouse) and four
+ * actions fan out along an arc up and to the right: WhatsApp, Chatbot, Call, Visit.
  *
  * The geometry is one number, RADIUS, and one list, ARC. Each action's resting
- * offset is polar — the angles run left-to-right across the top of the dome, so
- * DOM order, tab order and what you see all agree, with no reversing tricks.
+ * offset is polar — the angles run clockwise from the top of the dome, so DOM
+ * order, tab order and what you see all agree, with no reversing tricks.
  *
  * A disclosure, not a menu: a button plus a list of links. `role="menu"` would
  * flip screen readers into application mode and oblige roving tabindex, arrow
@@ -63,33 +62,36 @@ function WhatsAppGlyph({ className }: { className?: string }) {
 /**
  * The arc: one radius, four evenly-spaced seats.
  *
- * Even spacing is the whole trick. Hand-picked angles (158/124/56/22) read as
- * two tight pairs with a 74px chasm across the top, because the gap either side
- * of the crown was twice the gap between neighbours. Sweeping SPREAD° about the
- * vertical and dividing it equally puts the same ~16px of air between every
- * pair, so the fan reads as one object rather than four scattered dots.
+ * Even spacing is the whole trick — sweeping SPREAD° and dividing it equally
+ * puts the same air between every pair, so the fan reads as one object rather
+ * than four scattered dots.
+ *
+ * Anchored in the bottom-left corner, the fan opens up and to the right: the
+ * sweep is centred on the 45° diagonal (CENTER_ANGLE) so every seat lands in the
+ * upper-right quadrant — none crosses the left edge (which would clip, or worse,
+ * push a horizontal scrollbar onto the page) and none dips below the fold.
  *
  * The numbers are constrained, not taste:
  *  • RADIUS ≥ dome radius (42) + action radius (28) + air — any tighter and the
- *    seats sit on the dome itself. At 94 there is 24px of clearance.
- *  • The chord between neighbours is 2·R·sin(Δ/2) = 72px at 45°, which leaves
- *    16px between two 56px circles. Below ~41° they would touch.
+ *    seats sit on the dome itself.
+ *  • A quarter-sweep (SPREAD 90°, so Δ 30° between four seats) is narrow, so the
+ *    radius has to grow to keep the circles apart: the chord is 2·R·sin(Δ/2),
+ *    and at R = 140 that is ~72px, leaving ~16px between two 56px circles.
  */
-const RADIUS = 94;
-/** Total sweep of the fan, centred on straight up. */
-const SPREAD = 135;
+const RADIUS = 140;
+/** Total sweep of the fan. */
+const SPREAD = 90;
+/** Bearing the sweep is centred on, in degrees (90 = straight up, 0 = right). */
+const CENTER_ANGLE = 45;
 
 /**
- * Where the dome rests, in px of downward offset.
- *
- * The dome is DOME px across and its container's bottom edge sits INSET above
- * the viewport floor, so `PEEK` px of it hang below the fold. At rest exactly
- * half is showing; a mouse hovering lifts it into view; opening it brings it
- * fully up so the arc has room to unfold above.
+ * The dome is a full circle, DOME px across, pinned in the corner and always in
+ * view — it never hides below the fold. `LIFT` is a small vertical nudge (px,
+ * negative = up) per state: flush at rest, rising a touch on hover as an
+ * affordance and holding there while open, where the arc unfolds above it.
  */
 const DOME = 84;
-const INSET = 20;
-const PEEK = { rest: DOME / 2 + INSET, hover: 40, open: 0 };
+const LIFT = { rest: 0, hover: -6, open: -6 };
 
 type Action = {
 	key: string;
@@ -311,7 +313,7 @@ export function FloatingContact() {
 		setOpen((v) => !v);
 	};
 
-	// Left to right, which is also DOM order, tab order and paint order.
+	// Clockwise from the top, which is also DOM order, tab order and paint order.
 	const actions: Action[] = [
 		{
 			key: "whatsapp",
@@ -350,13 +352,13 @@ export function FloatingContact() {
 	];
 
 	/**
-	 * Seat `i` of `n`, evenly spaced across SPREAD° and centred on straight up
-	 * (90°), then polar → cartesian. Screen y grows downward, hence the negated
-	 * sine. Deriving the angles instead of listing them is what guarantees the
-	 * spacing stays even if an action is ever added or dropped.
+	 * Seat `i` of `n`, evenly spaced across SPREAD° and centred on CENTER_ANGLE,
+	 * then polar → cartesian. Screen y grows downward, hence the negated sine.
+	 * Deriving the angles instead of listing them is what guarantees the spacing
+	 * stays even if an action is ever added or dropped.
 	 */
 	const seat = (i: number, n: number) => {
-		const deg = 90 + SPREAD / 2 - (i * SPREAD) / (n - 1);
+		const deg = CENTER_ANGLE + SPREAD / 2 - (i * SPREAD) / (n - 1);
 		const rad = (deg * Math.PI) / 180;
 		return { x: RADIUS * Math.cos(rad), y: -RADIUS * Math.sin(rad) };
 	};
@@ -406,9 +408,9 @@ export function FloatingContact() {
 	};
 
 	const domeY =
-		open ? PEEK.open
-		: hovered ? PEEK.hover
-		: PEEK.rest;
+		open ? LIFT.open
+		: hovered ? LIFT.hover
+		: LIFT.rest;
 
 	return (
 		<>
@@ -431,7 +433,7 @@ export function FloatingContact() {
 				ref={rootRef}
 				onPointerEnter={onEnter}
 				onPointerLeave={onLeave}
-				className="pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-1/2 z-[60] -translate-x-1/2"
+				className="pointer-events-none fixed bottom-[calc(env(safe-area-inset-bottom,0px)+20px)] left-[calc(env(safe-area-inset-left,0px)+24px)] z-[60]"
 				initial={false}
 				animate={shown ? "shown" : "hidden"}
 				variants={{
@@ -459,7 +461,7 @@ export function FloatingContact() {
 						aria-expanded={open}
 						aria-controls="floating-contact-actions"
 						className={cn(
-							"pointer-events-auto absolute inset-0 flex flex-col items-center gap-1 rounded-full bg-ink pt-3.5 text-white shadow-lift ring-1 ring-inset ring-white/10",
+							"pointer-events-auto absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full bg-ink text-white shadow-lift ring-1 ring-inset ring-white/10",
 							"transition-shadow duration-200 hover:shadow-glow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-corporate-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white",
 						)}
 						// The shake: a lift and a shiver, a few times, then never again.
@@ -513,9 +515,8 @@ export function FloatingContact() {
 							</motion.span>
 						</AnimatePresence>
 
-						{/* Below the fold at rest, in view once the dome lifts. The accessible
-						    name is this text — no aria-label, which would desync from "Close"
-						    the moment it opens (WCAG 2.5.3 Label in Name). */}
+						{/* The accessible name is this text — no aria-label, which would desync
+						    from "Close" the moment it opens (WCAG 2.5.3 Label in Name). */}
 						<span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-white/90">
 							{open ? "Close" : "Connect"}
 						</span>

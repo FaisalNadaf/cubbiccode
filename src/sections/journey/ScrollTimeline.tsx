@@ -322,7 +322,7 @@ function Slide({
 							    half-viewport photo it will never paint. >= lg resolves to the
 							    original 50vw, so the chosen candidate there is unchanged. */}
 							<Image
-								src={m.image ?? "/images/Moments/1.jpg"}
+								src={m.image ?? "/images/Moments/1759160316850.jpg"}
 								alt={m.title}
 								fill
 								sizes="(min-width: 1024px) 50vw, 1px"
@@ -404,7 +404,7 @@ function Slide({
 					{/* Mirror of the desktop hint: this subtree is display:none at lg, so a
 					    desktop preload of slide 0 must not pull the full-width phone crop. */}
 					<Image
-						src={m.image ?? "/images/Moments/1.jpg"}
+						src={m.image ?? "/images/Moments/1759160316850.jpg"}
 						alt={m.title}
 						fill
 						sizes="(min-width: 1024px) 1px, 100vw"
@@ -534,7 +534,7 @@ function StaticTimeline({ items }: { items: Milestone[] }) {
 									t.ring,
 								)}>
 								<Image
-									src={m.image ?? "/images/Moments/1.jpg"}
+									src={m.image ?? "/images/Moments/1759160316850.jpg"}
 									alt={m.title}
 									fill
 									sizes="(max-width: 1024px) 100vw, 50vw"

@@ -25,7 +25,7 @@ const ownership = [
 		icon: Users,
 		title: "A cross-functional team",
 		text: "Designers, full-stack developers and a dedicated project manager on every single engagement.",
-		image: "/images/Headerimages/_DSC9846 - Copy.JPG",
+		image: "/images/Headerimages/_DSC9817.JPG",
 	},
 	{
 		icon: Gauge,
@@ -37,7 +37,7 @@ const ownership = [
 		icon: LifeBuoy,
 		title: "We don't vanish at launch",
 		text: "Ongoing support and AMC mean we're with you long after the site goes live.",
-		image: "/images/Headerimages/_DSC9802 - Copy.JPG",
+		image: "/images/Headerimages/_DSC9846 - Copy.JPG",
 	},
 ];
 

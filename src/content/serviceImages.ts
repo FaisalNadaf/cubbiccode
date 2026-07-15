@@ -39,7 +39,7 @@ const CAPABILITY_IMAGE: Record<string, string> = {
 // One image per feature (aligned to capabilities.ts `features`, in order).
 const CAPABILITY_FEATURE_IMAGES: Record<string, string[]> = {
   "website-development": [
-    p("seo better result.webp"),
+    p("hero-minimal-bold-2.webp"),
     p("Responsive & Mobile-First Builds.webp"),
     p("using e commrce website.jpg"),
     p("Booking & Appointment Websites_converted.jpg"),
@@ -73,11 +73,11 @@ const CAPABILITY_FEATURE_IMAGES: Record<string, string[]> = {
     p("work done.webp"),
   ],
   seo: [
-    p("tech seo.webp"),
+    p("techinicalseeo.webp"),
     p("onpageseoo.jpg"),
     p("offpage seo.webp"),
     p("localseo.jpg"),
-    p("lead genn.webp"),
+    p("content optimization.webp"),
     p("Analyticsreporting_converted.jpg"),
   ],
 };
@@ -117,10 +117,10 @@ const CAPABILITY_PROBLEM_IMAGES: Record<string, string[]> = {
   ],
   // Invisible off page one; bad SEO (stuffing, spam) actively hurts.
   seo: [
-    p("SEOSearchVisibilityDomainAuthorityAccelerator.jpg"),
-    p("SpeedSEOOptimisation_converted.jpg"),
-    p("Built-inSEOanalytics_converted.jpg"),
-    p("Contentoptimisation_converted.jpg"),
+    p("techinicalseeo.webp"),
+    p("content optimization.webp"),
+    p("offpage seo.webp"),
+    p("industraila seo.webp"),
   ],
 };
 
@@ -163,7 +163,7 @@ const INDUSTRY_SOLUTION_IMAGES: Record<string, string[]> = {
     p("prithvimetal.jpg"),
     p("enquary portal.webp"),
     p("CustomERP_converted.jpg"),
-    p("Dealer & distributor portals_converted.jpg"),
+    p("dealeerand salee.webp"),
     p("Workflow automation_converted.jpg"),
     p("industraila seo.webp"),
   ],

@@ -24,8 +24,14 @@ const TOTAL = String(recognitions.length).padStart(2, "0");
  * to clear the same 67px header and the peeks only have to read as a deck, so
  * both shrink and the card gets ~92px back.
  */
-const DECK_DESKTOP = { pin: 104, peek: 16 };
-const DECK_MOBILE = { pin: 76, peek: 8 };
+// `cap` is the card's maximum height at this breakpoint (see cardHeight).
+// Below lg the figure flexes to fill whatever the content leaves (see the card
+// markup), so the cap no longer fights a white gap — it just keeps the card, and
+// thus that flexed image, a sensible height on a tall phone instead of letting
+// it grow to fill the whole viewport. Small phones stay viewport-limited below
+// the cap, so their citations are never clipped either way.
+const DECK_DESKTOP = { pin: 104, peek: 16, cap: "42rem" };
+const DECK_MOBILE = { pin: 76, peek: 8, cap: "36rem" };
 
 /**
  * SSR and the first client paint assume desktop, so the >= 1024px render is
@@ -72,11 +78,11 @@ const VH50 = "calc(var(--deck-vh, 1vh) * 50)";
  * Card height. A pinned card starts `pin` down and the deepest one another
  * `peek × (n-1)` below that, so anything taller than the remaining space has
  * its bottom cropped for the entire time you are reading it. Reserve the pin,
- * the full peek run and a little breathing room, then cap so the card does not
- * grow absurd on a tall monitor.
+ * the full peek run and a little breathing room, then cap (per breakpoint, see
+ * the DECK constants) so the card does not grow absurd on a tall screen.
  */
-const cardHeight = (deckDepth: number) =>
-	`min(42rem, calc(${VH100} - ${deckDepth + 40}px))`;
+const cardHeight = (deckDepth: number, cap = "42rem") =>
+	`min(${cap}, calc(${VH100} - ${deckDepth + 40}px))`;
 
 /**
  * Runway below the deck, before the page's next section.
@@ -92,8 +98,8 @@ const cardHeight = (deckDepth: number) =>
  * it can only ever be *less* than the `innerHeight/2` ScrollStack actually
  * releases — the runway errs long, never short.
  */
-const endSpace = (deckDepth: number) =>
-	`max(10rem, calc(${deckDepth}px + ${cardHeight(deckDepth)} - ${VH50} + 4rem))`;
+const endSpace = (deckDepth: number, cap = "42rem") =>
+	`max(10rem, calc(${deckDepth}px + ${cardHeight(deckDepth, cap)} - ${VH50} + 4rem))`;
 
 /**
  * Width of a card's image column. Only ever consumed at >= lg (the grid is a
@@ -131,9 +137,9 @@ function figureColumn(r: Recognition) {
  * falls back to a plain stack under `prefers-reduced-motion`.
  */
 export function RecognitionStack() {
-	const { pin, peek } = useDeck();
+	const { pin, peek, cap } = useDeck();
 	const deckDepth = pin + peek * (recognitions.length - 1);
-	const CARD_HEIGHT = cardHeight(deckDepth);
+	const CARD_HEIGHT = cardHeight(deckDepth, cap);
 
 	return (
 		<>
@@ -155,7 +161,7 @@ export function RecognitionStack() {
 				stackPosition={`${pin}px`}
 				baseScale={0.85}
 				dimAmount={0.7}
-				endSpace={endSpace(deckDepth)}>
+				endSpace={endSpace(deckDepth, cap)}>
 				{recognitions.map((r, i) => {
 					const index = String(i + 1).padStart(2, "0");
 
@@ -170,7 +176,7 @@ export function RecognitionStack() {
 						    deck stack unevenly. Same formula at every breakpoint, so it is
 						    an inline style rather than six Tailwind variants. */}
 							<article
-								className="grid grid-cols-1 lg:[grid-template-columns:var(--fig-col)_1fr]"
+								className="flex flex-col lg:grid lg:[grid-template-columns:var(--fig-col)_1fr]"
 								style={
 									{
 										height: CARD_HEIGHT,
@@ -178,15 +184,13 @@ export function RecognitionStack() {
 									} as CSSProperties
 								}>
 								{/* ── Certificate / photo ── */}
-								{/* Stacked layout splits the card's fixed height between the
-							    document and the text, so the figure cannot grow without
-							    squeezing a long award citation. Below sm the card is at its
-							    shortest (the height cap is viewport-driven) while the citations
-							    are at their tallest — the longest of them needs every one of
-							    the 60% left here, so the figure gives up four points there.
+								{/* Stacked below lg: the content sits at its natural height at the
+							    bottom and the figure takes the space left above it (`flex-1`), so
+							    a short citation yields a taller image rather than a dead white
+							    gap, and a long one still fits — the card is capped to hold it.
 							    Desktop is side-by-side, so there the figure simply runs the
 							    card's full height. */}
-								<figure className="relative h-[34%] overflow-hidden bg-gradient-to-br from-white via-steel-50 to-steel-200 sm:h-[48%] lg:h-full">
+								<figure className="relative min-h-0 flex-1 overflow-hidden bg-gradient-to-br from-white via-steel-50 to-steel-200 lg:h-full">
 									<div
 										aria-hidden
 										className="absolute inset-0 bg-blueprint [background-size:32px_32px] opacity-40"
@@ -214,7 +218,7 @@ export function RecognitionStack() {
 								{/* ── Content ── */}
 								{/* `min-h-0` so this grid row may shrink below its content's
 							    intrinsic height instead of pushing the card past its cap. */}
-								<div className="relative flex min-h-0 flex-col justify-center px-5 py-4 sm:px-10 sm:py-9 lg:px-12 lg:py-10 xl:px-16 xl:py-14">
+								<div className="relative flex min-h-0 shrink-0 flex-col justify-center px-5 py-4 sm:px-10 sm:py-9 lg:px-12 lg:py-10 xl:px-16 xl:py-14">
 									{/* Ghost index, purely decorative depth */}
 									<span
 										aria-hidden

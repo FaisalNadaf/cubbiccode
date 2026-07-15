@@ -40,31 +40,31 @@ const WORK_HERE = [
 		icon: ShieldCheck,
 		title: "Ownership, not hand-holding",
 		text: "You'll be trusted with responsibility early. We hire people we can rely on, then get out of their way.",
-		image: "/images/Moments/DSC_5557.JPG",
+		image: "/images/Headerimages/_DSC9803.jpg",
 	},
 	{
 		icon: Sparkles,
 		title: "AI-first, always learning",
 		text: "We build with modern tools React, Laravel, Cloud, and AI workflows. You'll work the way the industry is heading, not the way it's leaving behind.",
-		image: "/images/Moments/_MG_9991.JPG",
+		image: "/images/Headerimages/_DSC9850.JPG",
 	},
 	{
 		icon: Rocket,
 		title: "Real impact, real clients",
 		text: "From local first-movers to brands like Tata Sky and Reliance, your work ships and gets used. No busywork, no shelfware.",
-		image: "/images/about/parallax-2.jpg",
+		image: "/images/Headerimages/_DSC9847.JPG",
 	},
 	{
 		icon: GraduationCap,
 		title: "Grow with us",
 		text: "We train 1,000+ students a year; we invest just as hard in our own team. Mentorship, new skills, and a clear path forward.",
-		image: "/images/Moments/DSC_7895.JPG",
+		image: "/images/Headerimages/x3.jpg.jpeg",
 	},
 	{
 		icon: Users,
 		title: "Lean teams, big voice",
 		text: "Small teams mean your ideas are heard and your work is visible. No bureaucracy to disappear into.",
-		image: "/images/Moments/20250914_112031.jpg",
+		image: "/images/Headerimages/_DSC9796.jpg",
 	},
 ];
 
