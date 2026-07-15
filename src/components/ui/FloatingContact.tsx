@@ -37,13 +37,12 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
-import { MapPin, MessageSquareText, MessagesSquare, Phone, X } from "lucide-react";
+import { MapPin, MessagesSquare, Phone, X } from "lucide-react";
 import { site } from "@/content/site";
-import { routes } from "@/lib/routes";
 import { EASE_OUT, usePrefersReducedMotion } from "@/lib/motion";
-import { onCollectChat, openCollectChat } from "@/lib/collectchat";
+import { onCollectChat } from "@/lib/collectchat";
 import { cn } from "@/lib/utils";
 
 /** lucide has no WhatsApp glyph. Monochrome, which their brand guidelines allow. */
@@ -60,11 +59,11 @@ function WhatsAppGlyph({ className }: { className?: string }) {
 }
 
 /**
- * The arc: one radius, four evenly-spaced seats.
+ * The arc: one radius, three evenly-spaced seats.
  *
  * Even spacing is the whole trick — sweeping SPREAD° and dividing it equally
  * puts the same air between every pair, so the fan reads as one object rather
- * than four scattered dots.
+ * than scattered dots.
  *
  * Anchored in the bottom-left corner, the fan opens up and to the right: the
  * sweep is centred on the 45° diagonal (CENTER_ANGLE) so every seat lands in the
@@ -74,11 +73,12 @@ function WhatsAppGlyph({ className }: { className?: string }) {
  * The numbers are constrained, not taste:
  *  • RADIUS ≥ dome radius (42) + action radius (28) + air — any tighter and the
  *    seats sit on the dome itself.
- *  • A quarter-sweep (SPREAD 90°, so Δ 30° between four seats) is narrow, so the
- *    radius has to grow to keep the circles apart: the chord is 2·R·sin(Δ/2),
- *    and at R = 140 that is ~72px, leaving ~16px between two 56px circles.
+ *  • With three seats the quarter-sweep (SPREAD 90°) spaces them Δ 45° apart —
+ *    wide enough that the radius can sit close to the dome: the chord is
+ *    2·R·sin(Δ/2), and at R = 100 that is ~76px, leaving ~20px between two 56px
+ *    circles.
  */
-const RADIUS = 140;
+const RADIUS = 100;
 /** Total sweep of the fan. */
 const SPREAD = 90;
 /** Bearing the sweep is centred on, in degrees (90 = straight up, 0 = right). */
@@ -159,7 +159,6 @@ export function FloatingContact() {
 
 	const reduced = usePrefersReducedMotion();
 	const pathname = usePathname();
-	const router = useRouter();
 
 	const shown = armed && !yielded;
 
@@ -322,17 +321,6 @@ export function FloatingContact() {
 			href: site.whatsapp,
 			external: true,
 			ariaLabel: "Message us on WhatsApp",
-		},
-		{
-			key: "chatbot",
-			label: "Chatbot",
-			icon: <MessageSquareText className={ICON} strokeWidth={1.75} aria-hidden />,
-			onSelect: () => {
-				// The launcher is deferred and may be ad-blocked outright. Never a dead
-				// button: fall through to the page that does the same job.
-				if (!openCollectChat()) router.push(routes.contact);
-			},
-			ariaLabel: "Chat with our bot",
 		},
 		{
 			key: "call",

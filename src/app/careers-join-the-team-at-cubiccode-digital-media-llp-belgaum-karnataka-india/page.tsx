@@ -110,8 +110,8 @@ export default function CareersPage() {
 				kicker="Join Cubiccode Team"
 				title="Build things that matter, with people who give a damn."
 				subtitle="We're a lean, award-winning studio that's shipped 700+ projects for 500+ clients, and we're always looking for people who take ownership, learn fast, and want their work to actually reach the world."
-				image="/images/Headerimages/Screenshot 2026-07-14 211433.png"
-				imageAlt="The Wall of Fame at Cubiccode, honouring employees of the month"
+				image="/images/Headerimages/_DSC9817 - Copy.JPG"
+				imageAlt="The Cubiccode team at work in the Belagavi studio"
 				breadcrumb={[{ label: "Home", href: "/" }, { label: "Careers" }]}>
 				<div className="flex flex-wrap items-center gap-4">
 					<Button

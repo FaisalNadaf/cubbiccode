@@ -40,7 +40,7 @@ export default function ContactPage() {
 				kicker="Contact us"
 				title="Let's transform your business for a change that matters"
 				subtitle="Would you like to discuss a project? Tell us where you are and where you'd like to go and we'll come back with a clear plan, timeline and proposal, typically within a day."
-				image="/images/Headerimages/_DSC9862.JPG"
+				image="/images/Headerimages/_DSC9817 - Copy.JPG"
 				imageAlt="A project discussion with the Cubiccode team"
 				breadcrumb={[{ label: "Home", href: "/" }, { label: "Contact" }]}
 			/>
@@ -210,24 +210,24 @@ export default function ContactPage() {
 						</Reveal>
 						<Reveal delay={0.1}>
 							<h2 className="mt-5 text-pretty font-display text-3xl font-bold leading-[1.08] tracking-tightest text-ink sm:text-4xl lg:text-[2.9rem]">
-								Three offices, one standard of work
+								Visit our Belagavi office
 							</h2>
 						</Reveal>
 						<Reveal delay={0.2}>
 							<p className="mt-5 text-lg leading-relaxed text-steel-600">
-								Drop by our offices in Belagavi or our Bengaluru workspace or
-								simply send your enquiry and we&apos;ll bring the meeting to
-								you.
+								Drop by our Belagavi office, or simply send your enquiry and
+								we&apos;ll bring the meeting to you.
 							</p>
 						</Reveal>
 					</div>
 
-					{/* Three offices + the company panel fill a 2x2: the panel is emitted
-					    straight after the first office, so at lg the rows read
-					    [office 1 | Cubiccode] / [office 2 | office 3]. Below lg the grid is a
-					    single column and they simply stack in that same order. */}
+					{/* The Belagavi office + the company panel fill one lg row (the panel is
+					    emitted straight after the office): [office | Cubiccode]. Below lg
+					    the grid is a single column and they stack in that order. */}
 					<div className="mt-14 grid grid-cols-1 gap-8 lg:grid-cols-2">
-						{site.offices.map((office, i) => (
+						{site.offices
+							.filter((o) => o.id !== "registered" && o.id !== "bengaluru")
+							.map((office, i) => (
 							<Fragment key={office.label}>
 								<Reveal
 									delay={i * 0.1}

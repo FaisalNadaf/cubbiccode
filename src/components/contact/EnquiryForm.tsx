@@ -97,38 +97,25 @@ export function EnquiryForm() {
 
 		setStatus("sending");
 
-		// Web3Forms delivers the enquiry straight to the inbox with no backend of
-		// our own. The access key is a public, submit-only token (safe to ship in
-		// the client bundle). Without it we keep the graceful WhatsApp/email
-		// hand-off on the success screen, so the form never hard-fails.
-		const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY;
-		if (!accessKey) {
-			window.setTimeout(() => setStatus("sent"), 850);
-			return;
-		}
-
+		// Delivered by our own /api/enquiry route over SMTP — no third-party
+		// service. It validates again server-side and mails the enquiry to the
+		// inbox; on any failure we fall back to the WhatsApp/email hand-off.
 		try {
-			const res = await fetch("https://api.web3forms.com/submit", {
+			const res = await fetch("/api/enquiry", {
 				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-					Accept: "application/json",
-				},
+				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					access_key: accessKey,
-					subject: `New website enquiry: ${values.subject || "Project enquiry"}`,
-					from_name: "Cubiccode website",
-					// The visitor's own address, so a reply goes straight back to them.
-					replyto: values.email,
 					name: values.name,
 					email: values.email,
-					phone: values.phone || "—",
-					topic: values.subject,
+					phone: values.phone,
+					subject: values.subject,
 					message: values.message,
 				}),
 			});
-			const data = (await res.json()) as { success?: boolean };
-			setStatus(data.success ? "sent" : "error");
+			const data = (await res.json().catch(() => ({}))) as {
+				success?: boolean;
+			};
+			setStatus(res.ok && data.success ? "sent" : "error");
 		} catch {
 			setStatus("error");
 		}

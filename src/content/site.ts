@@ -52,7 +52,7 @@ export const site = {
 	/** The Google Maps place pin — drops you on the business, not on a search
 	 *  results page the way the office `map` query links do. Used by the floating
 	 *  contact dock, where the tap has to land somewhere unambiguous. */
-	mapShort: "https://maps.app.goo.gl/VidrzDfiY5m7C4nLA",
+	mapShort: "https://maps.app.goo.gl/88ACjAZE8rhZij3R6",
 	proposalCta: routes.contact,
 	socials: {
 		linkedin: "https://www.linkedin.com/company/cubiccode/mycompany/",
@@ -229,7 +229,8 @@ export const nav: NavGroup[] = [
 						href: routes.founders,
 						desc: "The vision behind Cubiccode",
 						icon: "Quote",
-					},	{
+					},
+					{
 						label: "Photo Gallery",
 						href: routes.gallery,
 						desc: "Nearly a decade, in photographs",
@@ -258,7 +259,6 @@ export const nav: NavGroup[] = [
 						desc: "ISO 9001:2015 & quality standards",
 						icon: "BadgeCheck",
 					},
-				
 				],
 			},
 		],
