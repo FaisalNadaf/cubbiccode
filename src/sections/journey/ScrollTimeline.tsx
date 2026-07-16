@@ -157,6 +157,7 @@ function PinnedTimeline({ items }: { items: Milestone[] }) {
 						i={i}
 						total={total}
 						progress={scrollYProgress}
+						active={i === active}
 					/>
 				))}
 
@@ -233,16 +234,20 @@ function Slide({
 	i,
 	total,
 	progress,
+	active,
 }: {
 	m: Milestone;
 	i: number;
 	total: number;
 	progress: MotionValue<number>;
+	/** True while this is the chapter on screen — the gate on the video embed. */
+	active: boolean;
 }) {
 	const { input, output, seg, c, fade } = opacityStops(i, total);
 	const left = i % 2 === 0; // image on the left this slide?
 	const side = left ? 1 : -1; // caption enters from this direction
 	const t = themeOf(i); // dark on even slides, light on odd
+	const doc = m.fit === "contain"; // a document, shown whole rather than cropped
 
 	// Cross-fade opacity (kept in sync with the matching ThemeLayer).
 	const opacity = useTransform(progress, input, output);
@@ -312,29 +317,40 @@ function Slide({
 							left ? "left-[5%]" : "right-[5%]",
 						)}>
 						<motion.div
-							style={{ y: imgY, scale: imgScale }}
+							style={{
+								y: imgY,
+								scale: imgScale,
+								// A document's frame is cut to its own aspect so `contain` fills
+								// it edge to edge; photos keep the fixed 16/10 crop window.
+								...(doc && m.aspect ? { aspectRatio: m.aspect } : {}),
+							}}
 							className={cn(
-								"relative aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 shadow-[0_50px_130px_-40px_rgba(0,0,0,0.6)] [will-change:transform]",
+								"relative w-full overflow-hidden rounded-2xl ring-1 shadow-[0_50px_130px_-40px_rgba(0,0,0,0.6)] [will-change:transform]",
+								doc ? "bg-white" : "aspect-[16/10]",
 								t.ring,
 							)}>
 							{/* This composition is display:none below lg, but `priority` still
 							    preloads slide 0 — the media condition stops a phone fetching a
 							    half-viewport photo it will never paint. >= lg resolves to the
 							    original 50vw, so the chosen candidate there is unchanged. */}
-							<Image
-								src={m.image ?? "/images/Moments/1759160316850.jpg"}
-								alt={m.title}
-								fill
-								sizes="(min-width: 1024px) 50vw, 1px"
+							<SlideMedia
+								m={m}
+								live={active}
 								priority={i === 0}
-								className="object-cover"
+								sizes="(min-width: 1024px) 50vw, 1px"
+								objectClass={doc ? "object-contain" : "object-cover"}
 							/>
-							<div
-								className={cn(
-									"absolute inset-0 bg-gradient-to-t via-transparent to-transparent",
-									t.imgOverlay,
-								)}
-							/>
+							{/* The grounding overlay is for photos only: it would just darken a
+							    document that is meant to be read, or a video that is meant to be
+							    watched. */}
+							{!doc && !m.youtubeId && (
+								<div
+									className={cn(
+										"pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent",
+										t.imgOverlay,
+									)}
+								/>
+							)}
 						</motion.div>
 
 						{m.image2 && (
@@ -451,6 +467,83 @@ function Slide({
 	);
 }
 
+/* ── Slide media: still, document, or footage ────────────────────────────── */
+
+/**
+ * What sits in a slide's frame: the photo (or document) still, and — when the
+ * milestone has footage — a muted, looping YouTube embed layered over it.
+ *
+ * The embed is mounted only while `live` (the slide is the one on screen). All
+ * eleven slides stay in the DOM behind each other, so mounting every player up
+ * front would run hidden iframes for footage no one is watching; worse, this
+ * deck Ken-Burns-scales the active frame every scroll frame, and a live iframe
+ * there re-rasterises with it — one at a time is the price, all of them is not.
+ * The still stays underneath as the poster, so the frame is never empty while
+ * the player loads. `mute=1` is the price of autoplay (browsers block sound),
+ * and `loop` only repeats a single video when `playlist` names its own id.
+ */
+function SlideMedia({
+	m,
+	live,
+	priority,
+	sizes,
+	objectClass,
+}: {
+	m: Milestone;
+	live: boolean;
+	priority: boolean;
+	sizes: string;
+	objectClass: string;
+}) {
+	const reduce = useReducedMotion();
+
+	const poster = (
+		<Image
+			src={m.image ?? "/images/Moments/1759160316850.jpg"}
+			alt={m.title}
+			fill
+			sizes={sizes}
+			priority={priority}
+			className={objectClass}
+		/>
+	);
+
+	if (!m.youtubeId) return poster;
+
+	// A clip that starts on its own is exactly what a reduced-motion visitor asked
+	// not to be given, so for them it loads paused on its own play button.
+	const params = new URLSearchParams({
+		autoplay: !reduce && live ? "1" : "0",
+		mute: "1",
+		loop: "1",
+		playlist: m.youtubeId, // required, or `loop` is ignored on a single video
+		playsinline: "1",
+		rel: "0",
+		modestbranding: "1",
+	});
+
+	return (
+		<>
+			{poster}
+			{live && (
+				<iframe
+					// -nocookie: no YouTube ad cookie for a visitor who only scrolled past.
+					src={`https://www.youtube-nocookie.com/embed/${m.youtubeId}?${params}`}
+					title={m.title}
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+					referrerPolicy="strict-origin-when-cross-origin"
+					allowFullScreen
+					// This desktop frame is display:none below lg (the mobile composition
+					// takes over), but it stays in the DOM. lazy keeps that hidden copy —
+					// which has no layout box on a phone — from loading the player at all.
+					loading="lazy"
+					className="absolute inset-0 size-full border-0"
+				/>
+			)}
+		</>
+	);
+}
+
 /* ── Per-slide theme backdrop (cross-fades dark ⇄ light on scroll) ────────── */
 
 function ThemeLayer({
@@ -511,6 +604,7 @@ function StaticTimeline({ items }: { items: Milestone[] }) {
 				const left = i % 2 === 0;
 				const dark = isDark(i);
 				const t = themeOf(i);
+				const doc = m.fit === "contain";
 				return (
 					<section
 						key={m.year}
@@ -529,16 +623,20 @@ function StaticTimeline({ items }: { items: Milestone[] }) {
 								!left && "lg:[direction:rtl]",
 							)}>
 							<div
+								style={
+									doc && m.aspect ? { aspectRatio: m.aspect } : undefined
+								}
 								className={cn(
-									"relative aspect-[16/10] w-full overflow-hidden rounded-2xl ring-1 [direction:ltr]",
+									"relative w-full overflow-hidden rounded-2xl ring-1 [direction:ltr]",
+									doc ? "bg-white" : "aspect-[16/10]",
 									t.ring,
 								)}>
-								<Image
-									src={m.image ?? "/images/Moments/1759160316850.jpg"}
-									alt={m.title}
-									fill
+								<SlideMedia
+									m={m}
+									live
+									priority={false}
 									sizes="(max-width: 1024px) 100vw, 50vw"
-									className="object-cover"
+									objectClass={doc ? "object-contain" : "object-cover"}
 								/>
 							</div>
 							<div className="[direction:ltr]">

@@ -204,6 +204,21 @@ export type Milestone = {
 	image2?: string;
 	/** True when `image2` is a portrait document (a certificate)  renders in a taller, fully-visible frame instead of a cropped landscape one. */
 	image2Certificate?: boolean;
+	/**
+	 * How `image` sits in the slide's frame. Photos default to `cover` and fill it.
+	 * A press cutting or certificate is a document and must be shown whole, so it is
+	 * `contain`ed — the frame is then cut to `aspect` so the document fills it top to
+	 * bottom with nothing cropped and no empty bands.
+	 */
+	fit?: "cover" | "contain";
+	/** `image`'s natural width ÷ height. Required with `fit: "contain"`. Measure, don't guess. */
+	aspect?: number;
+	/**
+	 * YouTube id of footage for this milestone. When set, the slide's photo frame
+	 * becomes a muted, looping player with `image` as its poster; the embed is only
+	 * mounted while this slide is the one on screen, never before.
+	 */
+	youtubeId?: string;
 };
 
 // Our Journey  authoritative milestones.
@@ -227,14 +242,18 @@ export const journey: Milestone[] = [
 		title: "A teacher honoured",
 		text: "We've trained numerous successful students who've gone on to build rewarding careers across industries. In recognition of his contribution to digital education, our Managing Director, Sarvesh Kakkeri, was honoured with the Best Youngest Digital Marketing Teacher in India award at the Indian Education Awards.",
 		image: "/images/Moments/DSC_7895.JPG",
+		youtubeId: "8pesjkSey9M",
 	},
 	{
 		year: "2019",
 		title: "National recognition & 250+ companies",
 		text: "A major milestone recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
-		image: "/images/Moments/DSC_5557.JPG",
-		// image2: "/images/Moments/business-excellence-certificate1.jpg",
-		// image2Certificate: true,
+		image: "/images/Moments/paper.jpg",
+		// A newspaper collage — a document, not a photo. contain + the measured
+		// aspect show it whole; object-cover in the 16/10 frame cropped its top and
+		// bottom rows away.
+		fit: "contain",
+		aspect: 1.163, // measured: 1007 × 875
 	},
 	{
 		year: "2020",
@@ -276,7 +295,7 @@ export const journey: Milestone[] = [
 		year: "2025",
 		title: "Silver at the India Digital Awards",
 		text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally we won Silver in the Web Application Development Company of the Year category at the IAMAI's 16th India Digital Awards.",
-		image: "/images/Moments/HQWhatsAppImage2026-03-17at12.00.40PM.jpg.jpeg",
+		image: "/images/Moments/varrrn.jpeg",
 	},
 	{
 		year: "2026",
