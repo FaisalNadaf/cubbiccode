@@ -228,7 +228,6 @@ export const journey: Milestone[] = [
 		title: "Cubiccode is founded",
 		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
 		image: "/images/Moments/2016.jpeg",
-		// image2: "/images/Moments/1759160316850.jpg",
 	},
 	{
 		year: "2017",
@@ -241,7 +240,7 @@ export const journey: Milestone[] = [
 		year: "2018",
 		title: "A teacher honoured",
 		text: "We've trained numerous successful students who've gone on to build rewarding careers across industries. In recognition of his contribution to digital education, our Managing Director, Sarvesh Kakkeri, was honoured with the Best Youngest Digital Marketing Teacher in India award at the Indian Education Awards.",
-		image: "/images/Moments/DSC_7895.JPG",
+		image: "/images/Moments/Screenshot 2026-07-17 113701.png",	
 		youtubeId: "8pesjkSey9M",
 	},
 	{

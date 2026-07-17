@@ -456,14 +456,14 @@ export const nav: NavGroup[] = [
 			{
 				// The site 301s http → https; link straight to https to skip the hop.
 				label: "DevOps Engineering",
-				href: "https://devops.cubiccode.in/",
+				href: "https://devops.cubiccode.org/",
 				desc: "Docker, Kubernetes & AWS",
 				icon: "GitBranch",
 				external: true,
 			},
 			{
 				label: "Full Stack Web Development",
-				href: "https://fullstackweb.cubiccode.in/",
+				href: "https://fullstackweb.cubiccode.org/",
 				desc: "Job-oriented course",
 				icon: "Layers",
 				external: true,

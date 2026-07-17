@@ -280,7 +280,7 @@ export default function ContactPage() {
 									amount={0.2}>
 									<article className="relative flex h-full min-h-[24rem] flex-col overflow-hidden rounded-4xl border border-steel-200 bg-ink shadow-soft">
 										<Image
-											src="/images/Headerimages/_DSC9796.jpg"
+											src="/images/Headerimages/_DSC9817 - Copy.JPG"
 											alt={`${site.legalName}  the team at work in the Belagavi studio`}
 											fill
 											sizes="(min-width: 1024px) 50vw, 100vw"
