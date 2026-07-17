@@ -226,27 +226,27 @@ export const journey: Milestone[] = [
 	{
 		year: "2016",
 		title: "Cubiccode is founded",
-		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri, we began our journey from a small office with a bold vision to deliver high-quality web solutions and become a trusted digital growth partner by helping businesses create impactful online experiences.",
+		text: "Founded by Shivani Jadhav and Sarvesh Kakkeri in a small Belagavi office, driven by one bold vision — to become a trusted digital growth partner for businesses.",
 		image: "/images/Moments/2016.jpeg",
 	},
 	{
 		year: "2017",
 		title: "Bridging the skills gap",
-		text: "We began training students in Belgaum after identifying a significant gap between academic learning and industry requirements. By bridging it with practical, industry-focused training, we trained over 100 students within our first year.",
+		text: "We began training students in Belgaum to close the gap between academic learning and real industry work, crossing 100 students trained in our very first year.",
 		image: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM1.jpeg",
 		// // image2: "/images/Moments/WhatsAppImage2017-10-13at10.14.12AM2.jpeg",
 	},
 	{
 		year: "2018",
 		title: "A teacher honoured",
-		text: "We've trained numerous successful students who've gone on to build rewarding careers across industries. In recognition of his contribution to digital education, our Managing Director, Sarvesh Kakkeri, was honoured with the Best Youngest Digital Marketing Teacher in India award at the Indian Education Awards.",
+		text: "In recognition of his work in digital education, Managing Director Sarvesh Kakkeri was named Best Youngest Digital Marketing Teacher in India at the Indian Education Awards.",
 		image: "/images/Moments/Screenshot 2026-07-17 113701.png",	
 		youtubeId: "8pesjkSey9M",
 	},
 	{
 		year: "2019",
 		title: "National recognition & 250+ companies",
-		text: "A major milestone recognised among the Top 10 Web Development Start-ups of 2019 by Silicon India and awarded Most Outstanding Web Development Company 2019 – Karnataka at the AI Global Excellence Awards. The same year, we delivered web solutions to 250+ companies.",
+		text: "Named a Top 10 Web Development Start-up of 2019 by Silicon India and Karnataka's Most Outstanding Web Development Company — the year we served 250+ companies.",
 		image: "/images/Moments/paper.jpg",
 		// A newspaper collage — a document, not a photo. contain + the measured
 		// aspect show it whole; object-cover in the 16/10 frame cropped its top and
@@ -257,14 +257,14 @@ export const journey: Milestone[] = [
 	{
 		year: "2020",
 		title: "On the TEDx stage",
-		text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing insights, experiences and ideas to inspire students, professionals and aspiring entrepreneurs further strengthening our commitment to education, innovation and empowering individuals through knowledge.",
+		text: "Sarvesh Kakkeri delivered his first TEDx Talk, sharing ideas and experiences to inspire students, professionals and aspiring entrepreneurs across the region.",
 		image: "/images/Moments/IMG_7820.JPG",
 		// image2: "/images/Moments/2020.jpg",
 	},
 	{
 		year: "2021",
 		title: "Most Innovative & Creative Web Solution",
-		text: "At the Brandscouncil Ratings Conclave & Awards 2021, held on 28 July at Hotel Radisson, Mumbai, Cubiccode was presented the Certificate of Achievement for Most Innovative and Creative Web Solution of the Year. The honour followed the second phase of the Brandscouncil Ratings Survey 2021, an international ratings, rankings and research programme run by the Council for Brand Business Promotions and Research.",
+		text: "At the Brandscouncil Ratings Conclave & Awards in Mumbai, Cubiccode received the Certificate of Achievement for Most Innovative and Creative Web Solution of the Year.",
 		image: "/images/Moments/award-bg.jpg",
 		// image2: "/images/Moments/brandcounselling1.jpg",
 		// image2Certificate: true,
@@ -272,14 +272,14 @@ export const journey: Milestone[] = [
 	{
 		year: "2022",
 		title: "GDG Belgaum & DevFest",
-		text: "We became the organizer of the Google Developer Group Belgaum, growing it into a thriving community of 4,500+ developers. Under this leadership, DevFest 2022 became the 5th largest DevFest held in the country that year.",
+		text: "We became the organiser of Google Developer Group Belgaum, growing it to 4,500+ developers and making DevFest 2022 the fifth largest in the country that year.",
 		image: "/images/Moments/devfest2022_2.jpg",
 		// // image2: "/images/Moments/WhatsAppImage2024-06-08at11.50.15AM.jpeg",
 	},
 	{
 		year: "2023",
 		title: "Most Innovative & Futuristic Training Platform",
-		text: "Our training arm was recognised as the Most Innovative & Futuristic Training Platform / Institute of the Year 2023 for South India at the Educational Excellence Awards & Conference 2023, National Edition. Presented by BeginUp Research Intelligence at the Taj West End, Bengaluru, the Certificate of Recognition cited our quality training, technology courses and outstanding trainers.",
+		text: "Our training arm was named South India's Most Innovative & Futuristic Training Platform of 2023 at the Educational Excellence Awards, held at the Taj West End, Bengaluru.",
 		image: "/images/Moments/79074b8b-a3d8-4bf9-accb-708b6acb57a1.jpg",
 		// image2: "/images/Moments/EducationalE.jpg",
 		// image2Certificate: true,
@@ -287,19 +287,19 @@ export const journey: Milestone[] = [
 	{
 		year: "2024",
 		title: "1,000+ students trained",
-		text: "Cubiccode's sister arm the Belgaum Institute of Data Analytics and Digital Marketing with AI had successfully trained 1,000+ students, helping learners gain practical skills and advance their careers in the technology sector.",
+		text: "Our sister arm, the Belgaum Institute of Data Analytics & Digital Marketing with AI, crossed 1,000+ students trained for careers across the technology sector.",
 		image: "/images/Headerimages/x3.jpg.jpeg",
 	},
 	{
 		year: "2025",
 		title: "Silver at the India Digital Awards",
-		text: "Our expertise in delivering complex web applications and enterprise-grade digital solutions was recognised nationally we won Silver in the Web Application Development Company of the Year category at the IAMAI's 16th India Digital Awards.",
+		text: "We won Silver for Web Application Development Company of the Year at the IAMAI's 16th India Digital Awards — national recognition for our enterprise web work.",
 		image: "/images/Moments/varrrn.jpeg",
 	},
 	{
 		year: "2026",
 		title: "Our new office",
-		text: "Ten years on from the small office we started in, we moved into a new home for the team a space with room to build, to train, and to host the community that has grown around us.",
+		text: "Ten years on from the room we started in, we moved into a new home for the team — space to build, to train, and to host the community that grew around us.",
 		image: "/images/Headerimages/Screenshot 2026-07-14 230346.png",
 		// image2: "/images/Headerimages/_DSC9889.JPG",
 	},

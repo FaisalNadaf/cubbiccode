@@ -124,7 +124,7 @@ export function ScrollTimeline({ items }: { items: Milestone[] }) {
 
 			<div className="container-x relative">
 				{/* header */}
-				<div className="mx-auto mb-16 max-w-2xl text-center lg:mb-24">
+				{/* <div className="mx-auto mb-16 max-w-2xl text-center lg:mb-24">
 					<p className="text-sm font-semibold uppercase tracking-kicker text-corporate-600">
 						2016 — Today
 					</p>
@@ -136,7 +136,7 @@ export function ScrollTimeline({ items }: { items: Milestone[] }) {
 						people — that took us from a single Belagavi room to teams across
 						Karnataka.
 					</p>
-				</div>
+				</div> */}
 
 				{/* timeline */}
 				<div
@@ -236,7 +236,7 @@ export function ScrollTimeline({ items }: { items: Milestone[] }) {
 									</span>
 
 									{/* card */}
-									<div className="pl-16 lg:grid lg:grid-cols-2 lg:pl-0">
+									<div className="pl-16 pr-6 lg:grid lg:grid-cols-2 lg:px-0">
 										<div
 											className={cn(
 												"lg:flex",
@@ -257,16 +257,35 @@ export function ScrollTimeline({ items }: { items: Milestone[] }) {
 													ease: [0.22, 1, 0.36, 1],
 												}}
 												whileHover={reduce ? undefined : { y: -6 }}
-												className="group w-full overflow-hidden rounded-3xl border border-steel-200 bg-white shadow-card transition-shadow duration-300 hover:shadow-lift lg:max-w-[400px]">
-												<CardMedia m={m} />
-												<div className="p-6 lg:p-7">
-													<h3 className="font-display text-xl font-bold leading-snug text-ink lg:text-2xl">
+												className="group relative w-full lg:max-w-[380px]">
+												{/* content body — the image reserves room on the outer side. Left
+												    and right padding are set per-side so a `lg:` shorthand can't
+												    collapse the space the floating image needs. */}
+												<div
+													className={cn(
+														"relative rounded-3xl border border-steel-200 bg-white shadow-card transition-shadow duration-300 group-hover:shadow-lift",
+														"py-6 lg:py-7",
+														isLeft ?
+															"pl-6 pr-[104px] lg:pl-[80px] lg:pr-7"
+														:	"pl-6 pr-[104px] lg:pl-7 lg:pr-[80px]",
+													)}>
+													<p className="font-display text-sm font-bold tracking-wide text-corporate-600">
+														{m.year}
+													</p>
+													<h3 className="mt-1.5 font-display text-lg font-bold leading-snug text-ink lg:text-xl">
 														{m.title}
 													</h3>
-													<p className="mt-3 text-sm leading-relaxed text-steel-600">
+													<p className="mt-2.5 text-sm leading-relaxed text-steel-600">
 														{m.text}
 													</p>
 												</div>
+
+												{/* small image, floating over the outer edge */}
+												<CardMedia
+													m={m}
+													isLeft={isLeft}
+													reduce={reduce}
+												/>
 											</motion.article>
 										</div>
 									</div>
@@ -282,53 +301,46 @@ export function ScrollTimeline({ items }: { items: Milestone[] }) {
 
 /* ── Card media: photo, whole document, or click-to-play footage ─────────── */
 
-function CardMedia({ m }: { m: Milestone }) {
-	const reduce = useReducedMotion();
+function CardMedia({
+	m,
+	isLeft,
+	reduce,
+}: {
+	m: Milestone;
+	isLeft: boolean;
+	reduce: boolean | null;
+}) {
 	const [playing, setPlaying] = useState(false);
-	const doc = m.fit === "contain"; // a press cutting / certificate, shown whole
 	const src = m.image ?? FALLBACK;
 
 	return (
 		<div
 			className={cn(
-				"relative w-full overflow-hidden",
-				// A document is cut to its own aspect so `contain` fills the frame with
-				// no bands; a photo keeps the fixed 16/10 crop window.
-				doc ? "bg-white" : "aspect-[16/10] bg-steel-100",
-			)}
-			style={doc && m.aspect ? { aspectRatio: String(m.aspect) } : undefined}>
+				"absolute top-1/2 z-10 aspect-square w-32 -translate-y-1/2 overflow-hidden rounded-2xl bg-steel-100 shadow-lift ring-1 ring-black/5 lg:w-40",
+				"right-0 translate-x-[28%] lg:translate-x-[60%]", // mobile modest, desktop 60% outside
+				isLeft && "lg:left-0 lg:right-auto lg:-translate-x-[60%]", // desktop-left: float left
+			)}>
 			<Image
 				src={src}
 				alt={m.title}
 				fill
-				sizes="(min-width: 1024px) 400px, 100vw"
+				sizes="(min-width: 1024px) 160px, 128px"
 				className={cn(
-					doc ? "object-contain p-2" : "object-cover",
-					!doc &&
-						!reduce &&
-						"transition-transform duration-1000 ease-out group-hover:scale-105",
+					"object-cover",
+					!reduce &&
+						"transition-transform duration-700 ease-out group-hover:scale-105",
 				)}
 			/>
 
-			{/* grounding gradient — photos only (a document is meant to be read) */}
-			{!doc && (
-				<div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/30 via-transparent to-transparent" />
-			)}
-
-			{/* year chip */}
-			<span className="absolute left-4 top-4 z-10 rounded-full bg-corporate-600/95 px-3 py-1 font-display text-sm font-bold tracking-wide text-white shadow-lg ring-1 ring-white/15 backdrop-blur-sm">
-				{m.year}
-			</span>
-
-			{/* footage: the still stays as the poster, the embed loads only on click */}
+			{/* footage: the still is the poster, the embed loads only on click */}
 			{m.youtubeId && !playing && (
 				<button
 					type="button"
 					onClick={() => setPlaying(true)}
 					aria-label={`Play video: ${m.title}`}
-					className="group/play absolute inset-0 z-10 grid place-items-center">
-					<span className="grid size-16 place-items-center rounded-full bg-white/90 text-corporate-600 shadow-xl ring-1 ring-black/5 backdrop-blur-sm transition-transform duration-300 group-hover/play:scale-110">
-						<Play className="ml-0.5 size-6 fill-current" />
+					className="absolute inset-0 grid place-items-center bg-ink/10 transition-colors hover:bg-ink/20">
+					<span className="grid size-9 place-items-center rounded-full bg-white/90 text-corporate-600 shadow-lg ring-1 ring-black/5">
+						<Play className="ml-0.5 size-4 fill-current" />
 					</span>
 				</button>
 			)}
@@ -339,7 +351,7 @@ function CardMedia({ m }: { m: Milestone }) {
 					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
 					referrerPolicy="strict-origin-when-cross-origin"
 					allowFullScreen
-					className="absolute inset-0 z-20 size-full border-0"
+					className="absolute inset-0 size-full border-0"
 				/>
 			)}
 		</div>
