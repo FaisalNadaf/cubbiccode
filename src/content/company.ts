@@ -51,19 +51,6 @@ export type Recognition = {
  */
 export const recognitions: Recognition[] = [
 	{
-		title: "Best Youngest Digital Marketing Teacher in India",
-		org: "Indian Education Awards",
-		blurb:
-			"Presented to co-founder Sarvesh Kakkeri for his contribution to digital education, after his first year of training students in Belgaum.",
-		year: "2018",
-		kind: "Award",
-		icon: "GraduationCap",
-		image: "/images/Moments/DSC_7895.JPG",
-		youtubeId: "8pesjkSey9M",
-		fit: "cover",
-		aspect: 1.51,
-	},
-	{
 		title: "10 Best Web Development Start-ups in India",
 		org: "Silicon India",
 		blurb:
@@ -101,6 +88,19 @@ export const recognitions: Recognition[] = [
 		image: "/images/Moments/2020.jpg",
 		fit: "cover",
 		aspect: 0.92,
+	},
+	{
+		title: "Best Youngest Digital Marketing Teacher in India",
+		org: "Indian Education Awards",
+		blurb:
+			"Presented to co-founder Sarvesh Kakkeri for his contribution to digital education, after his first year of training students in Belgaum.",
+		year: "2018",
+		kind: "Award",
+		icon: "GraduationCap",
+		image: "/images/Moments/DSC_7895.JPG",
+		youtubeId: "8pesjkSey9M",
+		fit: "cover",
+		aspect: 1.51,
 	},
 	{
 		title: "Most Innovative and Creative Web Solution of the Year",
@@ -240,7 +240,7 @@ export const journey: Milestone[] = [
 		year: "2018",
 		title: "A teacher honoured",
 		text: "In recognition of his work in digital education, Managing Director Sarvesh Kakkeri was named Best Youngest Digital Marketing Teacher in India at the Indian Education Awards.",
-		image: "/images/Moments/Screenshot 2026-07-17 113701.png",	
+		image: "/images/Moments/Screenshot 2026-07-17 113701.png",
 		youtubeId: "8pesjkSey9M",
 	},
 	{

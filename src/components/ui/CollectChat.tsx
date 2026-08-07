@@ -26,6 +26,7 @@
 import { useEffect, useState } from "react";
 import Script from "next/script";
 import { COLLECT_LAUNCHER_SRC } from "@/lib/collectchat";
+import { CollectChatDock } from "./CollectChatDock";
 
 /** Long enough to stay off the critical path, short enough that an idle reader still gets a bot. */
 const SAFETY_MS = 6000;
@@ -52,11 +53,18 @@ export function CollectChat() {
 	// next/script dedupes by id, so this survives client-side navigation without
 	// re-injecting. The widget itself lives in <body>, outside React's tree, and
 	// is therefore never torn down by a route change either.
+	//
+	// The dock rides along behind the same gate: it exists only to take over the
+	// launcher's placement, so there is nothing for it to do until the script that
+	// creates the launcher has been asked for.
 	return (
-		<Script
-			id="collectchat-launcher"
-			src={COLLECT_LAUNCHER_SRC}
-			strategy="lazyOnload"
-		/>
+		<>
+			<Script
+				id="collectchat-launcher"
+				src={COLLECT_LAUNCHER_SRC}
+				strategy="lazyOnload"
+			/>
+			<CollectChatDock />
+		</>
 	);
 }

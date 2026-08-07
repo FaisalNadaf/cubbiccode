@@ -143,20 +143,26 @@ export function Navbar() {
 	// has to be stopped as well. `window.lenis` is assigned by the SmoothScroll
 	// provider's effect and is absent entirely under reduced motion, hence the
 	// guarded lookup — by the time the drawer can be opened the provider has mounted.
+	//
+	// The lock goes on `body` ONLY, never on `<html>`, and that is load-bearing.
+	// An `overflow` on the root element is applied to the viewport as-is; an
+	// `overflow` on `body` is applied to the viewport *instead* when the root is
+	// `visible`, and body's own used value then stays `visible`. Both therefore
+	// lock the scroll equally well — but locking the root leaves body a scroll
+	// container in its own right, which re-homes every `position: sticky`
+	// descendant in the page onto it. Opening this drawer over the awards deck
+	// unpinned all eight cards mid-scroll and dropped them back to their flow
+	// positions, then snapped them back on close.
 	useEffect(() => {
 		if (!mobileOpen) return;
-		const html = document.documentElement;
 		const body = document.body;
-		const prevHtml = html.style.overflow;
 		const prevBody = body.style.overflow;
-		html.style.overflow = "hidden";
 		body.style.overflow = "hidden";
 		const lenis = (
 			window as unknown as { lenis?: { stop: () => void; start: () => void } }
 		).lenis;
 		lenis?.stop();
 		return () => {
-			html.style.overflow = prevHtml;
 			body.style.overflow = prevBody;
 			lenis?.start();
 		};

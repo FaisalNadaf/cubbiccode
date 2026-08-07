@@ -52,7 +52,7 @@ interface ScrollStackProps {
 	itemScale?: number;
 	/** Vertical peek of each buried card above the one covering it. */
 	itemStackDistance?: number;
-	/** Where a card pins, as a % of viewport height. */
+	/** Where a card pins, as a px length or a % of viewport height. */
 	stackPosition?: string;
 	/** Smallest a card may shrink to, however deep it is buried. */
 	baseScale?: number;
@@ -62,13 +62,17 @@ interface ScrollStackProps {
 	useWindowScroll?: boolean;
 	onStackComplete?: () => void;
 	/**
-	 * Space below the deck, before whatever the page renders next.
+	 * How long the finished deck holds before it is released back into the flow.
 	 *
-	 * Any CSS length. This is not decorative padding: the last card's pin releases
-	 * half a viewport before the end spacer, and a pinned card out-ranks the
-	 * following section on z-index, so if the runway is shorter than the card's
-	 * remaining on-screen extent the deck paints over that section. A caller with
-	 * tall cards or a deep stack must size this to them — see RecognitionStack.
+	 * Any CSS length. The cards are pinned with `position: sticky`, so they are
+	 * held by the *bottom edge of their container*, not by a scroll threshold —
+	 * this is the height of the spacer that sits between the last card and that
+	 * edge, and therefore how much further you scroll with the completed deck on
+	 * screen before it starts to leave.
+	 *
+	 * Because the browser owns the release, a card can never outrun its own
+	 * container and paint over whatever the page renders next — that is a
+	 * guarantee of the mechanism, not something the caller has to size for.
 	 */
 	endSpace?: string;
 }
@@ -77,7 +81,6 @@ interface ScrollStackProps {
 const LENIS_LOOKUP_FRAMES = 60;
 
 type CardState = {
-	y: number;
 	scale: number;
 	rotation: number;
 	dim: number;
@@ -86,8 +89,10 @@ type CardState = {
 type Metrics = {
 	/** Layout offset of each card's top, in scroller coordinates. */
 	tops: number[];
-	/** Layout offset of the trailing spacer. */
-	endTop: number;
+	/** Each card's sticky inset — where it comes to rest, from the viewport top. */
+	pins: number[];
+	/** Scroll offset at which the container's bottom edge releases the deck. */
+	releaseAt: number;
 	viewport: number;
 };
 
@@ -112,7 +117,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 	dimAmount = 0.7,
 	useWindowScroll = false,
 	onStackComplete,
-	endSpace = "40vh",
+	endSpace = "50vh",
 }) => {
 	const rootRef = useRef<HTMLDivElement>(null);
 	const scrollerRef = useRef<HTMLDivElement>(null);
@@ -120,6 +125,9 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
 	const cardsRef = useRef<HTMLElement[]>([]);
 	const shadesRef = useRef<(HTMLElement | null)[]>([]);
+	const pinsRef = useRef<number[]>([]);
+	/** Bottom margin dealt to the last card — part of the box sticky clamps. */
+	const lastMarginRef = useRef(0);
 	const metricsRef = useRef<Metrics | null>(null);
 	const lastStateRef = useRef<CardState[]>([]);
 	const stackCompletedRef = useRef(false);
@@ -148,8 +156,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
 	/**
 	 * Layout offset of `element`, ignoring the CSS transforms we apply to cards.
-	 * `getBoundingClientRect` would fold each card's own translateY back into the
-	 * next frame's input and the deck would walk off-screen.
+	 * `getBoundingClientRect` would fold each card's own sticky shift and scale
+	 * back into the next frame's input and the deck would walk off-screen.
 	 */
 	const offsetOf = useCallback(
 		(element: HTMLElement) => {
@@ -166,27 +174,104 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 	);
 
 	/**
+	 * Pin every card, in CSS, with `position: sticky`.
+	 *
+	 * This used to be a per-frame job: each card was translated down by exactly
+	 * the distance the page had scrolled past it, so it appeared to freeze. That
+	 * only ever looks frozen if the translate lands in the *same frame* as the
+	 * scroll it cancels — true on desktop, where Lenis repositions the page and
+	 * emits `scroll` synchronously, and false on every touch device, where Lenis
+	 * runs with `syncTouch` off and the page is scrolled natively on the
+	 * compositor thread. There the transform is always at least a frame late, so
+	 * every pinned card jitters by the frame's scroll delta — tens of pixels at
+	 * flick speed. That is the mobile flicker.
+	 *
+	 * A sticky card rests at `stackPosition + itemStackDistance × i` from the top
+	 * of the scrollport, which is precisely where the old arithmetic parked it —
+	 * same geometry, except the browser holds it, on the compositor, in lockstep
+	 * with native scrolling. Only the shrink and the dim are left to JS, and a
+	 * frame of latency there is invisible: they are slow, continuous, and no
+	 * longer carry any positional component.
+	 */
+	const applyPins = useCallback(
+		(viewport: number) => {
+			const cards = cardsRef.current;
+			const n = cards.length;
+			if (!n) return;
+
+			const stackPx = parsePercentage(stackPosition, viewport);
+			const pins: number[] = new Array(n);
+
+			for (let i = 0; i < n; i++) {
+				const card = cards[i];
+				const pin = stackPx + itemStackDistance * i;
+				pins[i] = pin;
+
+				card.style.position = "sticky";
+				// Safari shipped this behind a prefix for years and still rejects the
+				// unprefixed keyword on old builds — the assignment above is simply
+				// dropped, leaving the property empty rather than throwing.
+				if (!card.style.position) card.style.position = "-webkit-sticky";
+				card.style.top = `${pin}px`;
+
+				// The bottom margin still carries the flow gap, but it is dealt the
+				// mirror of the card's own pin, and that is load-bearing.
+				//
+				// A sticky box is held by two different edges measured off two
+				// different boxes — verified in Chromium, WebKit and Gecko, which all
+				// agree: the inset above is applied to the *border* box (a top margin
+				// does not move the pin, so `my-8` is left alone), but the clamp to the
+				// bottom of the containing block is applied to the *margin* box. Under
+				// a uniform bottom margin the front card — the one that pins lowest —
+				// would therefore reach that clamp first and slide up out of the deck
+				// while the cards buried behind it stayed put, unstacking the run from
+				// the front just as it left. Mirroring the pin ends every card's margin
+				// box the same distance below its own rest position, so the container
+				// catches the whole deck on one frame and it exits as the single object
+				// it reads as.
+				card.style.marginBottom = `${itemDistance + itemStackDistance * (n - 1 - i)}px`;
+			}
+
+			pinsRef.current = pins;
+			lastMarginRef.current = itemDistance;
+		},
+		[itemDistance, itemStackDistance, parsePercentage, stackPosition],
+	);
+
+	/**
 	 * Read every layout value the scroll loop needs, once, up front.
 	 *
-	 * Cheap rather than critical: because `transform` never invalidates layout
-	 * geometry, reading `offsetTop` between transform writes does not actually
-	 * force a reflow. Hoisting the reads out of the loop still spares us an
-	 * `offsetParent` walk per card plus a `querySelector` per frame, and keeps
-	 * the scroll path a pure function of `scrollTop`.
+	 * Must run *after* `applyPins`, which writes the margins these offsets are
+	 * measured from. `viewport` is passed in rather than sampled here — see the
+	 * mobile URL-bar note on `layout()`.
 	 */
-	const measure = useCallback(() => {
-		const cards = cardsRef.current;
-		if (!cards.length) return;
+	const measure = useCallback(
+		(viewport: number) => {
+			const cards = cardsRef.current;
+			const n = cards.length;
+			if (!n) return;
 
-		metricsRef.current = {
-			tops: cards.map(offsetOf),
-			endTop: endRef.current ? offsetOf(endRef.current) : 0,
-			viewport:
-				useWindowScroll ?
-					window.innerHeight
-				:	(scrollerRef.current?.clientHeight ?? 0),
-		};
-	}, [offsetOf, useWindowScroll]);
+			const pins = pinsRef.current;
+			const end = endRef.current;
+			// Bottom of the container's *content* box — the edge sticky measures
+			// against, which is the bottom margin edge of its last in-flow child.
+			const contentBottom = end ? offsetOf(end) + end.offsetHeight : 0;
+
+			// Sticky clamps the *margin* box, so the last card is caught once the
+			// content bottom rises to `pin + height + marginBottom` from the top of
+			// the scrollport — the same edge, and therefore the same frame, as every
+			// card behind it (see the mirrored margins in `applyPins`).
+			const lastBox = cards[n - 1].offsetHeight + lastMarginRef.current;
+
+			metricsRef.current = {
+				tops: cards.map(offsetOf),
+				pins,
+				releaseAt: contentBottom - (pins[n - 1] ?? 0) - lastBox,
+				viewport,
+			};
+		},
+		[offsetOf],
+	);
 
 	const applyTransforms = useCallback(
 		(scrollTop: number) => {
@@ -195,16 +280,16 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 			const n = cards.length;
 			if (!metrics || !n) return;
 
-			const { tops, endTop, viewport } = metrics;
-			const stackPx = parsePercentage(stackPosition, viewport);
-			const pinEnd = endTop - viewport / 2;
+			const { tops, pins, releaseAt, viewport } = metrics;
 
 			// ── Pass 1: pure arithmetic, zero DOM access ──────────────────────────
 			//
 			// `pinStart[i]` is the scroll position at which card i comes to rest.
+			// CSS does the resting now; this is only the number the shrink and dim
+			// curves are keyed off.
 			const pinStart: number[] = new Array(n);
 			for (let i = 0; i < n; i++) {
-				pinStart[i] = tops[i] - stackPx - itemStackDistance * i;
+				pinStart[i] = tops[i] - pins[i];
 			}
 
 			// `cover[i]` — how far card i+1 has travelled across card i, from the
@@ -229,16 +314,6 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 				const card = cards[i];
 				if (!card) continue;
 
-				// Sub-pixel translation is deliberate. A pinned card's on-screen
-				// position is `layoutTop - scrollTop + y`, and Lenis scrolls to
-				// fractional offsets — so rounding `y` to whole pixels leaks
-				// `frac(scrollTop)` straight into the card and it wobbles within 1px of
-				// the page it is meant to be frozen against.
-				const y =
-					scrollTop < pinStart[i] ?
-						0
-					:	Math.max(0, Math.min(scrollTop, pinEnd) - pinStart[i]);
-
 				const scale = Math.max(baseScale, 1 - depth[i] * itemScale);
 				const rotation = rotationAmount ? depth[i] * rotationAmount : 0;
 				const dim = dimAmount ? clamp01(depth[i] * dimAmount) : 0;
@@ -248,19 +323,17 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 				// swallowed one frame at a time and the card silently drifts.
 				let previous = lastStateRef.current[i];
 				if (!previous) {
-					previous = { y: NaN, scale: NaN, rotation: NaN, dim: NaN };
+					previous = { scale: NaN, rotation: NaN, dim: NaN };
 					lastStateRef.current[i] = previous;
 				}
 
 				const moved =
-					!(Math.abs(previous.y - y) <= 0.01) ||
 					!(Math.abs(previous.scale - scale) <= 0.0005) ||
 					!(Math.abs(previous.rotation - rotation) <= 0.01);
 
 				if (moved) {
 					const rotate = rotation ? ` rotate(${rotation.toFixed(3)}deg)` : "";
-					card.style.transform = `translate3d(0, ${y.toFixed(3)}px, 0) scale(${scale.toFixed(4)})${rotate}`;
-					previous.y = y;
+					card.style.transform = `scale(${scale.toFixed(4)})${rotate}`;
 					previous.scale = scale;
 					previous.rotation = rotation;
 				}
@@ -273,22 +346,13 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 			}
 
 			const lastPinned =
-				scrollTop >= pinStart[n - 1] && scrollTop <= pinEnd;
+				scrollTop >= pinStart[n - 1] && scrollTop <= releaseAt;
 			if (lastPinned !== stackCompletedRef.current) {
 				stackCompletedRef.current = lastPinned;
 				if (lastPinned) onStackComplete?.();
 			}
 		},
-		[
-			baseScale,
-			dimAmount,
-			itemScale,
-			itemStackDistance,
-			onStackComplete,
-			parsePercentage,
-			rotationAmount,
-			stackPosition,
-		],
+		[baseScale, dimAmount, itemScale, onStackComplete, rotationAmount],
 	);
 
 	useLayoutEffect(() => {
@@ -307,17 +371,18 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 		lastStateRef.current = [];
 
 		// Reduced motion: no pinning, no scaling, no shade — just a plain stack of
-		// cards in normal flow. The deck is decoration, not content.
+		// cards in normal flow. The deck is decoration, not content, so the trailing
+		// spacer that holds the finished deck on screen is dead weight here too.
 		const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 		if (reduce) {
 			cards.forEach((card, i) => {
 				if (i < cards.length - 1) card.style.marginBottom = `${itemDistance}px`;
 			});
+			if (endRef.current) endRef.current.style.height = "0px";
 			return;
 		}
 
 		cards.forEach((card, i) => {
-			if (i < cards.length - 1) card.style.marginBottom = `${itemDistance}px`;
 			card.style.transformOrigin = "top center";
 			card.style.willChange = "transform";
 			// Stable paint order — later cards always stack over earlier ones.
@@ -331,18 +396,36 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
 		const update = () => applyTransforms(readScrollTop());
 
-		const remeasure = () => {
-			measure();
+		/** Cached viewport height. See `layout()`. */
+		let viewport = 0;
+
+		/**
+		 * Re-pin and re-measure.
+		 *
+		 * `refreshViewport` is the whole point of the split. Mobile address bars
+		 * collapse as you scroll and change `innerHeight` by ~10%, but every height
+		 * in this deck is authored in `svh`, which does *not* move with the bar. So
+		 * re-sampling the live viewport in response to anything other than a genuine
+		 * layout change shifts the cover windows and the release point under a deck
+		 * whose geometry never moved, and the whole stack snaps mid-scroll.
+		 *
+		 * Order matters: `applyPins` writes the margins `measure` reads offsets from.
+		 */
+		const layout = (refreshViewport: boolean) => {
+			if (refreshViewport || !viewport) {
+				viewport =
+					useWindowScroll ?
+						window.innerHeight
+					:	(scrollerRef.current?.clientHeight ?? 0);
+			}
+			applyPins(viewport);
+			measure(viewport);
 			update();
 		};
 
-		// Mobile address bars collapse as you scroll and fire `resize` every time.
-		// `measure()` would then re-read `window.innerHeight` — a value the cards
-		// never see, because their heights are authored in `vh`, which on iOS is
-		// pinned to the *large* viewport — so `pinEnd` and the cover windows would
-		// shift mid-scroll and the whole deck snaps. Only a width change can
-		// actually move a card's layout offset, so on touch we re-measure on width
-		// (i.e. rotation) alone. Fine pointers keep re-measuring on every resize.
+		// Only a width change can actually move a card's layout offset on touch, so
+		// there we re-measure on width (i.e. rotation) alone. Fine pointers have no
+		// collapsing chrome, so every resize is real.
 		const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
 		let lastWidth = window.innerWidth;
 		const onResize = () => {
@@ -350,7 +433,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 			const widthChanged = width !== lastWidth;
 			lastWidth = width;
 			if (coarsePointer && !widthChanged) return;
-			remeasure();
+			layout(true);
 		};
 
 		// Native `scroll` fires after the browser has already committed the frame,
@@ -377,17 +460,15 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
 		if (useWindowScroll) {
 			// The app runs one window-level Lenis (providers/SmoothScroll). Attach to
-			// it and write transforms *synchronously* from its scroll event: Lenis
-			// emits immediately after it repositions the page, inside the same frame,
-			// so the card's compensating translate lands before paint. Deferring to a
-			// rAF instead leaves every pinned card one frame behind the scroll it is
-			// cancelling out — a per-frame shudder that reads as flicker.
+			// it so the shrink and the dim advance on the same tick Lenis repositions
+			// the page, rather than a frame behind it. The card's *position* no longer
+			// depends on this — sticky owns that — so a missing Lenis is now only a
+			// smoothness question, not a correctness one.
 			//
 			// SmoothScroll assigns `window.lenis` from a *parent* effect, and React
 			// flushes child effects first, so it is reliably absent on our first pass.
 			// Listen natively meanwhile and upgrade the moment it appears.
-			measure();
-			update();
+			layout(true);
 			listenNative();
 
 			let framesLeft = LENIS_LOOKUP_FRAMES;
@@ -410,9 +491,11 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 			window.addEventListener("resize", onResize);
 
 			// Text reflow and late-loading fonts move the cards' layout offsets.
-			// Transforms never change the inner's height, so this cannot self-trigger.
-			// This one is never gated: a real layout change must always re-measure.
-			const observer = new ResizeObserver(remeasure);
+			// Transforms never change the inner's height, so this cannot self-trigger;
+			// neither can `applyPins`, which rewrites the same margins it wrote last
+			// pass. This one is never gated — a real layout change must always
+			// re-measure — but it deliberately does not re-sample the viewport.
+			const observer = new ResizeObserver(() => layout(false));
 			const inner = root.querySelector(".scroll-stack-inner");
 			if (inner) observer.observe(inner);
 
@@ -428,6 +511,7 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 				sharedLenisRef.current = null;
 				cardsRef.current = [];
 				shadesRef.current = [];
+				pinsRef.current = [];
 				lastStateRef.current = [];
 				metricsRef.current = null;
 				stackCompletedRef.current = false;
@@ -458,11 +542,10 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 		};
 		ownRafRef.current = requestAnimationFrame(raf);
 
-		measure();
-		update();
+		layout(true);
 
 		window.addEventListener("resize", onResize);
-		const observer = new ResizeObserver(remeasure);
+		const observer = new ResizeObserver(() => layout(false));
 		const inner = scroller.querySelector(".scroll-stack-inner");
 		if (inner) observer.observe(inner);
 
@@ -477,11 +560,13 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 			ownLenisRef.current = null;
 			cardsRef.current = [];
 			shadesRef.current = [];
+			pinsRef.current = [];
 			lastStateRef.current = [];
 			metricsRef.current = null;
 			stackCompletedRef.current = false;
 		};
 	}, [
+		applyPins,
 		applyTransforms,
 		itemDistance,
 		measure,
@@ -491,19 +576,27 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 
 	// In window-scroll mode the page itself is the scroller. Making this an
 	// `overflow-y-auto` box too would trap the wheel inside it.
+	//
+	// NOTE: nothing between here and the scrollport may set `overflow`,
+	// `transform`, `filter` or `contain` — any of those re-homes a sticky
+	// descendant onto that ancestor and the deck stops pinning. app/template.tsx
+	// crossfades routes with opacity alone for exactly this reason.
 	if (useWindowScroll) {
 		return (
 			<div
 				ref={rootRef}
 				className={`relative w-full ${className}`.trim()}>
-				<div
-					className="scroll-stack-inner px-4 pt-[14vh] sm:px-8 lg:px-10 xl:px-12"
-					style={{ paddingBottom: endSpace }}>
+				<div className="scroll-stack-inner px-4 pb-24 pt-[14vh] sm:px-8 sm:pb-32 lg:px-10 xl:px-12">
 					{children}
-					{/* Spacer so the last pin can release cleanly */}
+					{/* The deck's runway, and an in-flow one: it is the last child, so it
+					    is what pushes the container's content box — and therefore the
+					    edge every sticky card is clamped to — below the last card. Padding
+					    on the container could not do this; padding sits outside the
+					    content box, where sticky cannot see it. */}
 					<div
 						ref={endRef}
-						className="scroll-stack-end h-px w-full"
+						className="scroll-stack-end w-full"
+						style={{ height: endSpace }}
 					/>
 				</div>
 			</div>
@@ -524,14 +617,13 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
 				overscrollBehavior: "contain",
 				WebkitOverflowScrolling: "touch",
 			}}>
-			<div
-				className="scroll-stack-inner px-4 pt-[14vh] sm:px-8 lg:px-10 xl:px-12"
-				style={{ paddingBottom: endSpace }}>
+			<div className="scroll-stack-inner px-4 pb-24 pt-[14vh] sm:px-8 sm:pb-32 lg:px-10 xl:px-12">
 				{children}
-				{/* Spacer so the last pin can release cleanly */}
+				{/* See the note on the window-scroll branch's spacer. */}
 				<div
 					ref={endRef}
-					className="scroll-stack-end h-px w-full"
+					className="scroll-stack-end w-full"
+					style={{ height: endSpace }}
 				/>
 			</div>
 		</div>

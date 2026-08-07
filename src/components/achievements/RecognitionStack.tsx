@@ -7,7 +7,10 @@ import Image from "next/image";
 import ScrollStack, { ScrollStackItem } from "@/components/ScrollStack";
 import { Icon } from "@/components/ui/Icon";
 import { recognitions, type Recognition } from "@/content/company";
-import { usePrefersReducedMotion } from "@/lib/motion";
+import {
+	useIsomorphicLayoutEffect,
+	usePrefersReducedMotion,
+} from "@/lib/motion";
 
 const TOTAL = String(recognitions.length).padStart(2, "0");
 
@@ -34,13 +37,19 @@ const DECK_DESKTOP = { pin: 104, peek: 16, cap: "42rem" };
 const DECK_MOBILE = { pin: 76, peek: 8, cap: "36rem" };
 
 /**
- * SSR and the first client paint assume desktop, so the >= 1024px render is
+ * SSR and the first client render assume desktop, so the >= 1024px render is
  * byte-identical and never flashes. ScrollStack lists these props in its layout
  * effect's deps, so it re-measures the deck when they flip on a phone.
+ *
+ * The flip runs in a *layout* effect, not a passive one. Both fire after
+ * hydration, but a passive effect fires after the browser has painted — so a
+ * phone got one frame of the deck at desktop geometry (a 232px reserve and a
+ * 42rem cap) and then a visible jolt as the card resized under it. A layout
+ * effect lands the correction in the same frame as the hydration paint.
  */
 function useDeck() {
 	const [mobile, setMobile] = useState(false);
-	useEffect(() => {
+	useIsomorphicLayoutEffect(() => {
 		const mq = window.matchMedia("(max-width: 1023.98px)");
 		const sync = () => setMobile(mq.matches);
 		sync();
@@ -85,21 +94,22 @@ const cardHeight = (deckDepth: number, cap = "42rem") =>
 	`min(${cap}, calc(${VH100} - ${deckDepth + 40}px))`;
 
 /**
- * Runway below the deck, before the page's next section.
+ * How long the finished deck holds before it is released back into the flow.
  *
- * ScrollStack releases the last card's pin half a viewport before this spacer,
- * but the card is still parked `deckDepth` down and stands `cardHeight` tall —
- * and it out-ranks the following section on z-index, so any part of it still on
- * screen when that section arrives paints straight over it. Reserve the card's
- * full on-screen extent, give back the half viewport the pin releases early, and
- * add a margin. Too small and the last card sits on top of the CTA.
+ * This used to be a collision runway. The cards were pinned by a per-frame
+ * transform, which meant nothing stopped one from still standing `deckDepth +
+ * cardHeight` tall over the top of the page when the next section arrived —
+ * and cards out-rank it on z-index — so this had to reserve the deck's entire
+ * on-screen extent or the last award painted over the CTA.
  *
- * The half viewport given back is measured in the same small-viewport unit, so
- * it can only ever be *less* than the `innerHeight/2` ScrollStack actually
- * releases — the runway errs long, never short.
+ * The pin is now `position: sticky`, and a sticky card is clamped to the bottom
+ * of its own container: it is released *by* the edge that the next section
+ * follows, so it can never outrun it. Overlap is structurally impossible and
+ * this is free to be what it reads as — a beat with the completed deck on
+ * screen before it leaves. Measured in the small-viewport unit for the same
+ * reason the card is, and capped so the beat does not stretch on a tall screen.
  */
-const endSpace = (deckDepth: number, cap = "42rem") =>
-	`max(10rem, calc(${deckDepth}px + ${cardHeight(deckDepth, cap)} - ${VH50} + 4rem))`;
+const END_SPACE = `min(24rem, ${VH50})`;
 
 /**
  * Width of a card's image column. Only ever consumed at >= lg (the grid is a
@@ -161,7 +171,7 @@ export function RecognitionStack() {
 				stackPosition={`${pin}px`}
 				baseScale={0.85}
 				dimAmount={0.7}
-				endSpace={endSpace(deckDepth, cap)}>
+				endSpace={END_SPACE}>
 				{recognitions.map((r, i) => {
 					const index = String(i + 1).padStart(2, "0");
 

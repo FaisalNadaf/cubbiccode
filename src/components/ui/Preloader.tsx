@@ -119,13 +119,19 @@ export function Preloader() {
 	// handler, so preventDefault() blocks native scroll and stopPropagation()
 	// keeps Lenis  and any other scroller  from ever seeing the event.
 	// overflow:hidden stays as a secondary guard for keyboard / scrollbar scroll.
+	//
+	// That guard goes on `body` ONLY, never on `<html>`. An overflow on the root
+	// element is applied to the viewport as-is; an overflow on `body` is applied
+	// to the viewport *instead* while the root is `visible`, and body's own used
+	// value stays `visible`. Both lock the scroll — but locking the root also
+	// makes body a scroll container, which re-homes every `position: sticky`
+	// element on the page onto it and silently stops it pinning (see the awards
+	// deck in components/ScrollStack). Nothing unpins it again if a stray lock is
+	// ever left behind, so the cheap version is simply never to set it.
 	useEffect(() => {
 		if (gone) return;
-		const html = document.documentElement;
 		const body = document.body;
-		const prevHtmlOverflow = html.style.overflow;
 		const prevBodyOverflow = body.style.overflow;
-		html.style.overflow = "hidden";
 		body.style.overflow = "hidden";
 
 		const block = (e: Event) => {
@@ -139,7 +145,6 @@ export function Preloader() {
 		return () => {
 			window.removeEventListener("wheel", block, opts);
 			window.removeEventListener("touchmove", block, opts);
-			html.style.overflow = prevHtmlOverflow;
 			body.style.overflow = prevBodyOverflow;
 		};
 	}, [gone]);
