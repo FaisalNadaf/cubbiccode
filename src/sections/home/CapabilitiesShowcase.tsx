@@ -25,7 +25,7 @@ import { capabilityImage } from "@/content/serviceImages";
  * cards over a hairline. On scroll the words part + fade and the scene
  * cross-dissolves into a pinned showcase: a column of portrait cards travels
  * vertically so one capability is centred at a time (neighbours peek above /
- * below). The surrounding editorial furniture  a serif title block, a feature
+ * below). The surrounding editorial furniture  a Sora title block, a feature
  * + tech panel, an `n/total` counter and the CTA  crossfades to the active
  * capability. The background cools subtly as the sequence resolves.
  *
@@ -167,10 +167,10 @@ export function CapabilitiesShowcase() {
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0, y: -12 }}
 								transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}>
-								<span className="font-serif text-[clamp(1rem,1.4vw,1.4rem)] text-corporate-500">
+								<span className="font-display text-[clamp(1rem,1.4vw,1.4rem)] font-medium text-corporate-500">
 									({idx(active + 1)})
 								</span>
-								<h3 className="mt-2 font-serif text-[clamp(1.8rem,3.4vw,3.2rem)] font-normal leading-[1.05] tracking-[-0.01em] text-ink">
+								<h3 className="mt-2 font-display text-[clamp(1.8rem,3.4vw,3.2rem)] font-semibold leading-[1.05] tracking-tightest text-ink">
 									{cap.title}
 								</h3>
 								<p className="mt-4 max-w-[34ch] font-sans text-[clamp(13px,0.95vw,15.5px)] leading-relaxed text-steel-600">
@@ -244,7 +244,7 @@ export function CapabilitiesShowcase() {
 							<motion.span
 								aria-hidden
 								style={{ x: introXLeft }}
-								className="select-none whitespace-nowrap font-serif text-[clamp(2.5rem,7vw,7rem)] font-normal leading-none tracking-[-0.02em] text-ink [will-change:transform]">
+								className="select-none whitespace-nowrap font-display text-[clamp(2.5rem,7vw,7rem)] font-semibold leading-none tracking-tightest text-ink [will-change:transform]">
 								Our
 							</motion.span>
 
@@ -261,7 +261,7 @@ export function CapabilitiesShowcase() {
 							<motion.span
 								aria-hidden
 								style={{ x: introXRight }}
-								className="select-none whitespace-nowrap font-serif text-[clamp(2.5rem,7vw,7rem)] font-normal leading-none tracking-[-0.02em] text-ink [will-change:transform]">
+								className="select-none whitespace-nowrap font-display text-[clamp(2.5rem,7vw,7rem)] font-semibold leading-none tracking-tightest text-ink [will-change:transform]">
 								Capabilities
 							</motion.span>
 						</div>
@@ -319,7 +319,7 @@ function CapabilitiesStatic({ animated }: { animated: boolean }) {
 				<span className="font-sans text-[12px] font-semibold uppercase tracking-[0.22em] text-corporate-600">
 					What we do
 				</span>
-				<h2 className="mt-3 font-serif text-4xl font-normal leading-[1.05] tracking-[-0.01em]">
+				<h2 className="mt-3 font-display text-4xl font-semibold leading-[1.05] tracking-tightest">
 					Our Capabilities
 				</h2>
 
@@ -334,10 +334,10 @@ function CapabilitiesStatic({ animated }: { animated: boolean }) {
 								className="aspect-[4/5] w-full max-w-[200px] shrink-0"
 							/>
 							<div>
-								<span className="font-serif text-base text-corporate-500">
+								<span className="font-display text-base font-medium text-corporate-500">
 									({idx(i + 1)})
 								</span>
-								<h3 className="mt-1 font-serif text-2xl font-normal leading-tight">
+								<h3 className="mt-1 font-display text-2xl font-semibold leading-tight">
 									{cap.title}
 								</h3>
 								<p className="mt-3 max-w-prose text-[15px] leading-relaxed text-steel-600">

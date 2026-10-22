@@ -125,7 +125,7 @@ export const heroStats: Stat[] = [
 export const hero = {
 	eyebrow: "ISO 9001:2015 Certified · 5x Awarded · Since 2016",
 	headline:
-		"We build websites and web apps that don't just look good they drive traffic and sales.",
+		"A Decade of Delivering Reliable, Scalable & Secure Web Applications and Customized ERP Software Solutions",
 	subheadline:
 		"With 500+ clients and nearly a decade building websites and web apps, Cubiccode is recognised among the 10 Best Web Development Start-ups in India (Silicon India, 2019), named Most Outstanding Web Development Company in Karnataka (AI Global Excellence Awards, 2019), and a Silver winner for Web Application Development Company of the Year at the 16th India Digital Awards 2025. Websites, web apps, customised ERP, SEO and workflow automation engineered in India, delivered on time.",
 	primaryCta: "Get a Proposal",

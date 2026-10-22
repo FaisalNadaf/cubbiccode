@@ -18,6 +18,8 @@ const BARE_ROUTES = new Set([
 	"/data-analytics",
 	"/digital-marketing",
 	"/gdg",
+	// Standalone tool with its own dark identity, header and credit line.
+	"/bni-investment-calculator",
 ]);
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {

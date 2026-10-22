@@ -56,10 +56,10 @@ export function Cursor() {
 				style={{ x, y }}
 				className="pointer-events-none fixed left-0 top-0 z-[90] hidden rounded-full bg-corporate-600 will-change-transform lg:block"
 				animate={{
-					width: active ? 8 : 6,
-					height: active ? 8 : 6,
-					marginLeft: active ? -4 : -3,
-					marginTop: active ? -4 : -3,
+					width: active ? 10 : 8,
+					height: active ? 10 : 8,
+					marginLeft: active ? -5 : -4,
+					marginTop: active ? -5 : -4,
 				}}
 			/>
 			<motion.div
@@ -67,10 +67,10 @@ export function Cursor() {
 				style={{ x: ringX, y: ringY }}
 				className="pointer-events-none fixed left-0 top-0 z-[90] hidden rounded-full border border-ink/40 will-change-transform lg:block"
 				animate={{
-					width: active ? 56 : 34,
-					height: active ? 56 : 34,
-					marginLeft: active ? -28 : -17,
-					marginTop: active ? -28 : -17,
+					width: active ? 64 : 42,
+					height: active ? 64 : 42,
+					marginLeft: active ? -32 : -21,
+					marginTop: active ? -32 : -21,
 					borderColor: active ? "rgba(27,110,194,0.6)" : "rgba(11,27,58,0.35)",
 					backgroundColor: active ? "rgba(27,110,194,0.06)" : "rgba(27,110,194,0)",
 				}}

@@ -395,8 +395,13 @@ export function Footer() {
 			{/* ── Giant clipped watermark ── */}
 			<div
 				aria-hidden
-				className="pointer-events-none relative h-20 select-none overflow-hidden sm:h-28 lg:h-40">
-				<span className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap font-display text-[6.5rem] font-bold leading-none tracking-tightest text-white/[0.03] sm:text-[9.5rem] lg:text-[13.5rem]">
+				className="pointer-events-none relative h-[clamp(1.5rem,10.5vw,10rem)] select-none overflow-hidden">
+				{/* Fluid, not stepped: at a fixed 6.5rem the word measures ~590px, so
+				    every phone cropped it on BOTH sides and it read as "UBICCO". The vw
+				    size keeps the whole wordmark on screen at any width, and the band
+				    height tracks it at the same ~3:4 ratio so the intended bleed off the
+				    bottom edge is unchanged. Both cap at the original desktop values. */}
+				<span className="absolute left-1/2 top-0 -translate-x-1/2 whitespace-nowrap font-display text-[clamp(2rem,14.5vw,13.5rem)] font-bold leading-none tracking-tightest text-white/[0.03]">
 					CUBICCODE
 				</span>
 			</div>

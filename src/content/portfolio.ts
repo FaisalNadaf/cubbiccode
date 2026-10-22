@@ -12,12 +12,140 @@ export const featuredProjects: (WebsiteProject & {
 	blurb: string;
 })[] = [
 	{
+		name: "School Excellence Program",
+		url: "school-execlence-program-website.vercel.app",
+		category: "Education",
+		image: "/images/portfolio/schoolexcellenceprogram.jpg",
+		blurb:
+			"A school-excellence programme site that presents its curriculum, outcomes and enrolment path clearly for parents and educators.",
+	},
+	{
+		name: "Edugradient",
+		url: "blueviolet-chicken-914938.hostingersite.com",
+		category: "Education",
+		image: "/images/portfolio/edugradient.jpg",
+		blurb:
+			"An education-technology brand site with a modern look, clear programme storytelling and a focused enquiry flow.",
+	},
+	{
+		name: "G7 Olympiad",
+		url: "lavenderblush-ferret-501801.hostingersite.com",
+		category: "Education",
+		image: "/images/portfolio/g7olympiad.jpg",
+		blurb:
+			"An olympiad programme website that makes exams, preparation and registration easy for students and parents to follow.",
+	},
+	{
+		name: "Belagavi Insider",
+		url: "belagaviinsider.com",
+		category: "Website",
+		image: "/images/portfolio/belagaviinsider.jpg",
+		blurb:
+			"A local news and city-guide portal for Belagavi, with fast, content-first browsing and a clean editorial layout.",
+	},
+	{
+		name: "Imbos Aerospace",
+		url: "rosybrown-cobra-980659.hostingersite.com",
+		category: "Website",
+		image: "/images/portfolio/imbosaerospace.jpg",
+		blurb:
+			"An aerospace engineering brand site that turns precision capability into a confident, credible first impression.",
+	},
+	{
+		name: "LBS Kidz",
+		url: "test-lbs-kidz.netlify.app",
+		category: "Education",
+		image: "/images/portfolio/lbskidz.jpg",
+		blurb:
+			"A bright, playful kids-learning website with a welcoming tone and a simple route to admissions and enquiries.",
+	},
+	{
 		name: "Harsha & Rakesh Salon",
 		url: "harsharakesh.com",
 		category: "E-commerce",
 		image: "/images/portfolio/harsharakes.jpg",
 		blurb:
 			"An elegant booking-first experience with online ordering, gift cards and a polished mobile flow.",
+	},
+	{
+		name: "Sangam Developers",
+		url: "test-sangam-group.netlify.app/renewables",
+		category: "Website",
+		image: "/images/portfolio/sangamdevelopers.jpg",
+		blurb:
+			"A corporate group site with a dedicated renewables division, built to project scale, credibility and a clear enquiry path.",
+	},
+	{
+		name: "Simran Technology",
+		url: "simran-technology-cranes-components.netlify.app",
+		category: "Website",
+		image: "/images/portfolio/simrantechnology.jpg",
+		blurb:
+			"An industrial site for cranes and components, with structured product categories and quote-ready enquiry paths.",
+	},
+	{
+		name: "Konin Valves",
+		url: "test-koninvalves.netlify.app",
+		category: "Website",
+		image: "/images/portfolio/koninvalves.jpg",
+		blurb:
+			"A valve manufacturer's catalogue site that organises products by type and application for engineering buyers.",
+	},
+	{
+		name: "BMGT",
+		url: "bmgt.ae/en",
+		category: "Website",
+		image: "/images/portfolio/bmgt.jpg",
+		blurb:
+			"A UAE business website with a clean, bilingual-ready structure that positions the company with authority.",
+	},
+	{
+		name: "Lokadarshan",
+		url: "lokadarshan.news",
+		category: "Website",
+		image: "/images/portfolio/lokadarshan.jpg",
+		blurb:
+			"A news publication site built for fast reading, with a clear category structure and a modern editorial design.",
+	},
+	{
+		name: "Foraam",
+		url: "foraam.com",
+		category: "E-commerce",
+		image: "/images/portfolio/FORAAM.jpg",
+		blurb:
+			"An ethnic-wear label brought online editorial lookbooks, rich product styling and a frictionless, mobile-first checkout.",
+	},
+	{
+		name: "Lokadarshan E-Paper",
+		url: "lightseagreen-mongoose-565306.hostingersite.com",
+		category: "Web App",
+		image: "/images/portfolio/lokadarshanepaper.jpg",
+		blurb:
+			"A digital e-paper reader that brings the daily print edition online, with page-by-page browsing and easy archives.",
+	},
+	{
+		name: "Belgaum Matrimony",
+		url: "belgaummatrimony.in",
+		category: "Web App",
+		image: "/images/portfolio/belgaummatrimony.jpg",
+		blurb:
+			"A matrimony platform with profile search, filters and a trust-first design for families looking for a match.",
+	},
+	{
+		name: "Sharvani Jewellers",
+		url: "test-sharvani.cubiccode.org",
+		category: "E-commerce",
+		image: "/images/portfolio/sharvanijewellers.jpg",
+		blurb:
+			"A jewellery storefront with curated collections, rich product close-ups and a smooth, trust-building shopping flow.",
+	},
+	{
+		name: "Belgaum Software Company",
+		url: "softwarecompanybelgaum.com",
+		category: "Website",
+		image: "/images/portfolio/belgaumsoftwarecompany.jpg",
+		blurb:
+			"A software-services site that lays out web, app and ERP capability with clear service pages and strong calls to action.",
 	},
 	{
 		name: "Madhtara",
@@ -43,12 +171,12 @@ export const featuredProjects: (WebsiteProject & {
 			"A heat-transfer engineering site that turns complex thermal-management capability into a clear, credible story.",
 	},
 	{
-		name: "Foraam",
-		url: "foraam.com",
-		category: "E-commerce",
-		image: "/images/portfolio/FORAAM.jpg",
+		name: "Creative Miura",
+		url: "creativemiura.com/index",
+		category: "Website",
+		image: "/images/portfolio/creativemiura.jpg",
 		blurb:
-			"An ethnic-wear label brought online editorial lookbooks, rich product styling and a frictionless, mobile-first checkout.",
+			"A creative studio site where bold visuals and smooth transitions put the work front and centre.",
 	},
 	{
 		name: "Simple",

@@ -12,6 +12,7 @@ import { PageLoader } from "@/components/ui/PageLoader";
 import { CollectChat } from "@/components/ui/CollectChat";
 import { FloatingContact } from "@/components/ui/FloatingContact";
 import { COLLECT_ID } from "@/lib/collectchat";
+import { CHUNK_RECOVERY_SCRIPT } from "@/lib/chunk-recovery";
 import { site } from "@/content/site";
 import { pageSeo } from "@/content/seo";
 import { buildMetadata, organizationJsonLd, websiteJsonLd } from "@/lib/seo";
@@ -93,6 +94,14 @@ export default function RootLayout({
 				"font-sans",
 			)}>
 			<head>
+				{/* First script in the document, deliberately: it listens for a build
+				    asset failing to load, which is what a document served from a cache
+				    older than the current build does. Anything registered after Next's
+				    own tags would miss the failure it exists to catch.
+				    See lib/chunk-recovery. */}
+				<script
+					dangerouslySetInnerHTML={{ __html: CHUNK_RECOVERY_SCRIPT }}
+				/>
 				{/* Two pre-paint gates, both set before first paint so nothing flashes:
             1. `data-preloader-seen` — this session already watched the intro,
                so globals.css hides the overlay before hydration.

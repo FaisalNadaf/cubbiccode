@@ -10,9 +10,10 @@ import { UI_SPRING } from "./motion";
 import type { CarouselTheme } from "./theme";
 
 /**
- * CarouselIndicators  the row of large circular thumbnails. The active one
- * scales up, shows full-colour and carries a shared ring that springs between
- * positions; inactive ones are dimmed/desaturated behind a thin border.
+ * CarouselIndicators  the row of large circular thumbnails. Every thumbnail is
+ * full-colour; the active one scales up and carries a shared ring that springs
+ * between positions, which is separation enough on its own — inactive ones only
+ * step back by a touch of opacity behind a thin border.
  * Falls back to numbers when no `thumbnails` are supplied.
  */
 export function CarouselIndicators({
@@ -68,29 +69,23 @@ export function CarouselIndicators({
 								:	"border-white/30 text-white/60 group-hover/dot:border-white/70 group-hover/dot:text-white",
 							)}>
 							{thumb ?
-								<>
-									<Image
-										src={thumb.src}
-										alt=""
-										fill
-										sizes="96px"
-										className={cn(
-											"object-cover transition-all duration-300",
-											active ?
-												"opacity-100 grayscale-0"
-											:	"opacity-60 grayscale group-hover/dot:opacity-90 group-hover/dot:grayscale-0",
-										)}
-									/>
-									{!active && (
-										<span
-											aria-hidden
-											className={cn(
-												"pointer-events-none absolute inset-0",
-												light ? "bg-white/30" : "bg-ink/30",
-											)}
-										/>
+								<Image
+									src={thumb.src}
+									alt=""
+									fill
+									sizes="96px"
+									// Every thumbnail sits in full colour. Inactive ones used to
+									// be desaturated behind a scrim, which left the whole strip
+									// looking grey; the active one is already unmistakable from
+									// its scale-up and ring, so a whisper of opacity is all the
+									// separation it needs.
+									className={cn(
+										"object-cover transition-opacity duration-300",
+										active ?
+											"opacity-100"
+										:	"opacity-90 group-hover/dot:opacity-100",
 									)}
-								</>
+								/>
 							:	<span className="relative z-10">{i + 1}</span>}
 						</span>
 

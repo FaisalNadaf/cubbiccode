@@ -77,15 +77,6 @@ export const SEO_CLIENTS: SeoClient[] = [
 		score: 97,
 	},
 	{
-		slug: "vip-spa-belagavi",
-		name: "VIP SPA Belagavi",
-		category: "Massage Spa",
-		industry: "Spa",
-		city: "Belgaum",
-		keyword: "best spa with steam bath budget friendly in belgaum",
-		score: 95,
-	},
-	{
 		slug: "quest-educare",
 		name: "Quest Educare",
 		category: "Coaching Center",

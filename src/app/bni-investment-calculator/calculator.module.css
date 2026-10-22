@@ -1,0 +1,137 @@
+/**
+ * BNI calculator — the handful of rules Tailwind cannot express.
+ *
+ * The page itself is built from the site's utilities and design tokens; what is
+ * left here is native form-control internals (which live in vendor
+ * pseudo-elements, unreachable from a utility class) and the print sheet.
+ *
+ * @format
+ */
+
+/* ── Number inputs ────────────────────────────────────────────────────────
+   The spinners are removed because every numeric field on this page has a
+   meaningful step in the thousands; the browser's 1-unit arrows are useless
+   at that scale and only crowd the field. */
+.numInput::-webkit-outer-spin-button,
+.numInput::-webkit-inner-spin-button {
+	appearance: none;
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.numInput {
+	appearance: textfield;
+	-moz-appearance: textfield;
+}
+
+/* ── Margin slider ────────────────────────────────────────────────────────
+   `--fill` is set inline from the component so the track paints as filled up
+   to the thumb. Track and thumb have to be declared once per vendor prefix —
+   a shared selector list is dropped wholesale by both engines. */
+.range {
+	appearance: none;
+	-webkit-appearance: none;
+	background: transparent;
+	cursor: pointer;
+}
+
+.range::-webkit-slider-runnable-track {
+	height: 6px;
+	border-radius: 999px;
+	background: linear-gradient(
+		to right,
+		#1b6ec2 0%,
+		#1b6ec2 var(--fill, 50%),
+		#e1e7ef var(--fill, 50%),
+		#e1e7ef 100%
+	);
+}
+
+.range::-moz-range-track {
+	height: 6px;
+	border-radius: 999px;
+	background: linear-gradient(
+		to right,
+		#1b6ec2 0%,
+		#1b6ec2 var(--fill, 50%),
+		#e1e7ef var(--fill, 50%),
+		#e1e7ef 100%
+	);
+}
+
+.range::-webkit-slider-thumb {
+	appearance: none;
+	-webkit-appearance: none;
+	width: 20px;
+	height: 20px;
+	/* Track is 6px; centre the 20px thumb on it. */
+	margin-top: -7px;
+	border-radius: 999px;
+	background: #fff;
+	border: 2px solid #1b6ec2;
+	box-shadow: 0 2px 8px -2px rgba(11, 27, 58, 0.25);
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.range::-moz-range-thumb {
+	width: 20px;
+	height: 20px;
+	border-radius: 999px;
+	background: #fff;
+	border: 2px solid #1b6ec2;
+	box-shadow: 0 2px 8px -2px rgba(11, 27, 58, 0.25);
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.2s ease;
+}
+
+.range:hover::-webkit-slider-thumb,
+.range:active::-webkit-slider-thumb {
+	transform: scale(1.12);
+	box-shadow: 0 0 0 6px rgba(27, 110, 194, 0.12);
+}
+
+.range:hover::-moz-range-thumb,
+.range:active::-moz-range-thumb {
+	transform: scale(1.12);
+	box-shadow: 0 0 0 6px rgba(27, 110, 194, 0.12);
+}
+
+.range:focus-visible::-webkit-slider-thumb {
+	box-shadow: 0 0 0 6px rgba(27, 110, 194, 0.22);
+}
+
+.range:focus-visible::-moz-range-thumb {
+	box-shadow: 0 0 0 6px rgba(27, 110, 194, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.range::-webkit-slider-thumb,
+	.range::-moz-range-thumb {
+		transition: none;
+	}
+}
+
+/* ── Print ────────────────────────────────────────────────────────────────
+   Far simpler than it used to be: the page is now ink-on-white by default, so
+   printing mostly means dropping the interactive furniture and letting the
+   plan through even when it has not been opened on screen. */
+@media print {
+	.noPrint {
+		display: none !important;
+	}
+
+	/* The plan is `hidden` until the CTA is pressed; on paper the reader has no
+	   way to press it, so the full document prints. */
+	.printOpen {
+		display: block !important;
+	}
+
+	.printPanel {
+		border: 1px solid #ccc !important;
+		box-shadow: none !important;
+		break-inside: avoid;
+	}
+}

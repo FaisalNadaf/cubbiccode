@@ -37,7 +37,7 @@ export function StatsBand() {
 			};
 
 	return (
-		<section className="relative w-full overflow-hidden bg-gradient-to-br from-ink via-corporate-900 to-corporate-800 py-24 text-white lg:py-32">
+		<section className="relative w-full overflow-hidden bg-gradient-to-br from-ink via-corporate-900 to-corporate-800 py-16 text-white sm:py-24 lg:py-32">
 			{/* Texture + ambient glows */}
 			<div
 				aria-hidden
@@ -71,14 +71,14 @@ export function StatsBand() {
 					initial="hidden"
 					whileInView="show"
 					viewport={{ once: true, amount: 0.3 }}
-					className="mx-auto mt-16 grid max-w-5xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+					className="mx-auto mt-10 grid max-w-5xl grid-cols-2 gap-3 sm:mt-16 sm:gap-5 lg:grid-cols-4">
 					{heroStats.map((s, i) => {
 						const Icon = ICONS[i] ?? Rocket;
 						return (
 							<motion.div
 								key={s.label}
 								variants={item}
-								className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/[0.05] p-7 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-corporate-300/40 hover:bg-white/[0.09]">
+								className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.05] p-4 text-center backdrop-blur-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-corporate-300/40 hover:bg-white/[0.09] sm:rounded-3xl sm:p-7">
 								{/* Top accent */}
 								<span className="absolute inset-x-0 top-0 mx-auto block h-px w-2/3 bg-gradient-to-r from-transparent via-corporate-300/70 to-transparent" />
 								{/* Corner glow on hover */}
@@ -88,18 +88,18 @@ export function StatsBand() {
 								/>
 
 								{/* Icon chip */}
-								<span className="mx-auto flex size-12 items-center justify-center rounded-2xl bg-corporate-500/15 text-corporate-200 ring-1 ring-corporate-400/25 transition-colors duration-300 group-hover:bg-corporate-500/25 group-hover:text-white">
-									<Icon className="size-5" />
+								<span className="mx-auto flex size-10 items-center justify-center rounded-xl bg-corporate-500/15 text-corporate-200 ring-1 ring-corporate-400/25 transition-colors duration-300 group-hover:bg-corporate-500/25 group-hover:text-white sm:size-12 sm:rounded-2xl">
+									<Icon className="size-4 sm:size-5" />
 								</span>
 
-								<div className="mt-5 font-display text-[2.6rem] font-bold leading-none tracking-tight text-white sm:text-5xl">
+								<div className="mt-3 font-display text-[1.75rem] font-bold leading-none tracking-tight text-white sm:mt-5 sm:text-[2.6rem] lg:text-5xl">
 									<CountStat
 										value={s.value}
 										prefix={s.prefix}
 										suffix={s.suffix}
 									/>
 								</div>
-								<div className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-corporate-100/80">
+								<div className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-corporate-100/80 sm:mt-3 sm:text-[11px]">
 									{s.label}
 								</div>
 							</motion.div>

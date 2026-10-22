@@ -40,7 +40,6 @@ export function Hero() {
 	// Foreground lifts + fades as the landing scrolls away → depth.
 	const contentY = useTransform(scrollYProgress, [0, 1], [0, -120]);
 	const contentFade = useTransform(scrollYProgress, [0, 0.75], [1, 0]);
-	const indicatorFade = useTransform(scrollYProgress, [0, 0.14], [1, 0]);
 
 	return (
 		<>
@@ -98,19 +97,19 @@ export function Hero() {
 						</span>
 					</Reveal>
 
-					<h1 className="mx-auto mt-7 max-w-5xl font-display text-[2.2rem] font-bold leading-[1.06] tracking-tightest text-white [text-shadow:0_2px_24px_rgba(8,20,39,0.45)] sm:text-[3rem] lg:text-[3.9rem]">
+					<h1 className="mx-auto mt-7 max-w-6xl font-display text-[2rem] font-bold leading-[1.08] tracking-tightest text-white [text-shadow:0_2px_24px_rgba(8,20,39,0.45)] sm:text-[2.7rem] lg:text-[3.2rem] xl:text-[3.5rem]">
 						<SplitReveal
 							as="span"
 							play="mount"
 							className="block">
-							We build websites &amp; web apps that don&apos;t just look good
+							A Decade of Delivering Reliable, Scalable &amp; Secure
 						</SplitReveal>
 						<SplitReveal
 							as="span"
 							play="mount"
 							delay={0.18}
 							className="block text-corporate-100">
-							they drive traffic and sales.
+							Web Applications and Customized ERP Software Solutions
 						</SplitReveal>
 					</h1>
 
@@ -126,29 +125,6 @@ export function Hero() {
 							</Button>
 						</div>
 					</Reveal>
-				</motion.div>
-
-				{/* ── Scroll indicator ────────────────────────────────────────────── */}
-				<motion.div
-					style={reduce ? undefined : { opacity: indicatorFade }}
-					className="pointer-events-none absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 flex-col items-center gap-2 sm:flex"
-					aria-hidden="true">
-					<span className="text-[10px] font-semibold uppercase tracking-kicker text-white/65 [text-shadow:0_1px_2px_rgba(0,0,0,0.45)]">
-						Scroll
-					</span>
-					<span className="flex h-9 w-[22px] items-start justify-center rounded-full border border-white/35 p-1.5">
-						<motion.span
-							animate={
-								reduce ? undefined : { y: [0, 10, 0], opacity: [1, 0.3, 1] }
-							}
-							transition={{
-								duration: 1.6,
-								repeat: Infinity,
-								ease: "easeInOut",
-							}}
-							className="size-1.5 rounded-full bg-corporate-200"
-						/>
-					</span>
 				</motion.div>
 			</section>
 

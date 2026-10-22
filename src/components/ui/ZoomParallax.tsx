@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
 	motion,
@@ -12,7 +12,7 @@ import {
 	useMotionValueEvent,
 	type MotionValue,
 } from "framer-motion";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type ZoomImage = {
@@ -175,7 +175,7 @@ export function 	ZoomParallax({
 			{/* `h-screen-dvh` (not `h-screen`): on mobile Safari `100vh` is the *large*
 			    viewport, so the pane hangs behind the address bar and the carousel's
 			    bottom controls sit off-screen. `100dvh` === `100vh` on desktop. */}
-			<div className="sticky top-0 h-screen-dvh w-full overflow-hidden bg-ink">
+			<div className="sticky top-0 h-screen-dvh w-full overflow-clip bg-ink">
 				{/* ── Base layer: full-screen carousel (hidden until the hand-off) ── */}
 				<motion.div
 					style={{ opacity: carouselOpacity }}
@@ -257,7 +257,10 @@ export function 	ZoomParallax({
 						inCarousel ? "" : "pointer-events-none",
 					)}>
 					{/* Name  top left */}
-					<span className="absolute left-6 top-16 max-w-[70vw] truncate font-serif text-3xl text-white sm:left-10 sm:top-20 sm:text-4xl lg:left-14 lg:text-5xl">
+					{/* `truncate` clips to the line box, so the line box has to be tall
+					    enough for the serif's ascenders and descenders (g, y, B) — the
+					    text-* default `leading-none` sliced them off. */}
+					<span className="absolute left-6 top-14 max-w-[70vw] truncate px-1 py-2 font-serif text-3xl !leading-[1.3] text-white sm:left-10 sm:top-[4.5rem] sm:text-4xl lg:left-14 lg:text-5xl">
 						{current?.name}
 					</span>
 
@@ -270,41 +273,132 @@ export function 	ZoomParallax({
 							href={current.href}
 							target="_blank"
 							rel="noopener noreferrer"
-							className="pointer-events-auto group absolute bottom-28 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink shadow-lift transition-transform hover:-translate-y-0.5 md:bottom-9">
+							className="pointer-events-auto group absolute bottom-[calc(7.5rem_+_env(safe-area-inset-bottom))] left-1/2 inline-flex -translate-x-1/2 items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-ink shadow-lift transition-transform hover:-translate-y-0.5 max-md:bottom-[calc(11.5rem_+_env(safe-area-inset-bottom))]">
 							Visit website
 							<ArrowUpRight className="size-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
 						</a>
 					:	null}
 
-					{/* Counter + prev/next  bottom right */}
-					<div className="absolute bottom-9 right-6 flex items-center gap-5 sm:right-10 lg:right-14">
-						<span className="font-display text-xl tabular-nums text-white/80 sm:text-2xl">
-							{String(active + 1).padStart(2, "0")}
-							<span className="text-white/40">
-								{" "}
-								/ {String(N).padStart(2, "0")}
+					{/* Project switcher  small circular thumbnails. Scroll drives `active`
+					    and click calls `jumpTo`, so the two stay in sync both ways. */}
+					<ProjectDots
+						images={images}
+						active={active}
+						onSelect={jumpTo}
+					/>
+					</motion.div>
+			</div>
+		</div>
+	);
+}
+
+function ProjectDots({
+	images,
+	active,
+	onSelect,
+}: {
+	images: ZoomImage[];
+	active: number;
+	onSelect: (i: number) => void;
+}) {
+	const trackRef = useRef<HTMLDivElement>(null);
+	const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
+	const drag = useRef({ down: false, moved: false, x: 0, left: 0 });
+	const [dragging, setDragging] = useState(false);
+
+	// Keep the active circle centred in the strip. Scrolls the strip itself —
+	// scrollIntoView would also scroll the page and fight the scrub.
+	useEffect(() => {
+		const track = trackRef.current;
+		const el = itemRefs.current[active];
+		if (!track || !el || drag.current.down) return;
+		track.scrollTo({
+			left: el.offsetLeft - track.clientWidth / 2 + el.offsetWidth / 2,
+			behavior: "smooth",
+		});
+	}, [active]);
+
+	// Mouse drag-to-scroll. Touch already pans natively (`touch-action: pan-x`).
+	const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+		if (e.pointerType !== "mouse" || e.button !== 0) return;
+		const track = trackRef.current;
+		if (!track) return;
+		drag.current = { down: true, moved: false, x: e.clientX, left: track.scrollLeft };
+	};
+	const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+		const d = drag.current;
+		const track = trackRef.current;
+		if (!d.down || !track) return;
+		const dx = e.clientX - d.x;
+		if (!d.moved && Math.abs(dx) > 5) {
+			d.moved = true;
+			setDragging(true);
+			track.setPointerCapture(e.pointerId);
+		}
+		if (d.moved) track.scrollLeft = d.left - dx;
+	};
+	const endDrag = () => {
+		if (!drag.current.down) return;
+		drag.current.down = false;
+		setDragging(false);
+		// `moved` stays set until the click that follows the release has been
+		// swallowed, then resets.
+		setTimeout(() => {
+			drag.current.moved = false;
+		}, 0);
+	};
+
+	return (
+		<div className="pointer-events-auto absolute bottom-0 left-1/2 w-[min(97vw,1120px)] -translate-x-1/2 rounded-t-[2.5rem] border border-b-0 border-white/20 bg-ink/60 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_30px_rgba(0,0,0,0.25)] backdrop-blur-md">
+			<div
+				ref={trackRef}
+				data-lenis-prevent
+				onPointerDown={onPointerDown}
+				onPointerMove={onPointerMove}
+				onPointerUp={endDrag}
+				onPointerCancel={endDrag}
+				onClickCapture={(e) => {
+					if (drag.current.moved) {
+						e.preventDefault();
+						e.stopPropagation();
+					}
+				}}
+				className={cn(
+					"flex select-none items-center gap-3 overflow-x-auto px-[max(1rem,calc(50%_-_1.5rem))] py-3.5 [-ms-overflow-style:none] [scrollbar-width:none] [touch-action:pan-x] [&::-webkit-scrollbar]:hidden [mask-image:linear-gradient(to_right,transparent,#000_6%,#000_94%,transparent)]",
+					dragging ? "cursor-grabbing" : "cursor-grab",
+				)}>
+				{images.map((img, i) => {
+					const on = i === active;
+					return (
+						<button
+							key={i}
+							ref={(el) => {
+								itemRefs.current[i] = el;
+							}}
+							type="button"
+							onMouseDown={(e) => e.preventDefault()}
+							onClick={() => onSelect(i)}
+							aria-label={`Show ${img.name ?? `project ${i + 1}`}`}
+							aria-current={on}
+							className={cn(
+								"shrink-0 rounded-full p-[2.5px] transition-all duration-300",
+								on ?
+									"scale-110 bg-gradient-to-tr from-corporate-400 via-fuchsia-400 to-amber-300 shadow-[0_0_16px_rgba(232,121,249,0.55)]"
+								:	"bg-white/25 opacity-75 hover:scale-105 hover:opacity-100",
+							)}>
+							<span className="relative block size-11 overflow-hidden rounded-full bg-ink sm:size-12">
+								<Image
+									src={img.src}
+									alt=""
+									fill
+									sizes="48px"
+									draggable={false}
+									className="object-cover object-top"
+								/>
 							</span>
-						</span>
-						<div className="pointer-events-auto flex items-center gap-3">
-							<button
-								type="button"
-								onClick={() => jumpTo(active - 1)}
-								disabled={active === 0}
-								aria-label="Previous"
-								className="flex size-14 items-center justify-center rounded-full bg-ink/60 text-white ring-1 ring-white/25 backdrop-blur transition-all hover:bg-white hover:text-ink disabled:opacity-30 disabled:hover:bg-ink/60 disabled:hover:text-white">
-								<ArrowLeft className="size-5" />
-							</button>
-							<button
-								type="button"
-								onClick={() => jumpTo(active + 1)}
-								disabled={active === N - 1}
-								aria-label="Next"
-								className="flex size-14 items-center justify-center rounded-full bg-ink/60 text-white ring-1 ring-white/25 backdrop-blur transition-all hover:bg-white hover:text-ink disabled:opacity-30 disabled:hover:bg-ink/60 disabled:hover:text-white">
-								<ArrowRight className="size-5" />
-							</button>
-						</div>
-					</div>
-				</motion.div>
+						</button>
+					);
+				})}
 			</div>
 		</div>
 	);
@@ -354,7 +448,7 @@ function CarouselSlide({
 			{/* The full website screenshot  always shown in its entirety, never cropped */}
 			<motion.div
 				style={{ scale: shotScale }}
-				className="absolute inset-0 flex items-center justify-center p-4 [will-change:transform] sm:p-8 lg:p-12">
+				className="absolute inset-0 flex items-center justify-center px-2 pb-[13rem] pt-[4.5rem] [will-change:transform] sm:px-4 sm:pt-[5.25rem] md:pb-[9rem] lg:px-[2vw]">
 				<div className="relative h-full w-full">
 					<Image
 						src={img.src}

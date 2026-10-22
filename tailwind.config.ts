@@ -14,6 +14,24 @@ const config: Config = {
       padding: { DEFAULT: "1.5rem", lg: "2rem", xl: "2.5rem" },
       screens: { "2xl": "1360px" },
     },
+    // Tailwind's defaults, plus three breakpoints the navbar needs. The desktop
+    // bar has to fit a ~190px logo, six nav pills and a ~225px CTA on one line,
+    // which needs roughly 1150px of container width — well past `lg`. These are
+    // spelled out here rather than in `extend` so they land in min-width order
+    // and utility precedence stays correct (a `navlg:` rule must win over a
+    // `navmd:` one).
+    screens: {
+      sm: "640px",
+      md: "768px",
+      lg: "1024px",
+      /** Desktop nav turns on: tightest tier that still fits the full bar. */
+      navsm: "1100px",
+      navmd: "1200px",
+      xl: "1280px",
+      /** Container has hit its 1360px cap — the bar can breathe from here up. */
+      navlg: "1360px",
+      "2xl": "1536px",
+    },
     extend: {
       colors: {
         // Industrial light-theme system

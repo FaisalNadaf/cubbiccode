@@ -168,11 +168,11 @@ export function Navbar() {
 		};
 	}, [mobileOpen]);
 
-	// The drawer and its toggle are both `lg:hidden`, so widening past the desktop
+	// The drawer and its toggle are both `navsm:hidden`, so widening past the desktop
 	// breakpoint while it is open would strand `mobileOpen` as true — and with it an
 	// invisible scroll lock on a page whose menu is no longer reachable.
 	useEffect(() => {
-		const mq = window.matchMedia("(min-width: 1024px)");
+		const mq = window.matchMedia("(min-width: 1100px)");
 		const onChange = (e: MediaQueryListEvent) => {
 			if (e.matches) setMobileOpen(false);
 		};
@@ -241,21 +241,38 @@ export function Navbar() {
 					onMouseEnter={cancelClose}>
 					<div
 						className={cn(
-							"relative flex items-center justify-between gap-4 transition-all duration-500",
+							"relative flex items-center justify-between gap-3 transition-all duration-500 navlg:gap-4",
 							scrolled ? "h-[66px]" : "h-[82px]",
 						)}>
 						<Logo
 							priority
 							className={cn(
-								"relative z-10 shrink-0 transition-[filter] duration-500 [&_img]:h-12",
+								// Gives back ~16px of bar width in the two tight tiers, where
+								// the six nav pills need every pixel they can get.
+								"relative z-10 shrink-0 transition-[filter] duration-500 [&_img]:h-12 navsm:[&_img]:h-11 navlg:[&_img]:h-12",
 								overDarkHero && "[&_img]:brightness-0 [&_img]:invert",
 							)}
 						/>
 
-						{/* ===== Desktop nav (centered) ===== */}
+						{/* ===== Desktop nav =====
+						    In the normal flex flow, NOT absolutely centred. It used to be
+						    `absolute left-1/2 -translate-x-1/2`, which took it out of the
+						    flow entirely: it could not push the logo or the CTA aside, so
+						    on any viewport under ~1250px (a 1536px laptop at 125% zoom is
+						    1229 CSS px) the right-hand pills simply ran underneath the
+						    "Get a Proposal" button. As a flex-1 child it is centred in the
+						    space that is actually left over, and collision is structurally
+						    impossible. `overflow-clip` is the backstop should a longer label
+						    ever be added — `clip` rather than `hidden` so this never becomes
+						    a scroll container, which would desync the sliding pill's
+						    offsetLeft math from what is on screen. The `px-1.5` is what keeps
+						    that clip honest: globals.css draws :focus-visible as a 2px
+						    outline at a 2px offset, i.e. 4px outside the pill, so without the
+						    padding the first and last item's focus ring would be shaved off.
+						    Note the pill below relies on this being the offsetParent. */}
 						<nav
 							ref={navRef}
-							className="absolute inset-y-0 left-1/2 hidden -translate-x-1/2 items-center gap-4 lg:flex">
+							className="relative hidden min-w-0 flex-1 items-center justify-center gap-1 overflow-clip px-1.5 navsm:flex navlg:gap-2">
 							{/* sliding pill */}
 							<motion.span
 								aria-hidden
@@ -278,8 +295,12 @@ export function Navbar() {
 							{nav.map((group, i) => {
 								const active = isActiveGroup(group, pathname);
 								const panel = hasPanel(group);
+								// Three density tiers so the row fits without collapsing to the
+								// drawer earlier than it has to: 1100-1199 trades a little type
+								// size for the space, 1200+ is back to 15px, 1360+ (container
+								// capped, maximum room) gets the roomy pills.
 								const common =
-									"relative z-10 inline-flex h-9 items-center gap-1 whitespace-nowrap rounded-full px-5 text-[15px] font-medium transition-colors duration-200";
+									"relative z-10 inline-flex h-9 shrink-0 items-center gap-1 whitespace-nowrap rounded-full px-3 text-[13.5px] font-medium transition-colors duration-200 navmd:text-[15px] navlg:px-4";
 								const tone =
 									overDarkHero ?
 										active || hovered === i ?
@@ -331,7 +352,7 @@ export function Navbar() {
 						</nav>
 
 						{/* ===== Right: CTA + mobile toggle ===== */}
-						<div className="relative z-10 flex items-center gap-2">
+						<div className="relative z-10 flex shrink-0 items-center gap-2">
 							<ProposalCta className="hidden sm:inline-flex" />
 							<MobileToggle
 								open={mobileOpen}
@@ -390,7 +411,10 @@ function ProposalCta({
 
 				rel="noopener noreferrer"
 				className={cn(
-					"group relative inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5",
+					"group relative inline-flex items-center justify-center gap-2 rounded-full py-2.5 text-sm font-semibold text-white transition-transform duration-300 hover:-translate-y-0.5",
+					// Narrower while the bar is at its tightest, back to px-5 once the
+					// container has hit its cap and there is room to spare.
+					full ? "px-5" : "px-4 navlg:px-5",
 					full && "w-full py-3.5 text-base",
 					className,
 				)}>
@@ -433,7 +457,13 @@ function ProposalCta({
 				<span className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-full">
 					<span className="absolute inset-y-0 -left-1/2 w-1/3 -skew-x-12 bg-white/30 blur-sm transition-transform duration-700 ease-out group-hover:translate-x-[420%]" />
 				</span>
-				Get a Proposal / Contact
+				{/* The "/ Contact" half is dropped in the one tier where the bar is
+				    genuinely out of room (1100-1199) — buys ~64px, which is the
+				    difference between the six nav pills fitting and not. */}
+				Get a Proposal
+				<span className={cn("hidden", full ? "inline" : "navmd:inline")}>
+					{" / Contact"}
+				</span>
 				<ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-0.5" />
 			</Link>
 		</Magnetic>
@@ -527,7 +557,7 @@ function MegaPanel({
 				mx.set(e.clientX - r.left);
 				my.set(e.clientY - r.top);
 			}}
-			className="absolute top-full z-[65] hidden pt-2.5 lg:block"
+			className="absolute top-full z-[65] hidden pt-2.5 navsm:block"
 			style={{ left }}>
 			<div className="relative overflow-hidden rounded-3xl border border-steel-200 bg-white/95 p-2.5 shadow-lift ring-1 ring-black/5 backdrop-blur-xl">
 				{/* mouse-follow glow */}
@@ -688,7 +718,7 @@ function MobileToggle({
 			aria-expanded={open}
 			aria-controls="mobile-menu"
 			className={cn(
-				"relative z-[90] inline-flex size-11 items-center justify-center rounded-full border shadow-soft backdrop-blur transition-colors lg:hidden",
+				"relative z-[90] inline-flex size-11 items-center justify-center rounded-full border shadow-soft backdrop-blur transition-colors navsm:hidden",
 				onDark ?
 					"border-white/25 bg-white/10 text-white hover:border-white/50"
 				:	"border-steel-200 bg-white/80 text-ink hover:border-corporate-300",
@@ -754,7 +784,7 @@ function MobileMenu({
 	const returnFocusRef = useRef<HTMLElement | null>(null);
 
 	// Modal semantics: move focus in, cycle Tab inside the drawer, close on Escape,
-	// hand focus back to whatever opened it. The whole subtree is `lg:hidden` and the
+	// hand focus back to whatever opened it. The whole subtree is `navsm:hidden` and the
 	// effect only arms while `open`, so none of it can run against the desktop bar.
 	useEffect(() => {
 		if (!open) {
@@ -822,7 +852,7 @@ function MobileMenu({
 					transition={
 						reduce ? { duration: 0 } : { duration: 0.6, ease: EASE }
 					}
-					className="fixed inset-0 z-[85] overflow-y-auto overscroll-contain bg-ink lg:hidden">
+					className="fixed inset-0 z-[85] overflow-y-auto overscroll-contain bg-ink navsm:hidden">
 					{/* animated background */}
 					<div className="pointer-events-none absolute inset-0 bg-blueprint [background-size:40px_40px] opacity-[0.14]" />
 					<motion.div
@@ -855,17 +885,19 @@ function MobileMenu({
 					<div className="container-x relative flex min-h-full flex-col pb-[calc(2.5rem_+_env(safe-area-inset-bottom))] pt-[calc(1.5rem_+_env(safe-area-inset-top))]">
 						<div className="flex items-center justify-between">
 							<Logo className="[&_img]:brightness-0 [&_img]:invert" />
-							{/* The header's MobileToggle is z-[90] and paints over this button,
-							    ~5px above it at the same x, so their 44px hit areas overlapped and
-							    a tap could land on either. `pointer-events-none` cedes every tap to
-							    the toggle on top (both call the same close), leaving exactly one
-							    touch target; the button stays focusable and Enter/Space still fire
-							    it, which is what keeps a close control inside the focus trap. */}
+							{/* The only close control a tap can actually reach. The header's
+							    MobileToggle lives inside a `relative z-10` wrapper, which is a stacking
+							    context of its own, so its `z-[90]` is capped at 10 within the header —
+							    and this drawer (z-[85], same header context) paints over it: the toggle
+							    is both hidden behind the opaque panel and untappable while the menu is
+							    open, so the tap has to land here. Hence no `pointer-events-none` — were
+							    the stacking ever to flip back, the two overlapping 44px hit areas both
+							    close the menu, so whichever one wins is the right outcome. */}
 							<button
 								type="button"
 								onClick={onClose}
 								aria-label="Close menu"
-								className="pointer-events-none inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white">
+								className="relative z-10 inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-white/50 hover:bg-white/10 active:bg-white/20">
 								<span className="relative block size-5">
 									<span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 rotate-45 rounded-full bg-white" />
 									<span className="absolute left-1/2 top-1/2 block h-[2px] w-5 -translate-x-1/2 -rotate-45 rounded-full bg-white" />
